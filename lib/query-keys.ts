@@ -43,6 +43,12 @@ export const queryKeys = {
 		user: ['reviews', 'user'] as const,
 	},
 
+	// Favorite-related queries
+	favorites: {
+		user: ['favorites', 'user'] as const,
+		byRecipe: (recipeId: number) => ['favorites', 'recipe', recipeId] as const,
+	},
+
 	// Collection-related queries
 	collections: {
 		all: ['collections'] as const,

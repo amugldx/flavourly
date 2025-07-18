@@ -9,11 +9,11 @@ export default function CollectionsPage() {
 	return (
 		<div className='space-y-6'>
 			{/* Header */}
-			<div className='flex items-center gap-4'>
+			<div className='flex flex-col items-start gap-4'>
 				<Button
-					asChild
 					variant='outline'
-					size='sm'>
+					size='sm'
+					asChild>
 					<Link href='/dashboard'>
 						<ArrowLeft className='w-4 h-4 mr-2' />
 						Back to Dashboard

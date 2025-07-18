@@ -34,8 +34,50 @@ export interface Recipe {
 	}>;
 	nutritionalInfo: {
 		calories: number | null;
+		proteinGrams: number | null;
+		carbohydratesGrams: number | null;
+		fatGrams: number | null;
+		fiberGrams: number | null;
+		sugarGrams: number | null;
+		sodiumMg: number | null;
 		dataSource: 'estimated_api' | 'verified_nutritionist';
 	} | null;
+	steps: Array<{
+		id: number;
+		stepNumber: number;
+		instruction: string;
+	}>;
+	ingredients: Array<{
+		recipeId: number;
+		ingredientId: number;
+		quantity: number;
+		notes: string | null;
+		ingredient: {
+			id: number;
+			name: string;
+		};
+		unit: {
+			id: number;
+			unitName: string;
+			abbreviation: string | null;
+		};
+	}>;
+	tags: Array<{
+		id: number;
+		name: string;
+		type: string;
+	}>;
+	reviews: Array<{
+		id: number;
+		rating: number;
+		comment: string | null;
+		createdAt: string;
+		user: {
+			id: number;
+			username: string;
+			fullName: string | null;
+		};
+	}>;
 	averageRating: number | null;
 	reviewCount: number;
 }
@@ -120,6 +162,28 @@ export function usePendingRecipes() {
 			const response = await fetch('/api/recipes?status=pending_verification');
 			if (!response.ok) {
 				throw new Error('Failed to fetch pending recipes');
+			}
+			return response.json();
+		},
+	});
+}
+
+// ========= FAVORITES QUERIES =========
+
+export interface FavoriteRecipe {
+	id: number;
+	createdAt: string;
+	recipe: Recipe;
+}
+
+// Fetch user's favorite recipes
+export function useUserFavorites() {
+	return useQuery({
+		queryKey: queryKeys.favorites.user,
+		queryFn: async (): Promise<FavoriteRecipe[]> => {
+			const response = await fetch('/api/favorites');
+			if (!response.ok) {
+				throw new Error('Failed to fetch favorites');
 			}
 			return response.json();
 		},

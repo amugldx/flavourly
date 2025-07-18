@@ -87,7 +87,7 @@ function DeleteRecipeDialog({ recipe, onDelete }: { recipe: any; onDelete: () =>
 				<Button
 					variant='outline'
 					size='sm'
-					className='text-destructive hover:text-destructive hover:bg-destructive/10'>
+					className='flex-1 text-destructive hover:text-destructive hover:bg-destructive/10'>
 					<Trash2 className='w-4 h-4 mr-1' />
 					Delete
 				</Button>

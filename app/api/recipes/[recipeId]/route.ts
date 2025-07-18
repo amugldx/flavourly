@@ -2,38 +2,100 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { recipeId: string } }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ recipeId: string }> },
+) {
 	try {
-		const session = await auth();
-		if (!session?.user?.id) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-		}
+		const { recipeId: recipeIdParam } = await params;
+		const recipeId = parseInt(recipeIdParam);
 
-		const recipeId = parseInt(params.recipeId);
 		if (isNaN(recipeId)) {
 			return NextResponse.json({ error: 'Invalid recipe ID' }, { status: 400 });
 		}
 
-		// Fetch recipe with all related data
-		const recipe = await prisma.recipe.findFirst({
-			where: {
-				id: recipeId,
-				authorId: parseInt(session.user.id), // Only allow editing own recipes
-			},
+		const recipe = await prisma.recipe.findUnique({
+			where: { id: recipeId },
 			include: {
+				author: {
+					select: {
+						id: true,
+						username: true,
+						fullName: true,
+					},
+				},
+				verifiedBy: {
+					select: {
+						id: true,
+						username: true,
+						fullName: true,
+					},
+				},
+				media: {
+					select: {
+						id: true,
+						url: true,
+						caption: true,
+						mediaType: true,
+					},
+				},
+				nutritionalInfo: true,
+				steps: {
+					orderBy: { stepNumber: 'asc' },
+					select: {
+						id: true,
+						stepNumber: true,
+						instruction: true,
+					},
+				},
 				ingredients: {
 					include: {
-						ingredient: true,
-						unit: true,
+						ingredient: {
+							select: {
+								id: true,
+								name: true,
+							},
+						},
+						unit: {
+							select: {
+								id: true,
+								unitName: true,
+								abbreviation: true,
+							},
+						},
 					},
 				},
-				steps: {
-					orderBy: {
-						stepNumber: 'asc',
+				tags: {
+					include: {
+						tag: {
+							include: {
+								tagType: {
+									select: {
+										id: true,
+										typeName: true,
+									},
+								},
+							},
+						},
 					},
 				},
-				media: true,
-				nutritionalInfo: true,
+				reviews: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								username: true,
+								fullName: true,
+							},
+						},
+					},
+					orderBy: { createdAt: 'desc' },
+				},
+				_count: {
+					select: {
+						reviews: true,
+					},
+				},
 			},
 		});
 
@@ -41,46 +103,65 @@ export async function GET(request: NextRequest, { params }: { params: { recipeId
 			return NextResponse.json({ error: 'Recipe not found' }, { status: 404 });
 		}
 
-		// Transform the data to match the form structure
+		// Calculate average rating
+		const totalRating = recipe.reviews.reduce((sum, review) => sum + review.rating, 0);
+		const averageRating = recipe.reviews.length > 0 ? totalRating / recipe.reviews.length : null;
+
+		// Transform the data to match the expected interface
 		const transformedRecipe = {
 			id: recipe.id,
 			title: recipe.title,
-			description: recipe.description || '',
-			cookingTimeMinutes: recipe.cookingTimeMinutes?.toString() || '',
-			servings: recipe.servings?.toString() || '',
-			ingredients: recipe.ingredients.map(ri => ({
-				name: ri.ingredient.name,
-				quantity: ri.quantity.toString(),
-				unit: ri.unit.unitName,
-				notes: ri.notes || '',
-			})),
-			steps: recipe.steps.map(step => step.instruction),
-			media: recipe.media.map(media => ({
-				id: media.id.toString(),
-				url: media.url,
-				type: media.mediaType,
-				publicId: media.id.toString(), // Using media ID as publicId for now
-			})),
+			description: recipe.description,
+			cookingTimeMinutes: recipe.cookingTimeMinutes,
+			servings: recipe.servings,
 			status: recipe.status,
-			createdAt: recipe.createdAt,
-			updatedAt: recipe.updatedAt,
+			verifiedAt: recipe.verifiedAt?.toISOString() || null,
+			healthTips: recipe.healthTips,
+			createdAt: recipe.createdAt.toISOString(),
+			updatedAt: recipe.updatedAt.toISOString(),
+			authorId: recipe.authorId,
+			verifiedById: recipe.verifiedById,
+			author: recipe.author,
+			verifiedBy: recipe.verifiedBy,
+			media: recipe.media,
+			nutritionalInfo: recipe.nutritionalInfo,
+			steps: recipe.steps,
+			ingredients: recipe.ingredients,
+			tags: recipe.tags.map(rt => ({
+				id: rt.tag.id,
+				name: rt.tag.tagName,
+				type: rt.tag.tagType.typeName,
+			})),
+			reviews: recipe.reviews.map(review => ({
+				id: review.id,
+				rating: review.rating,
+				comment: review.comment,
+				createdAt: review.createdAt.toISOString(),
+				user: review.user,
+			})),
+			averageRating,
+			reviewCount: recipe._count.reviews,
 		};
 
 		return NextResponse.json(transformedRecipe);
 	} catch (error) {
 		console.error('Error fetching recipe:', error);
-		return NextResponse.json({ error: 'Failed to fetch recipe' }, { status: 500 });
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 	}
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { recipeId: string } }) {
+export async function PUT(
+	request: NextRequest,
+	{ params }: { params: Promise<{ recipeId: string }> },
+) {
 	try {
 		const session = await auth();
 		if (!session?.user?.id) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const recipeId = parseInt(params.recipeId);
+		const { recipeId: recipeIdParam } = await params;
+		const recipeId = parseInt(recipeIdParam);
 		if (isNaN(recipeId)) {
 			return NextResponse.json({ error: 'Invalid recipe ID' }, { status: 400 });
 		}
@@ -245,14 +326,18 @@ export async function PUT(request: NextRequest, { params }: { params: { recipeId
 	}
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { recipeId: string } }) {
+export async function DELETE(
+	request: NextRequest,
+	{ params }: { params: Promise<{ recipeId: string }> },
+) {
 	try {
 		const session = await auth();
 		if (!session?.user?.id) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const recipeId = parseInt(params.recipeId);
+		const { recipeId: recipeIdParam } = await params;
+		const recipeId = parseInt(recipeIdParam);
 		if (isNaN(recipeId)) {
 			return NextResponse.json({ error: 'Invalid recipe ID' }, { status: 400 });
 		}
