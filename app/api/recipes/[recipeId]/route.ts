@@ -263,10 +263,37 @@ export async function DELETE(request: NextRequest, { params }: { params: { recip
 				id: recipeId,
 				authorId: parseInt(session.user.id),
 			},
+			include: {
+				media: true,
+			},
 		});
 
 		if (!existingRecipe) {
 			return NextResponse.json({ error: 'Recipe not found' }, { status: 404 });
+		}
+
+		// Delete images from Cloudinary if they exist
+		if (existingRecipe.media && existingRecipe.media.length > 0) {
+			const { extractPublicIdFromUrl, deleteFromCloudinary } = require('@/lib/cloudinary');
+
+			// Delete each media file from Cloudinary
+			for (const media of existingRecipe.media) {
+				try {
+					// Extract public ID from URL
+					const publicId = extractPublicIdFromUrl(media.url);
+
+					if (publicId) {
+						// Delete from Cloudinary
+						await deleteFromCloudinary(publicId);
+						console.log(`Successfully deleted from Cloudinary: ${publicId} (${media.url})`);
+					} else {
+						console.warn(`Could not extract public ID from URL: ${media.url}`);
+					}
+				} catch (cloudinaryError) {
+					console.error(`Failed to delete image from Cloudinary: ${media.url}`, cloudinaryError);
+					// Continue with deletion even if Cloudinary deletion fails
+				}
+			}
 		}
 
 		// Delete recipe (cascade will handle related data)

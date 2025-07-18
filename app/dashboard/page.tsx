@@ -3,8 +3,18 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMyRecipes } from '@/lib/hooks/use-my-recipes';
+import { useDeleteRecipe } from '@/lib/hooks/use-mutations';
+import { useUserRecipes } from '@/lib/hooks/use-queries';
 import {
 	AlertCircle,
 	BookOpen,
@@ -14,10 +24,12 @@ import {
 	Eye,
 	Plus,
 	Star,
+	Trash2,
 	Users,
 	XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 function getStatusBadge(status: string) {
 	switch (status) {
@@ -53,8 +65,62 @@ function getStatusBadge(status: string) {
 	}
 }
 
+function DeleteRecipeDialog({ recipe, onDelete }: { recipe: any; onDelete: () => void }) {
+	const [isOpen, setIsOpen] = useState(false);
+	const deleteRecipe = useDeleteRecipe();
+
+	const handleDelete = async () => {
+		try {
+			await deleteRecipe.mutateAsync(recipe.id);
+			setIsOpen(false);
+			onDelete();
+		} catch (error) {
+			// Error is handled by the mutation hook
+		}
+	};
+
+	return (
+		<Dialog
+			open={isOpen}
+			onOpenChange={setIsOpen}>
+			<DialogTrigger asChild>
+				<Button
+					variant='outline'
+					size='sm'
+					className='text-destructive hover:text-destructive hover:bg-destructive/10'>
+					<Trash2 className='w-4 h-4 mr-1' />
+					Delete
+				</Button>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Delete Recipe</DialogTitle>
+					<DialogDescription>
+						Are you sure you want to delete "{recipe.title}"? This action cannot be undone and will
+						permanently remove the recipe and all associated images.
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<Button
+						variant='outline'
+						onClick={() => setIsOpen(false)}>
+						Cancel
+					</Button>
+					<Button
+						variant='destructive'
+						onClick={handleDelete}
+						disabled={deleteRecipe.isPending}>
+						{deleteRecipe.isPending ? 'Deleting...' : 'Delete Recipe'}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
 function RecipeCard({
 	recipe,
+	onDelete,
 }: {
 	recipe: {
 		id: number;
@@ -76,6 +142,7 @@ function RecipeCard({
 		averageRating?: number | null;
 		reviewCount?: number;
 	};
+	onDelete: () => void;
 }) {
 	const cookingTimeMinutes = recipe.cookingTimeMinutes;
 
@@ -170,6 +237,10 @@ function RecipeCard({
 							Edit
 						</Link>
 					</Button>
+					<DeleteRecipeDialog
+						recipe={recipe}
+						onDelete={onDelete}
+					/>
 				</div>
 			</CardContent>
 		</Card>
@@ -197,7 +268,12 @@ function RecipeSkeleton() {
 }
 
 export default function DashboardPage() {
-	const { data: recipes, isLoading, error } = useMyRecipes();
+	const { data: recipes, isLoading, error } = useUserRecipes();
+
+	const handleRecipeDelete = () => {
+		// The centralized query system will automatically refetch the data
+		// No manual refetch needed
+	};
 
 	if (error) {
 		return (
@@ -251,7 +327,7 @@ export default function DashboardPage() {
 							{isLoading ? (
 								<Skeleton className='h-8 w-16' />
 							) : (
-								recipes?.filter(r => r.status === 'verified').length || 0
+								recipes?.filter((r: any) => r.status === 'verified').length || 0
 							)}
 						</div>
 					</CardContent>
@@ -266,7 +342,7 @@ export default function DashboardPage() {
 							{isLoading ? (
 								<Skeleton className='h-8 w-16' />
 							) : (
-								recipes?.filter(r => r.status === 'pending_verification').length || 0
+								recipes?.filter((r: any) => r.status === 'pending_verification').length || 0
 							)}
 						</div>
 					</CardContent>
@@ -284,10 +360,11 @@ export default function DashboardPage() {
 					</div>
 				) : recipes && recipes.length > 0 ? (
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-						{recipes.map(recipe => (
+						{recipes.map((recipe: any) => (
 							<RecipeCard
 								key={recipe.id}
 								recipe={recipe}
+								onDelete={handleRecipeDelete}
 							/>
 						))}
 					</div>

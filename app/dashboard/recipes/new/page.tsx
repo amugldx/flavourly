@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useCreateRecipe, type Ingredient } from '@/lib/hooks/use-recipes';
 import { ArrowLeft, Loader2, Plus, Save, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const commonUnits = [
@@ -30,6 +31,7 @@ const commonUnits = [
 ];
 
 export default function CreateRecipePage() {
+	const router = useRouter();
 	const [currentStep, setCurrentStep] = useState(1);
 	const [media, setMedia] = useState<
 		Array<{
@@ -49,6 +51,12 @@ export default function CreateRecipePage() {
 	});
 
 	const createRecipeMutation = useCreateRecipe();
+
+	// Handle successful recipe creation
+	const handleCreateSuccess = (data: { recipeId: number }) => {
+		// Navigate to dashboard after successful creation
+		router.push('/dashboard');
+	};
 
 	const updateFormData = (field: string, value: string | number) => {
 		setFormData(prev => ({ ...prev, [field]: value }));
@@ -144,7 +152,9 @@ export default function CreateRecipePage() {
 			media: media.filter(m => m.url),
 		};
 
-		createRecipeMutation.mutate(recipeData);
+		createRecipeMutation.mutate(recipeData, {
+			onSuccess: handleCreateSuccess,
+		});
 	};
 
 	const steps = [
@@ -215,7 +225,7 @@ export default function CreateRecipePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Basic Information</CardTitle>
-							<CardDescription>Start with the essential details about your recipe</CardDescription>
+							<CardDescription>Tell us about your recipe</CardDescription>
 						</CardHeader>
 						<CardContent className='space-y-4'>
 							<div className='space-y-2'>
@@ -228,23 +238,21 @@ export default function CreateRecipePage() {
 									required
 								/>
 							</div>
-
 							<div className='space-y-2'>
 								<Label htmlFor='description'>Description</Label>
 								<Textarea
 									id='description'
 									value={formData.description}
 									onChange={e => updateFormData('description', e.target.value)}
-									placeholder='Tell us about your recipe...'
+									placeholder='Describe your recipe...'
 									rows={3}
 								/>
 							</div>
-
 							<div className='grid grid-cols-2 gap-4'>
 								<div className='space-y-2'>
-									<Label htmlFor='cookingTime'>Cooking Time (minutes)</Label>
+									<Label htmlFor='cookingTimeMinutes'>Cooking Time (minutes)</Label>
 									<Input
-										id='cookingTime'
+										id='cookingTimeMinutes'
 										type='number'
 										value={formData.cookingTimeMinutes}
 										onChange={e => updateFormData('cookingTimeMinutes', e.target.value)}
@@ -252,7 +260,6 @@ export default function CreateRecipePage() {
 										min='1'
 									/>
 								</div>
-
 								<div className='space-y-2'>
 									<Label htmlFor='servings'>Servings</Label>
 									<Input
