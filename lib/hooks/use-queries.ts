@@ -237,11 +237,17 @@ export function useUserReviews() {
 
 export interface Collection {
 	id: number;
-	name: string;
+	collectionName: string;
 	description: string | null;
 	createdAt: string;
 	recipeCount: number;
-	recipes: Recipe[];
+	firstImage: string | null;
+}
+
+export interface CollectionDetail extends Collection {
+	recipes: Array<{
+		recipe: Recipe;
+	}>;
 }
 
 // Fetch user's collections
@@ -258,11 +264,11 @@ export function useUserCollections() {
 	});
 }
 
-// Fetch a single collection
+// Fetch a single collection by ID
 export function useCollection(collectionId: number) {
 	return useQuery({
 		queryKey: queryKeys.collections.detail(collectionId),
-		queryFn: async (): Promise<Collection> => {
+		queryFn: async (): Promise<CollectionDetail> => {
 			const response = await fetch(`/api/collections/${collectionId}`);
 			if (!response.ok) {
 				throw new Error('Failed to fetch collection');

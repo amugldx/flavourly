@@ -234,7 +234,7 @@ export function useDeleteReview() {
 // ========= COLLECTION MUTATIONS =========
 
 export interface CreateCollectionData {
-	name: string;
+	collectionName: string;
 	description?: string;
 }
 
@@ -242,12 +242,12 @@ export interface UpdateCollectionData extends CreateCollectionData {
 	id: number;
 }
 
-// Create a collection
+// Create a new collection
 export function useCreateCollection() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: CreateCollectionData): Promise<{ collectionId: number }> => {
+		mutationFn: async (data: CreateCollectionData): Promise<{ id: number }> => {
 			const response = await fetch('/api/collections', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -265,7 +265,7 @@ export function useCreateCollection() {
 			toast.success('Collection created successfully!');
 			await Promise.all([
 				queryClient.refetchQueries({ queryKey: queryKeys.collections.user }),
-				queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(data.collectionId) }),
+				refetchHelpers.refetchUserData(queryClient),
 			]);
 		},
 		onError: (error: Error) => {
@@ -274,12 +274,12 @@ export function useCreateCollection() {
 	});
 }
 
-// Update a collection
+// Update an existing collection
 export function useUpdateCollection() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: UpdateCollectionData): Promise<{ collectionId: number }> => {
+		mutationFn: async (data: UpdateCollectionData): Promise<{ id: number }> => {
 			const response = await fetch(`/api/collections/${data.id}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
@@ -297,7 +297,8 @@ export function useUpdateCollection() {
 			toast.success('Collection updated successfully!');
 			await Promise.all([
 				queryClient.refetchQueries({ queryKey: queryKeys.collections.user }),
-				queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(data.collectionId) }),
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(data.id) }),
+				refetchHelpers.refetchUserData(queryClient),
 			]);
 		},
 		onError: (error: Error) => {
@@ -321,9 +322,12 @@ export function useDeleteCollection() {
 				throw new Error(error.error || 'Failed to delete collection');
 			}
 		},
-		onSuccess: async () => {
+		onSuccess: async (_, collectionId) => {
 			toast.success('Collection deleted successfully!');
-			await queryClient.refetchQueries({ queryKey: queryKeys.collections.user });
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.user }),
+				refetchHelpers.refetchUserData(queryClient),
+			]);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || 'Failed to delete collection');
@@ -356,7 +360,11 @@ export function useAddRecipeToCollection() {
 		},
 		onSuccess: async (_, { collectionId }) => {
 			toast.success('Recipe added to collection!');
-			await queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(collectionId) });
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.user }),
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(collectionId) }),
+				refetchHelpers.refetchUserData(queryClient),
+			]);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || 'Failed to add recipe to collection');
@@ -387,7 +395,11 @@ export function useRemoveRecipeFromCollection() {
 		},
 		onSuccess: async (_, { collectionId }) => {
 			toast.success('Recipe removed from collection!');
-			await queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(collectionId) });
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.user }),
+				queryClient.refetchQueries({ queryKey: queryKeys.collections.detail(collectionId) }),
+				refetchHelpers.refetchUserData(queryClient),
+			]);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || 'Failed to remove recipe from collection');
