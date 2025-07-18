@@ -53,7 +53,30 @@ function getStatusBadge(status: string) {
 	}
 }
 
-function RecipeCard({ recipe }: { recipe: any }) {
+function RecipeCard({
+	recipe,
+}: {
+	recipe: {
+		id: number;
+		title: string;
+		description?: string | null;
+		cookingTimeMinutes?: number | null;
+		servings?: number | null;
+		status: string;
+		media?: Array<{
+			id: number;
+			url: string;
+			caption?: string | null;
+			mediaType: string;
+		}>;
+		nutritionalInfo?: {
+			calories?: number | null;
+			dataSource: string;
+		} | null;
+		averageRating?: number | null;
+		reviewCount?: number;
+	};
+}) {
 	const cookingTimeMinutes = recipe.cookingTimeMinutes;
 
 	return (
@@ -104,7 +127,7 @@ function RecipeCard({ recipe }: { recipe: any }) {
 						<div className='flex items-center gap-1'>
 							<Star className='w-4 h-4 fill-current' />
 							<span>
-								{recipe.averageRating.toFixed(1)} ({recipe.reviewCount})
+								{Number(recipe.averageRating).toFixed(1)} ({recipe.reviewCount})
 							</span>
 						</div>
 					)}
@@ -113,7 +136,9 @@ function RecipeCard({ recipe }: { recipe: any }) {
 				{/* Nutritional Info */}
 				{recipe.nutritionalInfo?.calories && (
 					<div className='mb-4 p-2 bg-muted/50 rounded text-sm'>
-						<span className='font-medium'>{recipe.nutritionalInfo.calories} calories</span>
+						<span className='font-medium'>
+							{Number(recipe.nutritionalInfo.calories).toFixed(0)} calories
+						</span>
 						<Badge
 							variant='outline'
 							className='ml-2 text-xs'>

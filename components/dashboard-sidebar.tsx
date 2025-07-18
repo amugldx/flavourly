@@ -88,7 +88,7 @@ export function DashboardSidebar() {
 		<div className='w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 			<div className='p-6'>
 				<h2 className='text-lg font-semibold mb-6'>Dashboard</h2>
-				<nav className='space-y-2'>
+				<nav className='space-y-8'>
 					{navItems.map(item => {
 						const isActive = pathname === item.href;
 						return (

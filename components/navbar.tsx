@@ -1,8 +1,9 @@
 'use client';
 
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User } from 'lucide-react';
+import { ChefHat, LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -13,27 +14,60 @@ export function Navbar() {
 		await signOut({ callbackUrl: '/signin' });
 	};
 
+	const getUserInitials = (name: string) => {
+		return name
+			.split(' ')
+			.map(n => n[0])
+			.join('')
+			.toUpperCase()
+			.slice(0, 2);
+	};
+
 	return (
 		<nav className='border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-			<div className='container flex h-14 items-center justify-between px-4'>
-				{/* Left side - Logo */}
+			<div className='flex h-16 items-center justify-between px-6'>
+				{/* Left side - Logo and Role */}
 				<div className='flex items-center gap-4'>
 					<Link
 						href='/'
-						className='flex items-center space-x-2 hover:opacity-80 transition-opacity'>
-						<span className='text-xl font-bold'>Flavourly</span>
+						className='flex items-center gap-3 hover:opacity-80 transition-opacity'>
+						<div className='flex h-10 w-10 items-center justify-center rounded-lg bg-primary'>
+							<ChefHat className='h-6 w-6 text-primary-foreground' />
+						</div>
+						<div className='flex flex-col'>
+							<span className='text-xl font-bold'>Flavourly</span>
+							{status === 'authenticated' && session?.user?.role && (
+								<span className='text-sm text-muted-foreground capitalize'>
+									{session.user.role}
+								</span>
+							)}
+						</div>
 					</Link>
 				</div>
 
+				{/* Center - Page Title (if needed) */}
+				<div className='flex-1 flex justify-center'>
+					{/* This can be used for page titles if needed */}
+				</div>
+
 				{/* Right side - User info and actions */}
-				<div className='flex items-center gap-3'>
+				<div className='flex items-center gap-4'>
 					{/* Show user info and actions if authenticated */}
 					{status === 'authenticated' && session ? (
 						<>
-							{/* User name */}
-							<div className='flex items-center gap-2 text-sm text-muted-foreground'>
-								<User className='w-4 h-4' />
-								<span>{session.user?.name || session.user?.username}</span>
+							{/* User Profile */}
+							<div className='flex items-center gap-3'>
+								<Avatar className='h-10 w-10'>
+									<AvatarFallback className='bg-primary text-primary-foreground'>
+										{getUserInitials(session.user?.name || session.user?.username || 'U')}
+									</AvatarFallback>
+								</Avatar>
+								<div className='flex flex-col'>
+									<span className='text-sm font-medium'>
+										{session.user?.name || session.user?.username}
+									</span>
+									<span className='text-xs text-muted-foreground'>{session.user?.email}</span>
+								</div>
 							</div>
 
 							{/* Theme Toggle */}
@@ -42,10 +76,10 @@ export function Navbar() {
 							{/* Logout Button */}
 							<Button
 								onClick={handleLogout}
-								variant='outline'
+								variant='ghost'
 								size='sm'
 								className='gap-2'>
-								<LogOut className='w-4 h-4' />
+								<LogOut className='h-4 w-4' />
 								Logout
 							</Button>
 						</>

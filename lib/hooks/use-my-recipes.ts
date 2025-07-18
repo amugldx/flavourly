@@ -24,8 +24,10 @@ interface Recipe {
 		fullName: string | null;
 	} | null;
 	media: Array<{
+		id: number;
 		url: string;
 		caption: string | null;
+		mediaType: string;
 	}>;
 	nutritionalInfo: {
 		calories: number | null;
