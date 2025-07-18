@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../query-keys';
 
 interface Recipe {
 	id: number;
@@ -47,7 +48,7 @@ async function fetchMyRecipes(): Promise<Recipe[]> {
 
 export function useMyRecipes() {
 	return useQuery({
-		queryKey: ['my-recipes'],
+		queryKey: queryKeys.recipes.my,
 		queryFn: fetchMyRecipes,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
