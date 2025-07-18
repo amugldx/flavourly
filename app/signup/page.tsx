@@ -76,12 +76,6 @@ export default function SignUpPage() {
 
 		const role = selectedRole === 'user' ? 'RecipeDeveloper' : 'Nutritionist';
 
-		console.log('Signup form submission:', {
-			selectedRole,
-			mappedRole: role,
-			formData: { ...formData, role },
-		});
-
 		signUpMutation.mutate({
 			email: formData.email,
 			password: formData.password,

@@ -54,8 +54,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						const fullName = credentials.fullName as string;
 						const role = credentials.role as string;
 
-						console.log('Signup attempt with role:', role); // Debug log
-
 						if (!username || !fullName) {
 							throw new Error('Username and full name are required for registration');
 						}
@@ -79,13 +77,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 							roleToAssign = RoleName.RecipeDeveloper;
 						}
 
-						console.log('Role to assign:', roleToAssign); // Debug log
-
 						const userRole = await prisma.role.findUnique({
 							where: { name: roleToAssign },
 						});
-
-						console.log('Found role in database:', userRole); // Debug log
 
 						if (!userRole) {
 							throw new Error('Role not found. Please seed the database first.');
@@ -107,8 +101,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 								role: true,
 							},
 						});
-
-						console.log('Created user with role:', newUser.role); // Debug log
 
 						return {
 							id: newUser.id.toString(),

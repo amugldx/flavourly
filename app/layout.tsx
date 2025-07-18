@@ -1,3 +1,4 @@
+import { AuthSessionProvider } from '@/components/session-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ReactQueryProvider } from '@/lib/react-query';
 import type { Metadata } from 'next';
@@ -29,13 +30,15 @@ export default function RootLayout({
 			lang='en'
 			suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<ThemeProvider
-					attribute='class'
-					defaultTheme='system'
-					enableSystem
-					disableTransitionOnChange>
-					<ReactQueryProvider>{children}</ReactQueryProvider>
-				</ThemeProvider>
+				<AuthSessionProvider>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='system'
+						enableSystem
+						disableTransitionOnChange>
+						<ReactQueryProvider>{children}</ReactQueryProvider>
+					</ThemeProvider>
+				</AuthSessionProvider>
 			</body>
 		</html>
 	);
