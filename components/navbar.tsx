@@ -1,14 +1,16 @@
 'use client';
 
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/lib/hooks/use-user';
 import { ChefHat, LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 export function Navbar() {
 	const { data: session, status } = useSession();
+	const { data: user } = useUser();
 
 	const handleLogout = async () => {
 		await signOut({ callbackUrl: '/signin' });
@@ -58,15 +60,21 @@ export function Navbar() {
 							{/* User Profile */}
 							<div className='flex items-center gap-3'>
 								<Avatar className='h-10 w-10'>
+									<AvatarImage
+										src={user?.profilePicture}
+										alt={user?.fullName || user?.username || 'Profile picture'}
+									/>
 									<AvatarFallback className='bg-primary text-primary-foreground'>
-										{getUserInitials(session.user?.name || session.user?.username || 'U')}
+										{getUserInitials(user?.fullName || user?.username || session.user?.name || 'U')}
 									</AvatarFallback>
 								</Avatar>
 								<div className='flex flex-col'>
 									<span className='text-sm font-medium'>
-										{session.user?.name || session.user?.username}
+										{user?.fullName || user?.username || session.user?.name}
 									</span>
-									<span className='text-xs text-muted-foreground'>{session.user?.email}</span>
+									<span className='text-xs text-muted-foreground'>
+										{user?.email || session.user?.email}
+									</span>
 								</div>
 							</div>
 

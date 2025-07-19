@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@/components/error-boundary';
 import { AuthSessionProvider } from '@/components/session-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ReactQueryProvider } from '@/lib/react-query';
@@ -31,15 +32,17 @@ export default function RootLayout({
 			lang='en'
 			suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<AuthSessionProvider>
-					<ThemeProvider
-						attribute='class'
-						defaultTheme='system'
-						enableSystem
-						disableTransitionOnChange>
-						<ReactQueryProvider>{children}</ReactQueryProvider>
-					</ThemeProvider>
-				</AuthSessionProvider>
+				<ErrorBoundary>
+					<AuthSessionProvider>
+						<ThemeProvider
+							attribute='class'
+							defaultTheme='system'
+							enableSystem
+							disableTransitionOnChange>
+							<ReactQueryProvider>{children}</ReactQueryProvider>
+						</ThemeProvider>
+					</AuthSessionProvider>
+				</ErrorBoundary>
 				<Toaster />
 			</body>
 		</html>

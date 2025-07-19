@@ -3,8 +3,10 @@
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ErrorDisplay } from '@/components/ui/error-display';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSignUp } from '@/lib/hooks/use-auth';
 import Link from 'next/link';
@@ -53,8 +55,14 @@ export default function SignUpPage() {
 
 		if (!formData.password) {
 			newErrors.password = 'Password is required';
-		} else if (formData.password.length < 6) {
-			newErrors.password = 'Password must be at least 6 characters';
+		} else if (formData.password.length < 8) {
+			newErrors.password = 'Password must be at least 8 characters';
+		} else {
+			const hasLetters = /[a-zA-Z]/.test(formData.password);
+			const hasNumbers = /\d/.test(formData.password);
+			if (!hasLetters || !hasNumbers) {
+				newErrors.password = 'Password must contain both letters and numbers';
+			}
 		}
 
 		if (!formData.confirmPassword) {
@@ -162,25 +170,26 @@ export default function SignUpPage() {
 
 								<div className='space-y-2'>
 									<Label htmlFor='password'>Password</Label>
-									<Input
+									<PasswordInput
 										id='password'
 										name='password'
-										type='password'
 										placeholder='Create a password'
 										value={formData.password}
 										onChange={handleChange}
 										required
 										aria-invalid={!!errors.password}
 									/>
+									<p className='text-sm text-muted-foreground'>
+										Password must be at least 8 characters long and contain letters and numbers
+									</p>
 									{errors.password && <p className='text-sm text-red-500'>{errors.password}</p>}
 								</div>
 
 								<div className='space-y-2'>
 									<Label htmlFor='confirmPassword'>Confirm Password</Label>
-									<Input
+									<PasswordInput
 										id='confirmPassword'
 										name='confirmPassword'
-										type='password'
 										placeholder='Confirm your password'
 										value={formData.confirmPassword}
 										onChange={handleChange}
@@ -192,19 +201,24 @@ export default function SignUpPage() {
 									)}
 								</div>
 
-								{signUpMutation.error && (
-									<div className='text-sm text-red-500 text-center'>
-										{signUpMutation.error.message}
-									</div>
-								)}
+								<ErrorDisplay
+									error={signUpMutation.error}
+									title='Account Creation Failed'
+									variant='destructive'
+								/>
 
 								<Button
 									type='submit'
 									className='w-full'
 									disabled={signUpMutation.isPending}>
-									{signUpMutation.isPending
-										? 'Creating account...'
-										: 'Create Recipe Developer Account'}
+									{signUpMutation.isPending ? (
+										<>
+											<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+											Creating account...
+										</>
+									) : (
+										'Create Recipe Developer Account'
+									)}
 								</Button>
 							</form>
 						</TabsContent>
@@ -262,25 +276,26 @@ export default function SignUpPage() {
 
 								<div className='space-y-2'>
 									<Label htmlFor='nutritionist-password'>Password</Label>
-									<Input
+									<PasswordInput
 										id='nutritionist-password'
 										name='password'
-										type='password'
 										placeholder='Create a password'
 										value={formData.password}
 										onChange={handleChange}
 										required
 										aria-invalid={!!errors.password}
 									/>
+									<p className='text-sm text-muted-foreground'>
+										Password must be at least 8 characters long and contain letters and numbers
+									</p>
 									{errors.password && <p className='text-sm text-red-500'>{errors.password}</p>}
 								</div>
 
 								<div className='space-y-2'>
 									<Label htmlFor='nutritionist-confirmPassword'>Confirm Password</Label>
-									<Input
+									<PasswordInput
 										id='nutritionist-confirmPassword'
 										name='confirmPassword'
-										type='password'
 										placeholder='Confirm your password'
 										value={formData.confirmPassword}
 										onChange={handleChange}
@@ -292,17 +307,24 @@ export default function SignUpPage() {
 									)}
 								</div>
 
-								{signUpMutation.error && (
-									<div className='text-sm text-red-500 text-center'>
-										{signUpMutation.error.message}
-									</div>
-								)}
+								<ErrorDisplay
+									error={signUpMutation.error}
+									title='Account Creation Failed'
+									variant='destructive'
+								/>
 
 								<Button
 									type='submit'
 									className='w-full'
 									disabled={signUpMutation.isPending}>
-									{signUpMutation.isPending ? 'Creating account...' : 'Create Nutritionist Account'}
+									{signUpMutation.isPending ? (
+										<>
+											<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+											Creating account...
+										</>
+									) : (
+										'Create Nutritionist Account'
+									)}
 								</Button>
 							</form>
 						</TabsContent>

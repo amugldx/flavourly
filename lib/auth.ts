@@ -58,6 +58,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 							throw new Error('Username and full name are required for registration');
 						}
 
+						// Validate password strength
+						if (password.length < 8) {
+							throw new Error('Password must be at least 8 characters long');
+						}
+
+						const hasLetters = /[a-zA-Z]/.test(password);
+						const hasNumbers = /\d/.test(password);
+						if (!hasLetters || !hasNumbers) {
+							throw new Error('Password must contain both letters and numbers');
+						}
+
 						// Check if user already exists
 						const existingUser = await prisma.user.findFirst({
 							where: {

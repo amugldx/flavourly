@@ -52,13 +52,21 @@ model Role {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String
-  fullName     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  username            String   @unique
+  email               String   @unique
+  passwordHash        String
+  fullName            String?
+  bio                 String?
+  profilePicture      String?
+  dietaryRestrictions String[] @default([])
+  allergies           String[] @default([])
+  cuisinePreferences  String[] @default([])
+  cookingSkill        String?
+  spiceTolerance      String?
+  mealSize            String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   // Relations
   roleId Int

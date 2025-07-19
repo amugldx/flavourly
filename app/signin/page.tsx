@@ -3,8 +3,10 @@
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ErrorDisplay } from '@/components/ui/error-display';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSignIn } from '@/lib/hooks/use-auth';
 import Link from 'next/link';
@@ -73,26 +75,32 @@ export default function SignInPage() {
 								</div>
 								<div className='space-y-2'>
 									<Label htmlFor='password'>Password</Label>
-									<Input
+									<PasswordInput
 										id='password'
 										name='password'
-										type='password'
 										placeholder='Enter your password'
 										value={formData.password}
 										onChange={handleChange}
 										required
 									/>
 								</div>
-								{signInMutation.error && (
-									<div className='text-sm text-red-500 text-center'>
-										{signInMutation.error.message}
-									</div>
-								)}
+								<ErrorDisplay
+									error={signInMutation.error}
+									title='Sign In Failed'
+									variant='destructive'
+								/>
 								<Button
 									type='submit'
 									className='w-full'
 									disabled={signInMutation.isPending}>
-									{signInMutation.isPending ? 'Signing in...' : 'Sign In as Recipe Developer'}
+									{signInMutation.isPending ? (
+										<>
+											<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+											Signing in...
+										</>
+									) : (
+										'Sign In as Recipe Developer'
+									)}
 								</Button>
 							</form>
 						</TabsContent>
@@ -117,26 +125,32 @@ export default function SignInPage() {
 								</div>
 								<div className='space-y-2'>
 									<Label htmlFor='nutritionist-password'>Password</Label>
-									<Input
+									<PasswordInput
 										id='nutritionist-password'
 										name='password'
-										type='password'
 										placeholder='Enter your password'
 										value={formData.password}
 										onChange={handleChange}
 										required
 									/>
 								</div>
-								{signInMutation.error && (
-									<div className='text-sm text-red-500 text-center'>
-										{signInMutation.error.message}
-									</div>
-								)}
+								<ErrorDisplay
+									error={signInMutation.error}
+									title='Sign In Failed'
+									variant='destructive'
+								/>
 								<Button
 									type='submit'
 									className='w-full'
 									disabled={signInMutation.isPending}>
-									{signInMutation.isPending ? 'Signing in...' : 'Sign In as Nutritionist'}
+									{signInMutation.isPending ? (
+										<>
+											<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+											Signing in...
+										</>
+									) : (
+										'Sign In as Nutritionist'
+									)}
 								</Button>
 							</form>
 						</TabsContent>

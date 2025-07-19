@@ -8,6 +8,39 @@ cloudinary.config({
 });
 
 /**
+ * Upload a profile picture to Cloudinary
+ * @param file - The file to upload
+ * @returns Promise that resolves to the upload result
+ */
+export async function uploadProfilePicture(file: File): Promise<{ url: string; publicId: string }> {
+	try {
+		// Convert file to base64 for Cloudinary upload
+		const arrayBuffer = await file.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
+		const base64String = buffer.toString('base64');
+		const dataURI = `data:${file.type};base64,${base64String}`;
+
+		// Upload to Cloudinary with profile picture specific settings
+		const result = await cloudinary.uploader.upload(dataURI, {
+			folder: 'flavourly/profiles',
+			transformation: [
+				{ width: 400, height: 400, crop: 'fill', gravity: 'face' },
+				{ quality: 'auto', fetch_format: 'auto' },
+			],
+			resource_type: 'image',
+		});
+
+		return {
+			url: result.secure_url,
+			publicId: result.public_id,
+		};
+	} catch (error) {
+		console.error('Error uploading profile picture to Cloudinary:', error);
+		throw new Error('Failed to upload profile picture');
+	}
+}
+
+/**
  * Extract the public ID from a Cloudinary URL
  * @param url - The Cloudinary URL (e.g., https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/filename.jpg)
  * @returns The public ID (e.g., folder/filename)
