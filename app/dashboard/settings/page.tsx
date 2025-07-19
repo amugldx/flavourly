@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import {
 	useUpdateDietaryPreferences,
 	useUpdateEmail,
@@ -38,6 +37,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface DietaryPreferences {
 	dietaryRestrictions: string[];
@@ -106,7 +106,6 @@ export default function SettingsPage() {
 	const updateEmail = useUpdateEmail();
 	const updatePassword = useUpdatePassword();
 	const updateDietaryPreferences = useUpdateDietaryPreferences();
-	const { toast } = useToast();
 
 	// Profile form state
 	const [profileForm, setProfileForm] = useState({
@@ -183,21 +182,13 @@ export default function SettingsPage() {
 			// Validate file type
 			const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 			if (!validTypes.includes(file.type)) {
-				toast({
-					title: 'Invalid file type',
-					description: 'Please upload JPG, PNG, or WebP images.',
-					variant: 'destructive',
-				});
+				toast.error('Please upload JPG, PNG, or WebP images.');
 				return;
 			}
 
 			// Validate file size (5MB limit)
 			if (file.size > 5 * 1024 * 1024) {
-				toast({
-					title: 'File too large',
-					description: 'Please upload an image smaller than 5MB.',
-					variant: 'destructive',
-				});
+				toast.error('Please upload an image smaller than 5MB.');
 				return;
 			}
 
@@ -212,11 +203,7 @@ export default function SettingsPage() {
 	const handleProfileSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!profileForm.fullName.trim()) {
-			toast({
-				title: 'Error',
-				description: 'Full name is required',
-				variant: 'destructive',
-			});
+			toast.error('Full name is required');
 			return;
 		}
 
@@ -235,16 +222,9 @@ export default function SettingsPage() {
 				setPreviewUrl(null);
 			}
 
-			toast({
-				title: 'Success',
-				description: 'Profile updated successfully',
-			});
+			toast.success('Profile updated successfully');
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update profile. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update profile. Please try again.');
 		} finally {
 			setIsUploadingPicture(false);
 		}
@@ -254,30 +234,19 @@ export default function SettingsPage() {
 	const handleEmailSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!emailForm.email.trim() || !emailForm.password) {
-			toast({
-				title: 'Error',
-				description: 'Please fill in all fields',
-				variant: 'destructive',
-			});
+			toast.error('Please fill in all fields');
 			return;
 		}
 
 		// Email validation
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(emailForm.email.trim())) {
-			toast({
-				title: 'Error',
-				description: 'Please enter a valid email address',
-				variant: 'destructive',
-			});
+			toast.error('Please enter a valid email address');
 			return;
 		}
 
 		if (emailForm.email === user?.email) {
-			toast({
-				title: 'No Changes',
-				description: 'Email address is the same as current',
-			});
+			toast.info('Email address is the same as current');
 			return;
 		}
 
@@ -286,17 +255,9 @@ export default function SettingsPage() {
 				email: emailForm.email.trim(),
 				password: emailForm.password,
 			});
-			toast({
-				title: 'Success',
-				description: 'Email updated successfully',
-			});
 			setEmailForm(prev => ({ ...prev, password: '' }));
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update email. Please check your password and try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update email. Please check your password and try again.');
 		}
 	};
 
@@ -307,29 +268,17 @@ export default function SettingsPage() {
 			!passwordForm.newPassword ||
 			!passwordForm.confirmPassword
 		) {
-			toast({
-				title: 'Error',
-				description: 'Please fill in all fields',
-				variant: 'destructive',
-			});
+			toast.error('Please fill in all fields');
 			return;
 		}
 
 		if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-			toast({
-				title: 'Error',
-				description: 'New passwords do not match',
-				variant: 'destructive',
-			});
+			toast.error('New passwords do not match');
 			return;
 		}
 
 		if (passwordForm.newPassword.length < 8) {
-			toast({
-				title: 'Error',
-				description: 'Password must be at least 8 characters long',
-				variant: 'destructive',
-			});
+			toast.error('Password must be at least 8 characters long');
 			return;
 		}
 
@@ -338,11 +287,7 @@ export default function SettingsPage() {
 		const hasNumbers = /\d/.test(passwordForm.newPassword);
 
 		if (!hasLetters || !hasNumbers) {
-			toast({
-				title: 'Error',
-				description: 'Password must contain both letters and numbers',
-				variant: 'destructive',
-			});
+			toast.error('Password must contain both letters and numbers');
 			return;
 		}
 
@@ -351,21 +296,13 @@ export default function SettingsPage() {
 				currentPassword: passwordForm.currentPassword,
 				newPassword: passwordForm.newPassword,
 			});
-			toast({
-				title: 'Success',
-				description: 'Password updated successfully',
-			});
 			setPasswordForm({
 				currentPassword: '',
 				newPassword: '',
 				confirmPassword: '',
 			});
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update password. Please check your current password and try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update password. Please check your current password and try again.');
 		}
 	};
 
@@ -427,16 +364,8 @@ export default function SettingsPage() {
 				spiceTolerance: preferences.spiceTolerance,
 				mealSize: preferences.mealSize,
 			});
-			toast({
-				title: 'Success',
-				description: 'Dietary preferences updated successfully',
-			});
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update dietary preferences. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update dietary preferences. Please try again.');
 		}
 	};
 

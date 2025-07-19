@@ -6,12 +6,16 @@ import { cn } from '@/lib/utils';
 import {
 	BookOpen,
 	Calendar,
+	CheckCircle,
 	ChevronRight,
+	ClipboardList,
 	FolderOpen,
 	Heart,
+	Home,
 	Plus,
 	Settings,
 	ShoppingCart,
+	User,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -21,7 +25,7 @@ interface NavItem {
 	title: string;
 	href: string;
 	icon: React.ComponentType<{ className?: string }>;
-	badge?: string;
+	badge?: string | number;
 }
 
 export function DashboardSidebar() {
@@ -29,7 +33,8 @@ export function DashboardSidebar() {
 	const pathname = usePathname();
 	const isNutritionist = session?.user?.role === 'Nutritionist';
 
-	const navItems: NavItem[] = [
+	// Recipe Developer Navigation
+	const recipeDeveloperNavItems: NavItem[] = [
 		{
 			title: 'My Recipes',
 			href: '/dashboard',
@@ -67,27 +72,45 @@ export function DashboardSidebar() {
 		},
 	];
 
-	// Add nutritionist-specific navigation
-	if (isNutritionist) {
-		navItems.push(
-			{
-				title: 'Review Queue',
-				href: '/nutritionist/queue',
-				icon: BookOpen,
-				badge: 'New',
-			},
-			{
-				title: 'Verified Recipes',
-				href: '/nutritionist/verified',
-				icon: BookOpen,
-			},
-		);
-	}
+	// Nutritionist Navigation
+	const nutritionistNavItems: NavItem[] = [
+		{
+			title: 'Dashboard',
+			href: '/nutritionist',
+			icon: Home,
+		},
+		{
+			title: 'Review Queue',
+			href: '/nutritionist/queue',
+			icon: ClipboardList,
+		},
+		{
+			title: 'My Verified',
+			href: '/nutritionist/verified',
+			icon: CheckCircle,
+		},
+		{
+			title: 'Profile',
+			href: session?.user?.id
+				? `/nutritionist/profile/${session.user.id}`
+				: '/nutritionist/profile',
+			icon: User,
+		},
+		{
+			title: 'Settings',
+			href: '/nutritionist/settings',
+			icon: Settings,
+		},
+	];
+
+	// Determine which navigation items to show based on role
+	const navItems = isNutritionist ? nutritionistNavItems : recipeDeveloperNavItems;
+	const dashboardTitle = isNutritionist ? 'Nutritionist Dashboard' : 'Dashboard';
 
 	return (
 		<div className='w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 			<div className='p-6'>
-				<h2 className='text-lg font-semibold mb-6'>Dashboard</h2>
+				<h2 className='text-lg font-semibold mb-6'>{dashboardTitle}</h2>
 				<nav className='space-y-8'>
 					{navItems.map(item => {
 						const isActive = pathname === item.href;

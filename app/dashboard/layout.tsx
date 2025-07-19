@@ -2,6 +2,7 @@
 
 import { DashboardSidebar } from '@/components/dashboard-sidebar';
 import { Navbar } from '@/components/navbar';
+import { RoleName } from '@/generated/prisma/client';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
@@ -18,6 +19,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
 	if (!session) {
 		redirect('/signin');
+	}
+
+	// Role-based access control
+	if (session.user.role === RoleName.Nutritionist) {
+		redirect('/nutritionist');
+	}
+
+	if (session.user.role !== RoleName.RecipeDeveloper) {
+		redirect('/unauthorized');
 	}
 
 	return (

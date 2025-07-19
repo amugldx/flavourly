@@ -8,7 +8,7 @@ import { useShoppingList, useUpdateShoppingList } from '@/lib/hooks/use-shopping
 import { format, parseISO } from 'date-fns';
 import { ArrowLeft, CheckCircle, Circle, Plus, Save, ShoppingCart, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 interface ShoppingListItem {
 	id?: number;
@@ -102,20 +102,22 @@ export default function ShoppingListDetailPage({
 	const [items, setItems] = useState<ShoppingListItem[]>([]);
 	const [listName, setListName] = useState('');
 
-	// Initialize state when data loads
-	if (shoppingList && items.length === 0) {
-		setItems(
-			shoppingList.items.map((item: any) => ({
-				id: item.id,
-				itemName: item.itemName,
-				quantity: Number(item.quantity),
-				unit: item.unit,
-				notes: item.notes,
-				isCompleted: item.isCompleted,
-			})),
-		);
-		setListName(shoppingList.listName);
-	}
+	// Initialize state when data loads - moved to useEffect to prevent infinite re-renders
+	useEffect(() => {
+		if (shoppingList && items.length === 0) {
+			setItems(
+				shoppingList.items.map((item: any) => ({
+					id: item.id,
+					itemName: item.itemName,
+					quantity: Number(item.quantity),
+					unit: item.unit,
+					notes: item.notes,
+					isCompleted: item.isCompleted,
+				})),
+			);
+			setListName(shoppingList.listName);
+		}
+	}, [shoppingList, items.length]);
 
 	const addItem = () => {
 		setItems([...items, { itemName: '', quantity: 1, unit: '', notes: '', isCompleted: false }]);

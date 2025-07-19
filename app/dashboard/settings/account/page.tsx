@@ -5,17 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
-import { useToast } from '@/hooks/use-toast';
 import { useUpdateEmail, useUpdatePassword, useUser } from '@/lib/hooks/use-user';
 import { ArrowLeft, Lock, Mail, Save, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function AccountSettingsPage() {
 	const { data: user, isLoading } = useUser();
 	const updateEmail = useUpdateEmail();
 	const updatePassword = useUpdatePassword();
-	const { toast } = useToast();
 
 	const [emailForm, setEmailForm] = useState({
 		email: '',
@@ -39,19 +38,12 @@ export default function AccountSettingsPage() {
 		e.preventDefault();
 
 		if (!emailForm.email.trim() || !emailForm.password) {
-			toast({
-				title: 'Error',
-				description: 'Please fill in all fields',
-				variant: 'destructive',
-			});
+			toast.error('Please fill in all fields');
 			return;
 		}
 
 		if (emailForm.email === user?.email) {
-			toast({
-				title: 'No Changes',
-				description: 'Email address is the same as current',
-			});
+			toast.info('Email address is the same as current');
 			return;
 		}
 
@@ -61,19 +53,10 @@ export default function AccountSettingsPage() {
 				password: emailForm.password,
 			});
 
-			toast({
-				title: 'Success',
-				description: 'Email updated successfully',
-			});
-
 			// Clear password field
 			setEmailForm(prev => ({ ...prev, password: '' }));
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update email. Please check your password and try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update email. Please check your password and try again.');
 		}
 	};
 
@@ -85,29 +68,17 @@ export default function AccountSettingsPage() {
 			!passwordForm.newPassword ||
 			!passwordForm.confirmPassword
 		) {
-			toast({
-				title: 'Error',
-				description: 'Please fill in all fields',
-				variant: 'destructive',
-			});
+			toast.error('Please fill in all fields');
 			return;
 		}
 
 		if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-			toast({
-				title: 'Error',
-				description: 'New passwords do not match',
-				variant: 'destructive',
-			});
+			toast.error('New passwords do not match');
 			return;
 		}
 
 		if (passwordForm.newPassword.length < 8) {
-			toast({
-				title: 'Error',
-				description: 'Password must be at least 8 characters long',
-				variant: 'destructive',
-			});
+			toast.error('Password must be at least 8 characters long');
 			return;
 		}
 
@@ -117,11 +88,6 @@ export default function AccountSettingsPage() {
 				newPassword: passwordForm.newPassword,
 			});
 
-			toast({
-				title: 'Success',
-				description: 'Password updated successfully',
-			});
-
 			// Clear form
 			setPasswordForm({
 				currentPassword: '',
@@ -129,11 +95,7 @@ export default function AccountSettingsPage() {
 				confirmPassword: '',
 			});
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update password. Please check your current password and try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update password. Please check your current password and try again.');
 		}
 	};
 

@@ -22,6 +22,7 @@ export async function GET(
 						id: true,
 						username: true,
 						fullName: true,
+						profilePicture: true,
 					},
 				},
 				verifiedBy: {
@@ -29,6 +30,7 @@ export async function GET(
 						id: true,
 						username: true,
 						fullName: true,
+						profilePicture: true,
 					},
 				},
 				media: {
@@ -94,6 +96,8 @@ export async function GET(
 				_count: {
 					select: {
 						reviews: true,
+						ingredients: true,
+						steps: true,
 					},
 				},
 			},
@@ -128,9 +132,14 @@ export async function GET(
 			steps: recipe.steps,
 			ingredients: recipe.ingredients,
 			tags: recipe.tags.map(rt => ({
-				id: rt.tag.id,
-				name: rt.tag.tagName,
-				type: rt.tag.tagType.typeName,
+				tag: {
+					id: rt.tag.id,
+					tagName: rt.tag.tagName,
+					tagType: {
+						id: rt.tag.tagType.id,
+						typeName: rt.tag.tagType.typeName,
+					},
+				},
 			})),
 			reviews: recipe.reviews.map(review => ({
 				id: review.id,
@@ -141,6 +150,11 @@ export async function GET(
 			})),
 			averageRating,
 			reviewCount: recipe._count.reviews,
+			_count: {
+				ingredients: recipe._count.ingredients,
+				steps: recipe._count.steps,
+				reviews: recipe._count.reviews,
+			},
 		};
 
 		return NextResponse.json(transformedRecipe);

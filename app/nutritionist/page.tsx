@@ -1,77 +1,92 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+'use client';
 
-export default function NutritionistDashboard() {
+import NutritionistDashboard from '@/components/nutritionist/NutritionistDashboard';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+
+// Loading component for the dashboard
+function DashboardLoading() {
 	return (
 		<div className='space-y-6'>
-			<div className='flex items-center justify-between'>
-				<div>
-					<h1 className='text-3xl font-bold tracking-tight'>Nutritionist Dashboard</h1>
-					<p className='text-muted-foreground'>
-						Review and verify recipes submitted by recipe developers.
-					</p>
+			{/* Welcome Section */}
+			<div className='mb-8'>
+				<div className='flex items-center justify-between'>
+					<div>
+						<div className='h-8 w-64 bg-muted animate-pulse rounded mb-2' />
+						<div className='h-4 w-48 bg-muted animate-pulse rounded' />
+					</div>
 				</div>
 			</div>
 
-			<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>Pending Reviews</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>0</div>
-						<p className='text-xs text-muted-foreground'>Recipes waiting for verification</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>Verified Today</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>0</div>
-						<p className='text-xs text-muted-foreground'>Recipes verified today</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>Total Verified</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>0</div>
-						<p className='text-xs text-muted-foreground'>Recipes verified by you</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-						<CardTitle className='text-sm font-medium'>Average Review Time</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='text-2xl font-bold'>--</div>
-						<p className='text-xs text-muted-foreground'>Minutes per review</p>
-					</CardContent>
-				</Card>
+			{/* Stats Cards */}
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+				{[1, 2, 3, 4].map(i => (
+					<div
+						key={i}
+						className='border rounded-lg p-6'>
+						<div className='h-4 w-20 bg-muted animate-pulse rounded mb-4' />
+						<div className='h-8 w-16 bg-muted animate-pulse rounded mb-2' />
+						<div className='h-3 w-24 bg-muted animate-pulse rounded' />
+					</div>
+				))}
 			</div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Coming Soon</CardTitle>
-					<CardDescription>
-						The nutritionist dashboard is under development. You'll be able to review and verify
-						recipes here.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<p className='text-sm text-muted-foreground'>This page will include:</p>
-					<ul className='mt-2 text-sm text-muted-foreground space-y-1'>
-						<li>• Recipe review queue</li>
-						<li>• Nutritional information verification</li>
-						<li>• Health tips and suggestions</li>
-						<li>• Recipe approval/rejection workflow</li>
-					</ul>
-				</CardContent>
-			</Card>
+			{/* Quick Actions */}
+			<div className='border rounded-lg p-6 mb-8'>
+				<div className='h-6 w-32 bg-muted animate-pulse rounded mb-4' />
+				<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+					{[1, 2, 3].map(i => (
+						<div
+							key={i}
+							className='h-20 border rounded-lg bg-muted animate-pulse'
+						/>
+					))}
+				</div>
+			</div>
+
+			{/* Recent Activities */}
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+				{[1, 2].map(i => (
+					<div
+						key={i}
+						className='border rounded-lg p-6'>
+						<div className='h-6 w-40 bg-muted animate-pulse rounded mb-4' />
+						<div className='space-y-4'>
+							{[1, 2, 3].map(j => (
+								<div
+									key={j}
+									className='flex items-center space-x-4'>
+									<div className='h-12 w-12 bg-muted animate-pulse rounded-lg' />
+									<div className='flex-1'>
+										<div className='h-4 w-32 bg-muted animate-pulse rounded mb-2' />
+										<div className='h-3 w-24 bg-muted animate-pulse rounded' />
+									</div>
+									<div className='h-8 w-16 bg-muted animate-pulse rounded' />
+								</div>
+							))}
+						</div>
+					</div>
+				))}
+			</div>
 		</div>
+	);
+}
+
+export default function NutritionistPage() {
+	const { data: session, status } = useSession();
+
+	if (status === 'loading') {
+		return <DashboardLoading />;
+	}
+
+	if (!session) {
+		redirect('/signin');
+	}
+
+	return (
+		<Suspense fallback={<DashboardLoading />}>
+			<NutritionistDashboard />
+		</Suspense>
 	);
 }

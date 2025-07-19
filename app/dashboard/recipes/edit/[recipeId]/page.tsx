@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useResubmitRecipe } from '@/lib/hooks/use-mutations';
 import { useRecipe, useUpdateRecipe, type Ingredient } from '@/lib/hooks/use-recipes';
-import { ArrowLeft, Loader2, Plus, Save, Trash2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Loader2, Plus, RefreshCw, Save, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -37,6 +38,7 @@ export default function EditRecipePage() {
 
 	const { data: recipe, isLoading, error } = useRecipe(recipeId);
 	const updateRecipeMutation = useUpdateRecipe();
+	const resubmitRecipe = useResubmitRecipe();
 
 	const [currentStep, setCurrentStep] = useState(1);
 	const [media, setMedia] = useState<
@@ -55,6 +57,20 @@ export default function EditRecipePage() {
 		ingredients: [{ name: '', quantity: '', unit: 'cup', notes: '' }] as Ingredient[],
 		steps: [''] as string[],
 	});
+
+	// Check if recipe can be resubmitted (needs revision)
+	const canResubmit = recipe?.status === 'needs_revision';
+
+	// Handle resubmitting recipe for review
+	const handleResubmit = async () => {
+		if (!canResubmit) return;
+
+		try {
+			await resubmitRecipe.mutateAsync(recipeId);
+		} catch (error) {
+			// Error is handled by the mutation
+		}
+	};
 
 	// Pre-populate form when recipe data is loaded
 	useEffect(() => {
@@ -226,11 +242,54 @@ export default function EditRecipePage() {
 						Back to Dashboard
 					</Link>
 				</Button>
-				<div>
-					<h1 className='text-3xl font-bold tracking-tight'>Edit Recipe</h1>
-					<p className='text-muted-foreground'>Update your recipe details and content</p>
+				<div className='flex items-center justify-between w-full'>
+					<div>
+						<h1 className='text-3xl font-bold tracking-tight'>Edit Recipe</h1>
+						<p className='text-muted-foreground'>Update your recipe details and content</p>
+					</div>
+
+					{/* Resubmit Button - Only show for recipes that need revision */}
+					{canResubmit && (
+						<Button
+							onClick={handleResubmit}
+							disabled={resubmitRecipe.isPending}
+							variant='outline'
+							className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
+							{resubmitRecipe.isPending ? (
+								<>
+									<Loader2 className='h-4 w-4 mr-2 animate-spin' />
+									Resubmitting...
+								</>
+							) : (
+								<>
+									<RefreshCw className='h-4 w-4 mr-2' />
+									Resubmit for Review
+								</>
+							)}
+						</Button>
+					)}
 				</div>
 			</div>
+
+			{/* Revision Notes - Show when recipe needs revision */}
+			{recipe?.status === 'needs_revision' && recipe?.healthTips && (
+				<Card className='border-orange-200 bg-orange-50'>
+					<CardHeader>
+						<CardTitle className='flex items-center text-orange-800'>
+							<AlertCircle className='w-5 h-5 mr-2' />
+							Revision Notes from Nutritionist
+						</CardTitle>
+						<CardDescription className='text-orange-700'>
+							Please review the feedback below and make the necessary changes before resubmitting.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className='p-4 bg-white rounded-lg border border-orange-200'>
+							<p className='text-sm text-gray-800 whitespace-pre-wrap'>{recipe.healthTips}</p>
+						</div>
+					</CardContent>
+				</Card>
+			)}
 
 			{/* Progress Steps */}
 			<Card>

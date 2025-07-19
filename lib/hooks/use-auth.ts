@@ -86,8 +86,8 @@ export function useSignIn() {
 			}
 		},
 		onError: (error: Error) => {
-			const userFriendlyMessage = getAuthErrorMessage(error.message);
-			toast.error(userFriendlyMessage);
+			// Error is now handled by the form's ErrorDisplay component
+			// No need to show toast here
 		},
 	});
 }
@@ -129,8 +129,8 @@ export function useSignUp() {
 			}
 		},
 		onError: (error: Error) => {
-			const userFriendlyMessage = getAuthErrorMessage(error.message);
-			toast.error(userFriendlyMessage);
+			// Error is now handled by the form's ErrorDisplay component
+			// No need to show toast here
 		},
 	});
 }

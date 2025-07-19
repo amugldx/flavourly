@@ -384,9 +384,12 @@ export function useRemoveRecipeFromCollection() {
 			collectionId: number;
 			recipeId: number;
 		}): Promise<void> => {
-			const response = await fetch(`/api/collections/${collectionId}/recipes/${recipeId}`, {
-				method: 'DELETE',
-			});
+			const response = await fetch(
+				`/api/collections/${collectionId}/recipes?recipeId=${recipeId}`,
+				{
+					method: 'DELETE',
+				},
+			);
 
 			if (!response.ok) {
 				const error = await response.json();
@@ -575,6 +578,36 @@ export interface VerifyRecipeData {
 	recipeId: number;
 	status: 'verified' | 'needs_revision';
 	healthTips?: string;
+}
+
+// Resubmit recipe for nutritionist review
+export function useResubmitRecipe() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (recipeId: number): Promise<void> => {
+			const response = await fetch(`/api/recipes/${recipeId}/resubmit`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error || 'Failed to resubmit recipe for review');
+			}
+		},
+		onSuccess: async (_, recipeId) => {
+			toast.success('Recipe resubmitted for nutritionist review!');
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: queryKeys.recipes.user }),
+				queryClient.refetchQueries({ queryKey: queryKeys.recipes.detail(recipeId) }),
+				refetchHelpers.refetchDashboard(queryClient),
+			]);
+		},
+		onError: (error: Error) => {
+			toast.error(error.message || 'Failed to resubmit recipe for review');
+		},
+	});
 }
 
 // Verify a recipe (Nutritionist only)

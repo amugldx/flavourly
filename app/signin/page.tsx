@@ -18,17 +18,82 @@ export default function SignInPage() {
 		password: '',
 	});
 	const [selectedRole, setSelectedRole] = useState('user');
+	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	const signInMutation = useSignIn();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData(prev => ({ ...prev, [name]: value }));
+		// Clear error when user starts typing
+		if (errors[name]) {
+			setErrors(prev => ({ ...prev, [name]: '' }));
+		}
+		// Clear mutation error when user starts typing
+		if (signInMutation.error) {
+			signInMutation.reset();
+		}
+	};
+
+	const validateForm = () => {
+		const newErrors: Record<string, string> = {};
+
+		if (!formData.email.trim()) {
+			newErrors.email = 'Email is required';
+		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+			newErrors.email = 'Please enter a valid email address';
+		}
+
+		if (!formData.password) {
+			newErrors.password = 'Password is required';
+		}
+
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		// Clear previous errors
+		setErrors({});
+
+		if (!validateForm()) {
+			return;
+		}
+
 		signInMutation.mutate(formData);
+	};
+
+	// Get user-friendly error message from mutation error
+	const getErrorMessage = () => {
+		if (!signInMutation.error) return null;
+
+		const errorMessage = signInMutation.error.message;
+
+		// Map specific error messages to user-friendly versions
+		const errorMap: Record<string, string> = {
+			'No user found with this email':
+				'No account found with this email address. Please check your email or create a new account.',
+			'Invalid password': 'Incorrect password. Please try again.',
+			CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
+			'Network error': 'Connection error. Please check your internet connection and try again.',
+		};
+
+		// Check for exact matches first
+		if (errorMap[errorMessage]) {
+			return errorMap[errorMessage];
+		}
+
+		// Check for partial matches
+		for (const [key, message] of Object.entries(errorMap)) {
+			if (errorMessage.toLowerCase().includes(key.toLowerCase())) {
+				return message;
+			}
+		}
+
+		// Return a generic message for unknown errors
+		return 'Sign in failed. Please check your credentials and try again.';
 	};
 
 	return (
@@ -71,7 +136,9 @@ export default function SignInPage() {
 										value={formData.email}
 										onChange={handleChange}
 										required
+										aria-invalid={!!errors.email}
 									/>
+									{errors.email && <p className='text-sm text-red-500'>{errors.email}</p>}
 								</div>
 								<div className='space-y-2'>
 									<Label htmlFor='password'>Password</Label>
@@ -82,12 +149,16 @@ export default function SignInPage() {
 										value={formData.password}
 										onChange={handleChange}
 										required
+										aria-invalid={!!errors.password}
 									/>
+									{errors.password && <p className='text-sm text-red-500'>{errors.password}</p>}
 								</div>
 								<ErrorDisplay
-									error={signInMutation.error}
+									error={getErrorMessage()}
 									title='Sign In Failed'
 									variant='destructive'
+									dismissible={true}
+									onDismiss={() => signInMutation.reset()}
 								/>
 								<Button
 									type='submit'
@@ -121,7 +192,9 @@ export default function SignInPage() {
 										value={formData.email}
 										onChange={handleChange}
 										required
+										aria-invalid={!!errors.email}
 									/>
+									{errors.email && <p className='text-sm text-red-500'>{errors.email}</p>}
 								</div>
 								<div className='space-y-2'>
 									<Label htmlFor='nutritionist-password'>Password</Label>
@@ -132,12 +205,16 @@ export default function SignInPage() {
 										value={formData.password}
 										onChange={handleChange}
 										required
+										aria-invalid={!!errors.password}
 									/>
+									{errors.password && <p className='text-sm text-red-500'>{errors.password}</p>}
 								</div>
 								<ErrorDisplay
-									error={signInMutation.error}
+									error={getErrorMessage()}
 									title='Sign In Failed'
 									variant='destructive'
+									dismissible={true}
+									onDismiss={() => signInMutation.reset()}
 								/>
 								<Button
 									type='submit'

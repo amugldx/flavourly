@@ -26,6 +26,7 @@ export interface Recipe {
 	steps: string[];
 	media: MediaFile[];
 	status: string;
+	healthTips?: string | null;
 	createdAt: string;
 	updatedAt: string;
 }

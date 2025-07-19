@@ -117,6 +117,7 @@ export function useUpdateEmail() {
 			return response.json();
 		},
 		onSuccess: () => {
+			toast.success('Email updated successfully');
 			queryClient.invalidateQueries({ queryKey: ['user'] });
 		},
 		onError: (error: Error) => {
@@ -145,6 +146,7 @@ export function useUpdatePassword() {
 			}
 		},
 		onSuccess: () => {
+			toast.success('Password updated successfully');
 			queryClient.invalidateQueries({ queryKey: ['user'] });
 		},
 		onError: (error: Error) => {

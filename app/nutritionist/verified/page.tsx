@@ -1,32 +1,34 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+'use client';
+
+import NutritionistVerifiedRecipes from '@/components/nutritionist/NutritionistVerifiedRecipes';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 export default function VerifiedRecipesPage() {
-	return (
-		<div className='space-y-6'>
-			<div>
-				<h1 className='text-3xl font-bold tracking-tight'>Verified Recipes</h1>
-				<p className='text-muted-foreground'>View all recipes you have verified and approved.</p>
-			</div>
+	const { data: session, status } = useSession();
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Coming Soon</CardTitle>
-					<CardDescription>
-						The verified recipes page is under development. You'll be able to view your verification
-						history here.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<p className='text-sm text-muted-foreground'>This page will include:</p>
-					<ul className='mt-2 text-sm text-muted-foreground space-y-1'>
-						<li>• History of all recipes you've verified</li>
-						<li>• Verification dates and details</li>
-						<li>• Nutritional information you approved</li>
-						<li>• Health tips you added</li>
-						<li>• Search and filter options</li>
-					</ul>
-				</CardContent>
-			</Card>
-		</div>
-	);
+	if (status === 'loading') {
+		return (
+			<div className='space-y-6'>
+				<div className='mb-8'>
+					<div className='h-8 w-48 bg-muted animate-pulse rounded mb-2' />
+					<div className='h-4 w-64 bg-muted animate-pulse rounded' />
+				</div>
+				<div className='space-y-4'>
+					{[1, 2, 3].map(i => (
+						<div
+							key={i}
+							className='h-20 bg-muted animate-pulse rounded'
+						/>
+					))}
+				</div>
+			</div>
+		);
+	}
+
+	if (!session) {
+		redirect('/signin');
+	}
+
+	return <NutritionistVerifiedRecipes />;
 }

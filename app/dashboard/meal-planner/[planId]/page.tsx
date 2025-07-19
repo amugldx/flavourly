@@ -1,6 +1,7 @@
 'use client';
 
 import { DeleteMealPlanDialog } from '@/components/delete-meal-plan-dialog';
+import { RecipeCombobox } from '@/components/recipe-combobox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,11 +26,11 @@ import {
 	useDeleteMealPlanEntry,
 	useMealPlanEntries,
 } from '@/lib/hooks/use-meal-plans';
-import { useUserRecipes } from '@/lib/hooks/use-recipes';
+import { useFavoritedRecipes, useUserRecipes } from '@/lib/hooks/use-recipes';
 import { addDays, format, parseISO } from 'date-fns';
 import { ArrowLeft, Calendar, Clock, Edit, Plus, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';
-import { use, useState } from 'react';
+import { use, useMemo, useState } from 'react';
 
 const mealTypeLabels: Record<MealType, string> = {
 	[MealType.Breakfast]: 'Breakfast',

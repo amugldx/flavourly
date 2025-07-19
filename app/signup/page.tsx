@@ -32,6 +32,10 @@ export default function SignUpPage() {
 		if (errors[name]) {
 			setErrors(prev => ({ ...prev, [name]: '' }));
 		}
+		// Clear mutation error when user starts typing
+		if (signUpMutation.error) {
+			signUpMutation.reset();
+		}
 	};
 
 	const validateForm = () => {
@@ -45,18 +49,20 @@ export default function SignUpPage() {
 			newErrors.username = 'Username is required';
 		} else if (formData.username.length < 3) {
 			newErrors.username = 'Username must be at least 3 characters';
+		} else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+			newErrors.username = 'Username can only contain letters, numbers, and underscores';
 		}
 
 		if (!formData.email.trim()) {
 			newErrors.email = 'Email is required';
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-			newErrors.email = 'Please enter a valid email';
+			newErrors.email = 'Please enter a valid email address';
 		}
 
 		if (!formData.password) {
 			newErrors.password = 'Password is required';
 		} else if (formData.password.length < 8) {
-			newErrors.password = 'Password must be at least 8 characters';
+			newErrors.password = 'Password must be at least 8 characters long';
 		} else {
 			const hasLetters = /[a-zA-Z]/.test(formData.password);
 			const hasNumbers = /\d/.test(formData.password);
@@ -78,6 +84,9 @@ export default function SignUpPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		// Clear previous errors
+		setErrors({});
+
 		if (!validateForm()) {
 			return;
 		}
@@ -91,6 +100,41 @@ export default function SignUpPage() {
 			fullName: formData.fullName,
 			role,
 		});
+	};
+
+	// Get user-friendly error message from mutation error
+	const getErrorMessage = () => {
+		if (!signUpMutation.error) return null;
+
+		const errorMessage = signUpMutation.error.message;
+
+		// Map specific error messages to user-friendly versions
+		const errorMap: Record<string, string> = {
+			'User with this email or username already exists':
+				'An account with this email or username already exists. Please try signing in instead.',
+			'Username and full name are required for registration': 'Please fill in all required fields.',
+			'Role not found. Please seed the database first.':
+				'System configuration error. Please contact support.',
+			'Password must be at least 8 characters long': 'Password must be at least 8 characters long.',
+			'Password must contain both letters and numbers':
+				'Password must contain both letters and numbers.',
+			'Network error': 'Connection error. Please check your internet connection and try again.',
+		};
+
+		// Check for exact matches first
+		if (errorMap[errorMessage]) {
+			return errorMap[errorMessage];
+		}
+
+		// Check for partial matches
+		for (const [key, message] of Object.entries(errorMap)) {
+			if (errorMessage.toLowerCase().includes(key.toLowerCase())) {
+				return message;
+			}
+		}
+
+		// Return a generic message for unknown errors
+		return 'Account creation failed. Please check your information and try again.';
 	};
 
 	return (
@@ -202,9 +246,11 @@ export default function SignUpPage() {
 								</div>
 
 								<ErrorDisplay
-									error={signUpMutation.error}
+									error={getErrorMessage()}
 									title='Account Creation Failed'
 									variant='destructive'
+									dismissible={true}
+									onDismiss={() => signUpMutation.reset()}
 								/>
 
 								<Button
@@ -308,9 +354,11 @@ export default function SignUpPage() {
 								</div>
 
 								<ErrorDisplay
-									error={signUpMutation.error}
+									error={getErrorMessage()}
 									title='Account Creation Failed'
 									variant='destructive'
+									dismissible={true}
+									onDismiss={() => signUpMutation.reset()}
 								/>
 
 								<Button

@@ -7,16 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import { useUpdateProfile, useUser } from '@/lib/hooks/use-user';
 import { ArrowLeft, Camera, Save, User } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function ProfileSettingsPage() {
 	const { data: user, isLoading } = useUser();
 	const updateProfile = useUpdateProfile();
-	const { toast } = useToast();
 
 	const [formData, setFormData] = useState({
 		fullName: '',
@@ -50,11 +49,7 @@ export default function ProfileSettingsPage() {
 		e.preventDefault();
 
 		if (!formData.fullName.trim()) {
-			toast({
-				title: 'Error',
-				description: 'Full name is required',
-				variant: 'destructive',
-			});
+			toast.error('Full name is required');
 			return;
 		}
 
@@ -64,17 +59,8 @@ export default function ProfileSettingsPage() {
 				bio: formData.bio.trim() || undefined,
 				profilePicture: formData.profilePicture,
 			});
-
-			toast({
-				title: 'Success',
-				description: 'Profile updated successfully',
-			});
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update profile. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update profile. Please try again.');
 		}
 	};
 

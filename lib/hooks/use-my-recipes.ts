@@ -23,6 +23,7 @@ interface Recipe {
 		id: number;
 		username: string;
 		fullName: string | null;
+		profilePicture: string | null;
 	} | null;
 	media: Array<{
 		id: number;

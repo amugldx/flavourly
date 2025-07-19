@@ -1,5 +1,6 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -129,6 +130,7 @@ function RecipeCard({
 		cookingTimeMinutes?: number | null;
 		servings?: number | null;
 		status: string;
+		healthTips?: string | null;
 		media?: Array<{
 			id: number;
 			url: string;
@@ -141,6 +143,12 @@ function RecipeCard({
 		} | null;
 		averageRating?: number | null;
 		reviewCount?: number;
+		verifiedBy?: {
+			id: number;
+			username: string;
+			fullName: string | null;
+			profilePicture: string | null;
+		} | null;
 	};
 	onDelete: () => void;
 }) {
@@ -161,6 +169,56 @@ function RecipeCard({
 			</CardHeader>
 
 			<CardContent className='pt-0 flex-1 flex flex-col'>
+				{/* Nutritionist Verification - Show for verified recipes */}
+				{recipe.status === 'verified' && recipe.verifiedBy && (
+					<div className='mb-4 p-3 bg-green-50 border border-green-200 rounded-lg'>
+						<div className='flex items-center gap-2'>
+							<CheckCircle className='w-4 h-4 text-green-600 flex-shrink-0' />
+							<div className='flex-1'>
+								<p className='text-sm font-medium text-green-800 mb-1'>Verified by Nutritionist</p>
+								<div className='flex items-center gap-2'>
+									<Avatar className='w-4 h-4'>
+										<AvatarImage src={recipe.verifiedBy.profilePicture || undefined} />
+										<AvatarFallback className='text-xs'>
+											{(recipe.verifiedBy.fullName || recipe.verifiedBy.username)
+												.charAt(0)
+												.toUpperCase()}
+										</AvatarFallback>
+									</Avatar>
+									<span className='text-xs text-green-700'>
+										{recipe.verifiedBy.fullName || recipe.verifiedBy.username}
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Nutritionist Review - Show for recipes that need revision */}
+				{recipe.status === 'needs_revision' && recipe.verifiedBy && (
+					<div className='mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg'>
+						<div className='flex items-center gap-2'>
+							<AlertCircle className='w-4 h-4 text-orange-600 flex-shrink-0' />
+							<div className='flex-1'>
+								<p className='text-sm font-medium text-orange-800 mb-1'>Review by Nutritionist</p>
+								<div className='flex items-center gap-2'>
+									<Avatar className='w-4 h-4'>
+										<AvatarImage src={recipe.verifiedBy.profilePicture || undefined} />
+										<AvatarFallback className='text-xs'>
+											{(recipe.verifiedBy.fullName || recipe.verifiedBy.username)
+												.charAt(0)
+												.toUpperCase()}
+										</AvatarFallback>
+									</Avatar>
+									<span className='text-xs text-orange-700'>
+										{recipe.verifiedBy.fullName || recipe.verifiedBy.username}
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
 				{/* Recipe Image */}
 				{recipe.media && recipe.media.length > 0 ? (
 					<div className='relative mb-4 aspect-video rounded-lg overflow-hidden bg-muted'>
@@ -217,7 +275,7 @@ function RecipeCard({
 				)}
 
 				{/* Action Buttons - always at bottom */}
-				<div className='flex gap-2 mt-auto pt-4'>
+				<div className='flex gap-2 mt-auto pt-4 flex-shrink-0'>
 					<Button
 						asChild
 						variant='outline'

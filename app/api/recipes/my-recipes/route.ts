@@ -14,7 +14,16 @@ export async function GET() {
 			where: {
 				authorId: parseInt(session.user.id),
 			},
-			include: {
+			select: {
+				id: true,
+				title: true,
+				description: true,
+				cookingTimeMinutes: true,
+				servings: true,
+				status: true,
+				healthTips: true,
+				createdAt: true,
+				updatedAt: true,
 				author: {
 					select: {
 						id: true,
@@ -27,6 +36,7 @@ export async function GET() {
 						id: true,
 						username: true,
 						fullName: true,
+						profilePicture: true,
 					},
 				},
 				media: {

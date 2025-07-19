@@ -1,28 +1,62 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MealType } from '@/generated/prisma/client';
+import { useAddMealPlanEntry, useMealPlans } from '@/lib/hooks/use-meal-plans';
 import {
+	useAddRecipeToCollection,
 	useAddToFavorites,
 	useCreateReview,
 	useRemoveFromFavorites,
+	useResubmitRecipe,
 } from '@/lib/hooks/use-mutations';
-import { useRecipe, useRecipeReviews, useUserFavorites } from '@/lib/hooks/use-queries';
 import {
+	useRecipe,
+	useRecipeReviews,
+	useUserCollections,
+	useUserFavorites,
+} from '@/lib/hooks/use-queries';
+import {
+	AlertCircle,
 	ArrowLeft,
+	BookOpen,
+	Calendar,
+	CheckCircle,
 	ChevronLeft,
 	ChevronRight,
 	Clock,
+	Edit,
 	Heart,
+	Loader2,
 	Play,
+	RefreshCw,
 	Share2,
 	Star,
+	User,
 	Users,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 import { toast } from 'sonner';
@@ -40,6 +74,22 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
 
+	// Enhanced Quick Actions hooks
+	const { data: collections } = useUserCollections();
+	const { data: mealPlans } = useMealPlans();
+	const addToCollection = useAddRecipeToCollection();
+	const addMealPlanEntry = useAddMealPlanEntry();
+	const resubmitRecipe = useResubmitRecipe();
+
+	// Quick Actions state
+	const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
+	const [showCollectionDialog, setShowCollectionDialog] = useState(false);
+	const [selectedMealPlan, setSelectedMealPlan] = useState('');
+	const [selectedCollection, setSelectedCollection] = useState('');
+	const [selectedMealType, setSelectedMealType] = useState<MealType>(MealType.Dinner);
+	const [selectedDate, setSelectedDate] = useState('');
+	const [servingsToPrepare, setServingsToPrepare] = useState(1);
+
 	const addToFavorites = useAddToFavorites();
 	const removeFromFavorites = useRemoveFromFavorites();
 	const createReview = useCreateReview();
@@ -49,6 +99,71 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 	// Check if recipe is in user's favorites
 	const isFavorited = userFavorites?.some(fav => fav.recipe.id === recipeIdNum) || false;
+
+	// Check if user can edit this recipe
+	const canEdit = session?.user?.id && recipe?.authorId === parseInt(session.user.id);
+
+	// Check if recipe can be resubmitted (needs revision and user is the author)
+	const canResubmit = canEdit && recipe?.status === 'needs_revision';
+
+	// Check if user is a nutritionist (should not see Quick Actions)
+	const isNutritionist = session?.user?.role === 'Nutritionist';
+
+	// Handle resubmitting recipe for review
+	const handleResubmit = async () => {
+		if (!canResubmit) return;
+
+		try {
+			await resubmitRecipe.mutateAsync(recipeIdNum);
+		} catch (error) {
+			// Error is handled by the mutation
+		}
+	};
+
+	// Handle adding recipe to meal plan
+	const handleAddToMealPlan = async () => {
+		if (!selectedMealPlan || !selectedDate) {
+			toast.error('Please select a meal plan and date');
+			return;
+		}
+
+		try {
+			await addMealPlanEntry.mutateAsync({
+				planId: parseInt(selectedMealPlan),
+				data: {
+					recipeId: recipeIdNum,
+					mealDate: selectedDate,
+					mealType: selectedMealType,
+					servingsToPrepare,
+				},
+			});
+			setShowMealPlanDialog(false);
+			setSelectedMealPlan('');
+			setSelectedDate('');
+			setServingsToPrepare(1);
+		} catch (error) {
+			// Error is handled by the mutation
+		}
+	};
+
+	// Handle adding recipe to collection
+	const handleAddToCollection = async () => {
+		if (!selectedCollection) {
+			toast.error('Please select a collection');
+			return;
+		}
+
+		try {
+			await addToCollection.mutateAsync({
+				collectionId: parseInt(selectedCollection),
+				recipeId: recipeIdNum,
+			});
+			setShowCollectionDialog(false);
+			setSelectedCollection('');
+		} catch (error) {
+			// Error is handled by the mutation
+		}
+	};
 
 	const handleFavoriteToggle = async () => {
 		if (!session) {
@@ -271,14 +386,16 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 							<Share2 className='h-4 w-4 mr-2' />
 							Share
 						</Button>
-						<Button
-							variant={isFavorited ? 'default' : 'outline'}
-							size='sm'
-							onClick={handleFavoriteToggle}
-							disabled={addToFavorites.isPending || removeFromFavorites.isPending}>
-							<Heart className={`h-4 w-4 mr-2 ${isFavorited ? 'fill-current' : ''}`} />
-							{isFavorited ? 'Favorited' : 'Favorite'}
-						</Button>
+						{!isNutritionist && (
+							<Button
+								variant={isFavorited ? 'default' : 'outline'}
+								size='sm'
+								onClick={handleFavoriteToggle}
+								disabled={addToFavorites.isPending || removeFromFavorites.isPending}>
+								<Heart className={`h-4 w-4 mr-2 ${isFavorited ? 'fill-current' : ''}`} />
+								{isFavorited ? 'Favorited' : 'Favorite'}
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>
@@ -291,7 +408,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 			)}
 
 			{/* Status Badge */}
-			<div className='mb-6'>
+			<div className='mb-6 flex items-center gap-4'>
 				<Badge
 					variant={
 						recipe.status === 'verified'
@@ -307,6 +424,28 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 						? '⏳ Pending Verification'
 						: '⚠️ Needs Revision'}
 				</Badge>
+
+				{/* Resubmit Button - Only show for recipes that need revision and user is the author */}
+				{canResubmit && (
+					<Button
+						onClick={handleResubmit}
+						disabled={resubmitRecipe.isPending}
+						variant='outline'
+						size='sm'
+						className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
+						{resubmitRecipe.isPending ? (
+							<>
+								<Loader2 className='h-4 w-4 mr-2 animate-spin' />
+								Resubmitting...
+							</>
+						) : (
+							<>
+								<RefreshCw className='h-4 w-4 mr-2' />
+								Resubmit for Review
+							</>
+						)}
+					</Button>
+				)}
 			</div>
 
 			{/* Main Content */}
@@ -519,19 +658,139 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 							<CardTitle>Recipe Author</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div className='flex items-center gap-3'>
-								<div className='w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold'>
-									{(recipe.author.fullName || recipe.author.username).charAt(0).toUpperCase()}
-								</div>
-								<div>
-									<div className='font-medium'>
-										{recipe.author.fullName || recipe.author.username}
+							<div className='space-y-3'>
+								<div className='flex items-center gap-3'>
+									<Avatar className='w-12 h-12'>
+										<AvatarImage src={recipe.author.profilePicture || undefined} />
+										<AvatarFallback>
+											{(recipe.author.fullName || recipe.author.username).charAt(0).toUpperCase()}
+										</AvatarFallback>
+									</Avatar>
+									<div>
+										<div className='font-medium'>
+											{recipe.author.fullName || recipe.author.username}
+										</div>
+										<div className='text-sm text-muted-foreground'>Recipe Developer</div>
 									</div>
-									<div className='text-sm text-muted-foreground'>Recipe Developer</div>
 								</div>
+								<Button
+									asChild
+									variant='outline'
+									size='sm'
+									className='w-full'>
+									<Link href={`/users/${recipe.author.id}`}>
+										<User className='h-4 w-4 mr-2' />
+										View Author Profile
+									</Link>
+								</Button>
 							</div>
 						</CardContent>
 					</Card>
+
+					{/* Nutritionist Verification Info - Only for verified recipes */}
+					{recipe.status === 'verified' && recipe.verifiedBy && (
+						<Card>
+							<CardHeader>
+								<CardTitle className='flex items-center gap-2'>
+									<CheckCircle className='h-5 w-5 text-green-600' />
+									Verified by Nutritionist
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className='space-y-3'>
+									<div className='flex items-center gap-3'>
+										<Avatar className='w-12 h-12'>
+											<AvatarImage src={recipe.verifiedBy.profilePicture || undefined} />
+											<AvatarFallback>
+												{(recipe.verifiedBy.fullName || recipe.verifiedBy.username)
+													.charAt(0)
+													.toUpperCase()}
+											</AvatarFallback>
+										</Avatar>
+										<div>
+											<div className='font-medium'>
+												{recipe.verifiedBy.fullName || recipe.verifiedBy.username}
+											</div>
+											<div className='text-sm text-muted-foreground'>Certified Nutritionist</div>
+										</div>
+									</div>
+									<Button
+										asChild
+										variant='outline'
+										size='sm'
+										className='w-full'>
+										<Link href={`/nutritionist-profile/${recipe.verifiedBy.id}`}>
+											<User className='h-4 w-4 mr-2' />
+											View Nutritionist Profile
+										</Link>
+									</Button>
+								</div>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Nutritionist Review Info - For recipes that need revision */}
+					{recipe.status === 'needs_revision' && recipe.verifiedBy && (
+						<Card>
+							<CardHeader>
+								<CardTitle className='flex items-center gap-2'>
+									<AlertCircle className='h-5 w-5 text-orange-600' />
+									Review by Nutritionist
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className='space-y-3'>
+									<div className='flex items-center gap-3'>
+										<Avatar className='w-12 h-12'>
+											<AvatarImage src={recipe.verifiedBy.profilePicture || undefined} />
+											<AvatarFallback>
+												{(recipe.verifiedBy.fullName || recipe.verifiedBy.username)
+													.charAt(0)
+													.toUpperCase()}
+											</AvatarFallback>
+										</Avatar>
+										<div>
+											<div className='font-medium'>
+												{recipe.verifiedBy.fullName || recipe.verifiedBy.username}
+											</div>
+											<div className='text-sm text-muted-foreground'>Certified Nutritionist</div>
+										</div>
+									</div>
+									<Button
+										asChild
+										variant='outline'
+										size='sm'
+										className='w-full'>
+										<Link href={`/nutritionist-profile/${recipe.verifiedBy.id}`}>
+											<User className='h-4 w-4 mr-2' />
+											View Nutritionist Profile
+										</Link>
+									</Button>
+								</div>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Revision Notes - Show when recipe needs revision */}
+					{recipe.status === 'needs_revision' && recipe.healthTips && (
+						<Card className='border-orange-200 bg-orange-50'>
+							<CardHeader>
+								<CardTitle className='flex items-center text-orange-800'>
+									<AlertCircle className='h-5 w-5 mr-2' />
+									Revision Notes from Nutritionist
+								</CardTitle>
+								<CardDescription className='text-orange-700'>
+									Please review the feedback below and make the necessary changes before
+									resubmitting.
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className='p-4 bg-white rounded-lg border border-orange-200'>
+									<p className='text-sm text-gray-800 whitespace-pre-wrap'>{recipe.healthTips}</p>
+								</div>
+							</CardContent>
+						</Card>
+					)}
 
 					{/* Recipe Stats */}
 					<Card>
@@ -571,31 +830,180 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 					</Card>
 
 					{/* Quick Actions */}
-					<Card>
-						<CardHeader>
-							<CardTitle>Quick Actions</CardTitle>
-						</CardHeader>
-						<CardContent className='space-y-3'>
-							<Button
-								variant='outline'
-								className='w-full justify-start'
-								onClick={() => router.push(`/dashboard/recipes/edit/${recipe.id}`)}>
-								Edit Recipe
-							</Button>
-							<Button
-								variant='outline'
-								className='w-full justify-start'
-								onClick={() => router.push('/dashboard/meal-planner')}>
-								Add to Meal Plan
-							</Button>
-							<Button
-								variant='outline'
-								className='w-full justify-start'
-								onClick={() => router.push('/dashboard/collections')}>
-								Add to Collection
-							</Button>
-						</CardContent>
-					</Card>
+					{!isNutritionist && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Quick Actions</CardTitle>
+							</CardHeader>
+							<CardContent className='space-y-3'>
+								{canEdit && (
+									<Button
+										variant='outline'
+										className='w-full justify-start'
+										onClick={() => router.push(`/dashboard/recipes/edit/${recipe.id}`)}>
+										<Edit className='h-4 w-4 mr-2' />
+										Edit Recipe
+									</Button>
+								)}
+
+								{/* Add to Meal Plan Dialog */}
+								<Dialog
+									open={showMealPlanDialog}
+									onOpenChange={setShowMealPlanDialog}>
+									<DialogTrigger asChild>
+										<Button
+											variant='outline'
+											className='w-full justify-start'>
+											<Calendar className='h-4 w-4 mr-2' />
+											Add to Meal Plan
+										</Button>
+									</DialogTrigger>
+									<DialogContent className='max-w-md'>
+										<DialogHeader>
+											<DialogTitle>Add to Meal Plan</DialogTitle>
+										</DialogHeader>
+										<div className='space-y-4'>
+											<div className='space-y-2'>
+												<Label htmlFor='meal-plan'>Select Meal Plan</Label>
+												<Select
+													value={selectedMealPlan}
+													onValueChange={setSelectedMealPlan}>
+													<SelectTrigger>
+														<SelectValue placeholder='Choose a meal plan' />
+													</SelectTrigger>
+													<SelectContent>
+														{mealPlans?.map((plan: any) => (
+															<SelectItem
+																key={plan.id}
+																value={plan.id.toString()}>
+																{plan.planName}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</div>
+
+											<div className='space-y-2'>
+												<Label htmlFor='date'>Date</Label>
+												<input
+													type='date'
+													id='date'
+													value={selectedDate}
+													onChange={e => setSelectedDate(e.target.value)}
+													className='w-full px-3 py-2 border border-input rounded-md bg-background text-sm'
+												/>
+											</div>
+
+											<div className='space-y-2'>
+												<Label htmlFor='meal-type'>Meal Type</Label>
+												<Select
+													value={selectedMealType}
+													onValueChange={value => setSelectedMealType(value as MealType)}>
+													<SelectTrigger>
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value={MealType.Breakfast}>Breakfast</SelectItem>
+														<SelectItem value={MealType.Lunch}>Lunch</SelectItem>
+														<SelectItem value={MealType.Dinner}>Dinner</SelectItem>
+														<SelectItem value={MealType.Snack}>Snack</SelectItem>
+													</SelectContent>
+												</Select>
+											</div>
+
+											<div className='space-y-2'>
+												<Label htmlFor='servings'>Servings to Prepare</Label>
+												<Select
+													value={servingsToPrepare.toString()}
+													onValueChange={value => setServingsToPrepare(parseInt(value))}>
+													<SelectTrigger>
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														{[1, 2, 3, 4, 5, 6, 8, 10].map(serving => (
+															<SelectItem
+																key={serving}
+																value={serving.toString()}>
+																{serving} {serving === 1 ? 'serving' : 'servings'}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</div>
+
+											<div className='flex justify-end gap-2'>
+												<Button
+													variant='outline'
+													onClick={() => setShowMealPlanDialog(false)}>
+													Cancel
+												</Button>
+												<Button
+													onClick={handleAddToMealPlan}
+													disabled={
+														addMealPlanEntry.isPending || !selectedMealPlan || !selectedDate
+													}>
+													{addMealPlanEntry.isPending ? 'Adding...' : 'Add to Meal Plan'}
+												</Button>
+											</div>
+										</div>
+									</DialogContent>
+								</Dialog>
+
+								{/* Add to Collection Dialog */}
+								<Dialog
+									open={showCollectionDialog}
+									onOpenChange={setShowCollectionDialog}>
+									<DialogTrigger asChild>
+										<Button
+											variant='outline'
+											className='w-full justify-start'>
+											<BookOpen className='h-4 w-4 mr-2' />
+											Add to Collection
+										</Button>
+									</DialogTrigger>
+									<DialogContent className='max-w-md'>
+										<DialogHeader>
+											<DialogTitle>Add to Collection</DialogTitle>
+										</DialogHeader>
+										<div className='space-y-4'>
+											<div className='space-y-2'>
+												<Label htmlFor='collection'>Select Collection</Label>
+												<Select
+													value={selectedCollection}
+													onValueChange={setSelectedCollection}>
+													<SelectTrigger>
+														<SelectValue placeholder='Choose a collection' />
+													</SelectTrigger>
+													<SelectContent>
+														{collections?.map(collection => (
+															<SelectItem
+																key={collection.id}
+																value={collection.id.toString()}>
+																{collection.collectionName}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</div>
+
+											<div className='flex justify-end gap-2'>
+												<Button
+													variant='outline'
+													onClick={() => setShowCollectionDialog(false)}>
+													Cancel
+												</Button>
+												<Button
+													onClick={handleAddToCollection}
+													disabled={addToCollection.isPending || !selectedCollection}>
+													{addToCollection.isPending ? 'Adding...' : 'Add to Collection'}
+												</Button>
+											</div>
+										</div>
+									</DialogContent>
+								</Dialog>
+							</CardContent>
+						</Card>
+					)}
 				</div>
 			</div>
 		</div>

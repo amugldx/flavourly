@@ -39,6 +39,14 @@ export async function GET(
 										fullName: true,
 									},
 								},
+								verifiedBy: {
+									select: {
+										id: true,
+										username: true,
+										fullName: true,
+										profilePicture: true,
+									},
+								},
 								ingredients: {
 									include: {
 										ingredient: true,
