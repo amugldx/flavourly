@@ -178,8 +178,8 @@ function DeleteCollectionDialog({
 
 function CollectionCard({ collection }: { collection: any }) {
 	return (
-		<Card className='h-full hover:shadow-md transition-shadow group'>
-			<CardHeader className='pb-3'>
+		<Card className='h-full hover:shadow-md transition-shadow group flex flex-col'>
+			<CardHeader className='pb-3 flex-shrink-0'>
 				<div className='flex items-start justify-between'>
 					<div className='flex-1 min-w-0'>
 						<CardTitle className='text-lg font-semibold truncate flex items-center gap-2'>
@@ -193,7 +193,7 @@ function CollectionCard({ collection }: { collection: any }) {
 				</div>
 			</CardHeader>
 
-			<CardContent className='pt-0'>
+			<CardContent className='pt-0 flex-1 flex flex-col'>
 				{/* Collection Image */}
 				{collection.firstImage && (
 					<div className='relative mb-4 aspect-video rounded-lg overflow-hidden bg-muted'>
@@ -216,8 +216,8 @@ function CollectionCard({ collection }: { collection: any }) {
 					</div>
 				</div>
 
-				{/* Action Buttons */}
-				<div className='flex gap-2'>
+				{/* Action Buttons - always at bottom */}
+				<div className='flex gap-2 mt-auto pt-4'>
 					<Button
 						asChild
 						variant='outline'

@@ -1,30 +1,29 @@
-# Meal Planner Documentation
+# Meal Planner Feature Documentation
 
 ## Overview
 
-The Meal Planner is a comprehensive feature that allows users to create weekly meal plans and organize their recipes by day and meal type. It provides a calendar-based interface with drag-and-drop functionality for easy meal planning.
+The Meal Planner feature allows users to create and manage meal plans with a weekly calendar interface. Users can add recipes to specific meal slots, view their plans, and generate shopping lists from their meal plans.
 
 ## Features
 
-### Core Functionality
+### 🗓️ **Core Functionality**
 
-1. **Create Meal Plans**: Users can create new meal plans with custom names and date ranges
-2. **Calendar View**: Weekly calendar interface showing all meal types (Breakfast, Lunch, Dinner, Snack)
-3. **Add Recipes**: Add recipes to specific meal slots with customizable serving sizes
-4. **Remove Recipes**: Remove recipes from meal plans with confirmation
-5. **Visual Organization**: Color-coded meal types for easy identification
-6. **Responsive Design**: Works on desktop and mobile devices
+- **Weekly Calendar View**: Visual calendar interface showing days and meal types
+- **Recipe Management**: Add and remove recipes from meal slots
+- **Meal Types**: Support for Breakfast, Lunch, Dinner, and Snack
+- **Servings Control**: Specify how many servings to prepare for each recipe
+- **Recipe Selection**: Advanced combobox with search functionality for both user recipes and favorited recipes
 
-### Meal Types
+### 📱 **User Interface**
 
-- **Breakfast** (Orange theme)
-- **Lunch** (Blue theme)
-- **Dinner** (Purple theme)
-- **Snack** (Green theme)
+- **Week/Day Views**: Toggle between weekly overview and daily detail views
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Visual Indicators**: Color-coded meal types and progress tracking
+- **Intuitive Navigation**: Easy switching between views and meal slots
 
-## Database Schema
+## Architecture
 
-### MealPlan Model
+### Database Schema
 
 ```prisma
 model MealPlan {
@@ -38,17 +37,16 @@ model MealPlan {
   userId          Int
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   entries         MealPlanEntry[]
+  shoppingLists   ShoppingList[]
+
+  /// @db.Check(constraint: "end_date >= start_date")
 }
-```
 
-### MealPlanEntry Model
-
-```prisma
 model MealPlanEntry {
   id                  Int       @id @default(autoincrement())
   mealDate            DateTime  @db.Date
   mealType            MealType
-  servingsToPrepare   Int       @default(1)
+  servingsToPrepare   Int       @default(1) /// @db.Check(constraint: "servings_to_prepare > 0")
 
   // Relations
   planId              Int
@@ -56,323 +54,314 @@ model MealPlanEntry {
 
   recipeId            Int
   recipe              Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+}
+
+enum MealType {
+  Breakfast
+  Lunch
+  Dinner
+  Snack
 }
 ```
 
-## API Endpoints
+### API Routes
 
-### Meal Plans
+#### `/api/meal-plans`
 
-#### GET /api/meal-plans
+- `GET`: Fetch all meal plans for the user
+- `POST`: Create a new meal plan
 
-- **Description**: Get all meal plans for the authenticated user
-- **Response**: Array of meal plans with entries and recipe details
-- **Authentication**: Required
+#### `/api/meal-plans/[planId]`
 
-#### POST /api/meal-plans
+- `GET`: Fetch specific meal plan with entries
+- `PUT`: Update meal plan details
+- `DELETE`: Delete meal plan and all entries
 
-- **Description**: Create a new meal plan
-- **Body**: `{ planName: string, startDate: string, endDate: string }`
-- **Response**: Created meal plan with entries
-- **Authentication**: Required
+#### `/api/meal-plans/[planId]/entries`
 
-### Meal Plan Entries
+- `POST`: Add a new meal plan entry
+- `DELETE`: Remove a meal plan entry
 
-#### GET /api/meal-plans/[planId]/entries
+### React Hooks
 
-- **Description**: Get all entries for a specific meal plan
-- **Response**: Array of meal plan entries with recipe details
-- **Authentication**: Required
+#### Queries
 
-#### POST /api/meal-plans/[planId]/entries
+- `useMealPlans()`: Fetch all meal plans
+- `useMealPlan(planId)`: Fetch specific meal plan
+- `useMealPlanEntries(planId)`: Fetch entries for a meal plan
 
-- **Description**: Add a recipe to a meal plan
-- **Body**: `{ recipeId: number, mealDate: string, mealType: MealType, servingsToPrepare?: number }`
-- **Response**: Created meal plan entry
-- **Authentication**: Required
+#### Mutations
 
-#### DELETE /api/meal-plans/[planId]/entries/[entryId]
+- `useCreateMealPlan()`: Create new meal plan
+- `useUpdateMealPlan()`: Update meal plan
+- `useDeleteMealPlan()`: Delete meal plan
+- `useAddMealPlanEntry()`: Add recipe to meal plan
+- `useDeleteMealPlanEntry()`: Remove recipe from meal plan
 
-- **Description**: Remove a recipe from a meal plan
-- **Response**: Success confirmation
-- **Authentication**: Required
+## User Flow
 
-## React Hooks
+### 1. **Creating Meal Plans**
 
-### Queries
+1. User navigates to Meal Planner page
+2. Clicks "Create New Plan" button
+3. Enters plan name and date range
+4. System creates empty meal plan with calendar view
 
-#### useMealPlans()
+### 2. **Adding Recipes to Meal Plans**
 
-- **Description**: Fetch all meal plans for the current user
-- **Returns**: `{ data, isLoading, error }`
-- **Query Key**: `['meal-plans', 'list']`
+#### Enhanced Recipe Selection
 
-#### useMealPlanEntries(planId: number)
+1. User clicks "Add Recipe" button on any meal slot
+2. **Combobox Dialog Opens**: Modern search interface with:
+   - **Search Functionality**: Real-time search through recipes
+   - **Dual Recipe Sources**: Shows both user's own recipes and favorited recipes
+   - **Recipe Details**: Displays cooking time and servings information
+   - **Smart Deduplication**: Automatically removes duplicates between user and favorited recipes
+3. User searches and selects desired recipe
+4. User specifies number of servings to prepare
+5. Recipe is added to the meal slot
 
-- **Description**: Fetch entries for a specific meal plan
-- **Returns**: `{ data, isLoading, error }`
-- **Query Key**: `['meal-plans', 'detail', planId, 'entries']`
-- **Enabled**: Only when planId is provided
+#### Recipe Sources
 
-### Mutations
+- **User's Own Recipes**: All recipes created by the user
+- **Favorited Recipes**: All recipes the user has marked as favorites
+- **Automatic Deduplication**: If a recipe exists in both sources, it appears only once
 
-#### useCreateMealPlan()
+### 3. **Managing Meal Plans**
 
-- **Description**: Create a new meal plan
-- **Parameters**: `CreateMealPlanData`
-- **Invalidates**: Meal plans list
-- **Toast**: Success/error notifications
+#### Week View
 
-#### useAddMealPlanEntry()
+- **Calendar Grid**: Visual representation of the week
+- **Meal Type Columns**: Breakfast, Lunch, Dinner, Snack
+- **Recipe Cards**: Shows recipe details in each slot
+- **Quick Actions**: Add/remove recipes with one click
 
-- **Description**: Add a recipe to a meal plan
-- **Parameters**: `{ planId: number, data: AddMealPlanEntryData }`
-- **Invalidates**: Specific meal plan entries and meal plans list
-- **Toast**: Success/error notifications
+#### Day View
 
-#### useDeleteMealPlanEntry()
+- **Detailed View**: Focus on single day
+- **Full Recipe Information**: Complete recipe details
+- **Servings Management**: Easy adjustment of servings
+- **Recipe Removal**: Quick removal of recipes
 
-- **Description**: Remove a recipe from a meal plan
-- **Parameters**: `{ planId: number, entryId: number }`
-- **Invalidates**: Specific meal plan entries and meal plans list
-- **Toast**: Success/error notifications
+### 4. **Recipe Management**
 
-## Pages
+#### Adding Recipes
 
-### /dashboard/meal-planner
+- **Combobox Interface**: Modern search and select experience
+- **Real-time Search**: Instant filtering as user types
+- **Rich Recipe Information**: Shows title, cooking time, and servings
+- **Visual Feedback**: Clear indication of selected recipe
 
-**Main Meal Planner Page**
+#### Removing Recipes
 
-- **Features**:
+- **One-click Removal**: Trash icon on each recipe card
+- **Confirmation**: Optional confirmation for destructive actions
+- **Immediate Update**: UI updates instantly after removal
 
-  - Overview of all meal plans
-  - Create new meal plan dialog
-  - Visual calendar cards showing meal distribution
-  - Navigation to detailed views
+## Technical Implementation
 
-- **Components**:
-  - `CreateMealPlanDialog`: Modal for creating new meal plans
-  - `MealPlanCard`: Card showing meal plan summary with mini calendar
-  - `MealPlanSkeleton`: Loading skeleton for meal plan cards
+### Enhanced Recipe Selection
 
-### /dashboard/meal-planner/[planId]
+#### Combobox Component
 
-**Detailed Meal Plan View**
+```typescript
+// Custom RecipeCombobox component using shadcn Command
+interface Recipe {
+	id: number;
+	title: string;
+	cookingTimeMinutes?: number | string;
+	servings?: number | string;
+}
 
-- **Features**:
+// Features:
+// - Real-time search functionality
+// - Keyboard navigation support
+// - Rich recipe information display
+// - Flexible data type handling
+```
 
-  - Full weekly calendar grid
-  - Add recipes to specific meal slots
-  - Remove recipes from meal slots
-  - Visual meal type organization
+#### Recipe Data Integration
 
-- **Components**:
-  - `AddRecipeDialog`: Modal for adding recipes to meal slots
-  - `RecipeCard`: Card showing recipe in meal slot with remove option
-  - `MealSlot`: Container for each meal type with recipes
+```typescript
+// Combine user recipes and favorited recipes
+const allRecipes = useMemo(() => {
+	const userRecipeIds = new Set(userRecipes?.map(r => r.id) || []);
+	const combined = [...(userRecipes || [])];
 
-## User Interface
+	// Add favorited recipes that aren't already in user recipes
+	favoritedRecipes?.forEach(recipe => {
+		if (!userRecipeIds.has(recipe.id)) {
+			combined.push(recipe);
+		}
+	});
 
-### Design Principles
+	return combined;
+}, [userRecipes, favoritedRecipes]);
+```
 
-1. **Consistent Theme**: Uses the established green theme with color-coded meal types
-2. **Responsive Layout**: Grid-based layout that adapts to screen size
-3. **Visual Hierarchy**: Clear distinction between different meal types and days
-4. **Interactive Elements**: Hover effects and smooth transitions
-5. **Accessibility**: Proper ARIA labels and keyboard navigation
+### State Management
 
-### Color Scheme
+#### Local State
 
-- **Breakfast**: Orange (`bg-orange-100 text-orange-800 border-orange-200`)
-- **Lunch**: Blue (`bg-blue-100 text-blue-800 border-blue-200`)
-- **Dinner**: Purple (`bg-purple-100 text-purple-800 border-purple-200`)
-- **Snack**: Green (`bg-green-100 text-green-800 border-green-200`)
+- `selectedRecipe`: Currently selected recipe ID
+- `servingsToPrepare`: Number of servings for the recipe
+- Dialog open/close states
 
-### Navigation Flow
+#### Server State
 
-1. **Dashboard** → **Meal Planner** (via sidebar)
-2. **Meal Planner** → **Create Meal Plan** (via dialog)
-3. **Meal Plan Card** → **View Details** (via button)
-4. **Meal Plan Details** → **Add Recipe** (via meal slot)
-5. **Back Navigation**: Consistent back buttons throughout
+- TanStack Query for data fetching and caching
+- Automatic cache invalidation on mutations
+- Optimistic updates for better UX
+
+### Error Handling
+
+#### API Errors
+
+- Proper error responses with meaningful messages
+- Client-side error handling with toast notifications
+- Fallback UI for error states
+
+#### Validation
+
+- Required field validation
+- Data type validation
+- Business logic validation (e.g., meal plan ownership)
+
+## UI Components
+
+### Main Components
+
+- `MealPlannerPage`: Overview page with meal plan cards
+- `EditMealPlanPage`: Detailed editing interface
+- `AddRecipeDialog`: Enhanced recipe selection dialog
+- `WeekView`: Weekly calendar interface
+- `DayView`: Daily detailed view
+
+### Enhanced Components
+
+- `RecipeCombobox`: Modern search and select interface
+- `MealSlot`: Individual meal slot with recipe cards
+- `RecipeCard`: Recipe display with actions
 
 ## Data Flow
 
-### Creating a Meal Plan
+### 1. **Fetching Data**
 
-1. User clicks "Create Meal Plan" button
-2. Dialog opens with form (name, start date, end date)
-3. Form submission triggers `useCreateMealPlan` mutation
-4. API creates meal plan in database
-5. Query cache is invalidated
-6. UI updates to show new meal plan
-7. Success toast is displayed
+```
+User visits page → useMealPlans hook → API call → Cache data → Render UI
+```
 
-### Adding a Recipe
+### 2. **Adding Recipes**
 
-1. User clicks "Add Recipe" in a meal slot
-2. Dialog opens with recipe search and selection
-3. User selects recipe and serving size
-4. Form submission triggers `useAddMealPlanEntry` mutation
-5. API creates meal plan entry in database
-6. Query cache is invalidated
-7. UI updates to show recipe in meal slot
-8. Success toast is displayed
+```
+User opens dialog → useUserRecipes + useFavoritedRecipes → Combine data →
+RecipeCombobox renders → User selects recipe → useAddMealPlanEntry mutation →
+API call → Cache invalidation → UI update
+```
 
-### Removing a Recipe
+### 3. **Removing Recipes**
 
-1. User clicks remove button on recipe card
-2. `useDeleteMealPlanEntry` mutation is triggered
-3. API deletes meal plan entry from database
-4. Query cache is invalidated
-5. UI updates to remove recipe from meal slot
-6. Success toast is displayed
-
-## Error Handling
-
-### API Errors
-
-- **401 Unauthorized**: Redirect to signin page
-- **404 Not Found**: Show error message with retry option
-- **500 Server Error**: Show generic error with retry option
-
-### Validation Errors
-
-- **Missing Fields**: Form validation prevents submission
-- **Invalid Dates**: Date picker ensures valid date ranges
-- **Duplicate Entries**: API prevents duplicate recipe entries
-
-### Network Errors
-
-- **Connection Issues**: Retry mechanism with exponential backoff
-- **Timeout**: User-friendly timeout messages
-- **Offline**: Graceful degradation with cached data
+```
+User clicks remove → useDeleteMealPlanEntry mutation → API call →
+Cache invalidation → UI update
+```
 
 ## Performance Considerations
 
-### Query Optimization
+### Optimization Strategies
 
-- **Selective Loading**: Only load meal plan entries when viewing details
-- **Pagination**: Future enhancement for large meal plans
-- **Caching**: TanStack Query provides intelligent caching
+- **Lazy Loading**: Load meal plans on demand
+- **Efficient Queries**: Optimized database queries with proper indexing
+- **Caching**: TanStack Query for efficient data management
+- **Memoization**: Prevent unnecessary re-renders
 
-### UI Performance
+### Database Indexes
 
-- **Virtual Scrolling**: For large meal plans (future enhancement)
-- **Lazy Loading**: Images and media content
-- **Debounced Search**: Recipe search with debounced input
+- `userId` index for user-specific queries
+- `planId` index for meal plan entries
+- `recipeId` index for recipe lookups
 
-## Testing
+## Security
 
-### Test Script
+### Access Control
 
-Run the meal planner test script to verify functionality:
+- User authentication required for all operations
+- User ownership validation for all resources
+- Proper authorization checks in API routes
 
-```bash
-npx tsx scripts/test-meal-planner.ts
-```
+### Data Validation
 
-### Test Coverage
+- Input sanitization and validation
+- SQL injection prevention through Prisma ORM
+- XSS prevention through proper escaping
 
-- ✅ Database operations (create, read, delete)
-- ✅ API endpoints
-- ✅ React hooks
-- ✅ UI components
-- ✅ Navigation flows
+## Testing Strategy
+
+### Unit Tests
+
+- Hook functionality testing
+- Component rendering tests
+- Recipe selection logic testing
+
+### Integration Tests
+
+- API endpoint testing
+- Database operation testing
+- User flow testing
+
+### E2E Tests
+
+- Complete user journey testing
+- Cross-browser compatibility
+- Mobile responsiveness testing
 
 ## Future Enhancements
 
 ### Planned Features
 
-1. **Drag and Drop**: Visual drag-and-drop for moving recipes between slots
-2. **Bulk Operations**: Add multiple recipes at once
-3. **Meal Plan Templates**: Pre-built meal plan templates
-4. **Shopping List Integration**: Auto-generate shopping lists from meal plans
-5. **Nutritional Analysis**: Calculate total nutrition for meal plans
-6. **Sharing**: Share meal plans with other users
-7. **Recurring Plans**: Set up recurring weekly meal plans
+- **Drag and Drop**: Drag recipes between meal slots
+- **Recipe Templates**: Save and reuse common meal combinations
+- **Nutritional Tracking**: Track daily nutritional intake
+- **Meal Prep Instructions**: Generate step-by-step prep instructions
+- **Shopping List Integration**: Direct integration with shopping list feature
 
 ### Technical Improvements
 
-1. **Real-time Updates**: WebSocket integration for collaborative planning
-2. **Offline Support**: Service worker for offline meal planning
-3. **Advanced Search**: Filter recipes by dietary restrictions, cooking time, etc.
-4. **Meal Plan Analytics**: Track meal planning habits and preferences
+- **Real-time Updates**: WebSocket integration for collaborative planning
+- **Offline Support**: Service worker for offline functionality
+- **Advanced Search**: Full-text search across recipe descriptions
+- **Bulk Operations**: Select multiple recipes for batch actions
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Meal Plan Not Loading**
+#### Recipe Selection Not Working
 
-   - Check user authentication
-   - Verify database connection
-   - Check browser console for errors
+- Check if user has recipes or favorited recipes
+- Verify API endpoints are responding correctly
+- Check browser console for errors
 
-2. **Can't Add Recipes**
+#### Recipes Not Loading
 
-   - Ensure user has created recipes
-   - Check recipe permissions
-   - Verify meal plan belongs to user
+- Check network connectivity
+- Verify user authentication
+- Check API response format
 
-3. **Date Display Issues**
-   - Check date-fns installation
-   - Verify date format consistency
-   - Check timezone settings
+#### Performance Issues
 
-### Debug Commands
+- Monitor database query performance
+- Check for large recipe lists
+- Verify proper indexing is in place
 
-```bash
-# Test meal planner functionality
-npx tsx scripts/test-meal-planner.ts
+### Debug Tools
 
-# Check database schema
-npx prisma db pull
+- Browser developer tools for client-side debugging
+- Database logs for server-side issues
+- TanStack Query DevTools for state debugging
 
-# Reset database (if needed)
-npx prisma db push --force-reset
-```
+## Conclusion
 
-## Security Considerations
-
-### Authentication
-
-- All API endpoints require authentication
-- User can only access their own meal plans
-- Session validation on every request
-
-### Data Validation
-
-- Input sanitization for all user inputs
-- Date range validation
-- Recipe ownership verification
-
-### Authorization
-
-- Users can only modify their own meal plans
-- Recipe access is restricted to user's recipes
-- No cross-user data access
-
-## Integration Points
-
-### Recipe System
-
-- Meal planner integrates with existing recipe system
-- Uses `useUserRecipes` hook for recipe selection
-- Maintains recipe relationships and metadata
-
-### User System
-
-- Integrates with NextAuth.js authentication
-- Uses user session for authorization
-- Respects user role permissions
-
-### Navigation System
-
-- Integrated with dashboard sidebar navigation
-- Consistent back navigation patterns
-- Breadcrumb navigation support
-
----
-
-This documentation provides a comprehensive overview of the Meal Planner feature, including its architecture, implementation details, and usage guidelines.
+The Meal Planner feature provides a comprehensive solution for meal planning with an enhanced recipe selection experience. The new combobox implementation offers users access to both their own recipes and favorited recipes through a modern, searchable interface. The feature seamlessly integrates with the overall application architecture and maintains consistency with established patterns.

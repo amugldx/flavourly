@@ -11,7 +11,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
 	Select,
@@ -60,14 +59,30 @@ function AddRecipeDialog({
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedRecipe, setSelectedRecipe] = useState('');
 	const [servingsToPrepare, setServingsToPrepare] = useState(1);
-	const [searchQuery, setSearchQuery] = useState('');
 	const addMealPlanEntry = useAddMealPlanEntry();
-	const { data: recipes, isLoading } = useUserRecipes();
 
-	const filteredRecipes =
-		recipes?.filter((recipe: any) =>
-			recipe.title.toLowerCase().includes(searchQuery.toLowerCase()),
-		) || [];
+	// Fetch both user's recipes and favorited recipes
+	const { data: userRecipes, isLoading: userRecipesLoading } = useUserRecipes();
+	const { data: favoritedRecipes, isLoading: favoritedRecipesLoading } = useFavoritedRecipes();
+
+	// Combine and deduplicate recipes
+	const allRecipes = useMemo(() => {
+		if (!userRecipes && !favoritedRecipes) return [];
+
+		const userRecipeIds = new Set(userRecipes?.map((r: any) => r.id) || []);
+		const combined = [...(userRecipes || [])];
+
+		// Add favorited recipes that aren't already in user recipes
+		favoritedRecipes?.forEach((recipe: any) => {
+			if (!userRecipeIds.has(recipe.id)) {
+				combined.push(recipe);
+			}
+		});
+
+		return combined;
+	}, [userRecipes, favoritedRecipes]);
+
+	const isLoading = userRecipesLoading || favoritedRecipesLoading;
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -86,7 +101,6 @@ function AddRecipeDialog({
 			setIsOpen(false);
 			setSelectedRecipe('');
 			setServingsToPrepare(1);
-			setSearchQuery('');
 			onSuccess();
 		} catch (error) {
 			// Error is handled by the mutation
@@ -114,46 +128,20 @@ function AddRecipeDialog({
 					onSubmit={handleSubmit}
 					className='space-y-4'>
 					<div className='space-y-2'>
-						<Label htmlFor='search'>Search Recipes</Label>
-						<Input
-							id='search'
-							value={searchQuery}
-							onChange={e => setSearchQuery(e.target.value)}
-							placeholder='Search your recipes...'
-						/>
-					</div>
-					<div className='space-y-2'>
 						<Label htmlFor='recipe'>Select Recipe</Label>
-						<Select
+						<RecipeCombobox
+							recipes={allRecipes}
 							value={selectedRecipe}
-							onValueChange={setSelectedRecipe}>
-							<SelectTrigger>
-								<SelectValue placeholder='Choose a recipe' />
-							</SelectTrigger>
-							<SelectContent>
-								{isLoading ? (
-									<SelectItem
-										value=''
-										disabled>
-										Loading...
-									</SelectItem>
-								) : filteredRecipes.length > 0 ? (
-									filteredRecipes.map((recipe: any) => (
-										<SelectItem
-											key={recipe.id}
-											value={recipe.id.toString()}>
-											{recipe.title}
-										</SelectItem>
-									))
-								) : (
-									<SelectItem
-										value=''
-										disabled>
-										No recipes found
-									</SelectItem>
-								)}
-							</SelectContent>
-						</Select>
+							onValueChange={setSelectedRecipe}
+							placeholder='Search and select a recipe...'
+							disabled={isLoading}
+						/>
+						{allRecipes.length > 0 && (
+							<p className='text-xs text-muted-foreground'>
+								{userRecipes?.length || 0} of your recipes • {favoritedRecipes?.length || 0}{' '}
+								favorited recipes
+							</p>
+						)}
 					</div>
 					<div className='space-y-2'>
 						<Label htmlFor='servings'>Servings to Prepare</Label>

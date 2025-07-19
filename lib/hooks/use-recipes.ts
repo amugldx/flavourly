@@ -58,6 +58,46 @@ export function useUserRecipes() {
 	});
 }
 
+// Fetch user's favorited recipes
+export function useFavoritedRecipes() {
+	return useQuery({
+		queryKey: ['favorited-recipes'],
+		queryFn: async (): Promise<Recipe[]> => {
+			const response = await fetch('/api/favorites');
+			if (!response.ok) {
+				throw new Error('Failed to fetch favorited recipes');
+			}
+			const favorites = await response.json();
+			// Transform the data to match Recipe interface
+			return favorites.map((favorite: any) => ({
+				id: favorite.recipe.id,
+				title: favorite.recipe.title,
+				description: favorite.recipe.description || '',
+				cookingTimeMinutes: favorite.recipe.cookingTimeMinutes?.toString() || '',
+				servings: favorite.recipe.servings?.toString() || '',
+				ingredients:
+					favorite.recipe.ingredients?.map((ing: any) => ({
+						name: ing.ingredient.name,
+						quantity: ing.quantity.toString(),
+						unit: ing.unit.unitName,
+						notes: ing.notes || '',
+					})) || [],
+				steps: favorite.recipe.steps?.map((step: any) => step.instruction) || [],
+				media:
+					favorite.recipe.media?.map((media: any) => ({
+						id: media.id.toString(),
+						url: media.url,
+						type: media.mediaType,
+						publicId: '',
+					})) || [],
+				status: favorite.recipe.status,
+				createdAt: favorite.recipe.createdAt,
+				updatedAt: favorite.recipe.updatedAt,
+			}));
+		},
+	});
+}
+
 // Fetch a single recipe by ID
 export function useRecipe(recipeId: number) {
 	return useQuery({

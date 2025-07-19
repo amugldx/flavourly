@@ -158,8 +158,8 @@ function MealPlanCard({ mealPlan }: { mealPlan: any }) {
 	}, {});
 
 	return (
-		<Card className='h-full hover:shadow-md transition-shadow'>
-			<CardHeader className='pb-3'>
+		<Card className='h-full hover:shadow-md transition-shadow flex flex-col'>
+			<CardHeader className='pb-3 flex-shrink-0'>
 				<div className='flex items-center justify-between'>
 					<CardTitle className='text-lg font-semibold flex items-center gap-2'>
 						<CalendarDays className='w-5 h-5 text-muted-foreground' />
@@ -171,8 +171,8 @@ function MealPlanCard({ mealPlan }: { mealPlan: any }) {
 					{format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
 				</div>
 			</CardHeader>
-			<CardContent className='pt-0'>
-				<div className='grid grid-cols-7 gap-2 text-xs'>
+			<CardContent className='pt-0 flex-1 flex flex-col'>
+				<div className='grid grid-cols-7 gap-2 text-xs flex-1'>
 					{weekDays.map((day, index) => (
 						<div
 							key={index}
@@ -198,7 +198,8 @@ function MealPlanCard({ mealPlan }: { mealPlan: any }) {
 						</div>
 					))}
 				</div>
-				<div className='flex gap-2 mt-4'>
+				{/* Action Buttons - always at bottom */}
+				<div className='flex gap-2 mt-auto pt-4'>
 					<Button
 						variant='outline'
 						size='sm'

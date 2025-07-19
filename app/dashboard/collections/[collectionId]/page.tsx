@@ -86,8 +86,8 @@ function RemoveRecipeDialog({
 
 function RecipeCard({ recipe, collectionId }: { recipe: any; collectionId: number }) {
 	return (
-		<Card className='h-full hover:shadow-md transition-shadow'>
-			<CardHeader className='pb-3'>
+		<Card className='h-full hover:shadow-md transition-shadow flex flex-col'>
+			<CardHeader className='pb-3 flex-shrink-0'>
 				<div className='flex items-start justify-between'>
 					<div className='flex-1 min-w-0'>
 						<CardTitle className='text-lg font-semibold truncate'>{recipe.title}</CardTitle>
@@ -105,7 +105,7 @@ function RecipeCard({ recipe, collectionId }: { recipe: any; collectionId: numbe
 				</div>
 			</CardHeader>
 
-			<CardContent className='pt-0'>
+			<CardContent className='pt-0 flex-1 flex flex-col'>
 				{/* Recipe Image */}
 				{recipe.media && recipe.media.length > 0 ? (
 					<div className='relative mb-4 aspect-video rounded-lg overflow-hidden bg-muted'>
@@ -161,8 +161,8 @@ function RecipeCard({ recipe, collectionId }: { recipe: any; collectionId: numbe
 					</div>
 				)}
 
-				{/* Action Buttons */}
-				<div className='flex gap-2'>
+				{/* Action Buttons - always at bottom */}
+				<div className='flex gap-2 mt-auto pt-4'>
 					<Button
 						asChild
 						variant='outline'
