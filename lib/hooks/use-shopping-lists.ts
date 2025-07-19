@@ -207,9 +207,10 @@ export function useToggleShoppingListItem() {
 
 			return response.json();
 		},
-		onSuccess: (_, { listId }) => {
+		onSuccess: (_, { listId, isCompleted }) => {
 			queryClient.invalidateQueries({ queryKey: ['shopping-list', listId] });
 			queryClient.invalidateQueries({ queryKey: ['shopping-lists'] });
+			toast.success(`Item ${isCompleted ? 'marked as complete' : 'marked as incomplete'}`);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || 'Failed to update item');

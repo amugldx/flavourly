@@ -6,7 +6,7 @@ This project uses NextAuth.js v5 with a custom credentials provider that support
 
 - **Sign In**: Users can authenticate with their email and password
 - **Sign Up**: New users can register with username, email, full name, and password
-- **Role-based Access**: Users are assigned roles (RecipeDeveloper, Nutritionist, Admin)
+- **Role-based Access**: Users are assigned roles (RecipeDeveloper, Nutritionist)
 - **Password Security**: Passwords are hashed using bcryptjs
 - **Type Safety**: Full TypeScript support with custom type definitions
 
@@ -18,48 +18,47 @@ Before using the authentication system, you need to seed the roles in the databa
 pnpm seed:roles
 ```
 
-This creates the three default roles:
+This creates the two default roles:
 
 - `RecipeDeveloper` (default role for new users)
 - `Nutritionist`
-- `Admin`
 
 ## Usage
 
 ### Sign In
 
 ```typescript
-import { signIn } from "@/lib/auth";
+import { signIn } from '@/lib/auth';
 
 // Sign in with email and password
-await signIn("credentials", {
-  email: "user@example.com",
-  password: "password123",
-  action: "signin",
-  redirect: false,
+await signIn('credentials', {
+	email: 'user@example.com',
+	password: 'password123',
+	action: 'signin',
+	redirect: false,
 });
 ```
 
 ### Sign Up
 
 ```typescript
-import { signIn } from "@/lib/auth";
+import { signIn } from '@/lib/auth';
 
 // Sign up with user details
-await signIn("credentials", {
-  email: "newuser@example.com",
-  password: "password123",
-  username: "newuser",
-  fullName: "New User",
-  action: "signup",
-  redirect: false,
+await signIn('credentials', {
+	email: 'newuser@example.com',
+	password: 'password123',
+	username: 'newuser',
+	fullName: 'New User',
+	action: 'signup',
+	redirect: false,
 });
 ```
 
 ### Getting User Session
 
 ```typescript
-import { auth } from "@/lib/auth";
+import { auth } from '@/lib/auth';
 
 // In a server component or API route
 const session = await auth();
@@ -69,8 +68,8 @@ console.log(session?.user); // { id, email, name, username, role }
 ### Role Checking
 
 ```typescript
-import { hasRole } from "@/lib/auth-helpers";
-import { RoleName } from "@/generated/prisma/client";
+import { hasRole } from '@/lib/auth-helpers';
+import { RoleName } from '@/generated/prisma/client';
 
 // Check if user has required role
 const canEditRecipes = hasRole(user.role, RoleName.Nutritionist);
@@ -121,7 +120,6 @@ model Role {
 enum RoleName {
   RecipeDeveloper
   Nutritionist
-  Admin
 }
 ```
 

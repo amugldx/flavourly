@@ -17,7 +17,6 @@ datasource db {
 enum RoleName {
   RecipeDeveloper
   Nutritionist
-  Admin
 }
 
 enum VerificationStatus {

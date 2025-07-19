@@ -1,9 +1,10 @@
 'use client';
 
+import { DeleteAccountDialog } from '@/components/delete-account-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -365,7 +366,7 @@ export default function SettingsPage() {
 				mealSize: preferences.mealSize,
 			});
 		} catch (error) {
-			toast.error('Failed to update dietary preferences. Please try again.');
+			// Error is handled by the mutation hook
 		}
 	};
 
@@ -428,7 +429,7 @@ export default function SettingsPage() {
 					<Tabs
 						defaultValue='profile'
 						className='w-full'>
-						<TabsList className='grid w-full grid-cols-3'>
+						<TabsList className='grid w-full grid-cols-4'>
 							<TabsTrigger
 								value='profile'
 								className='flex items-center gap-2'>
@@ -446,6 +447,12 @@ export default function SettingsPage() {
 								className='flex items-center gap-2'>
 								<Utensils className='w-4 h-4' />
 								Dietary Preferences
+							</TabsTrigger>
+							<TabsTrigger
+								value='danger'
+								className='flex items-center gap-2'>
+								<Shield className='w-4 h-4' />
+								Danger Zone
 							</TabsTrigger>
 						</TabsList>
 
@@ -1090,6 +1097,41 @@ export default function SettingsPage() {
 									</div>
 								</div>
 							</form>
+						</TabsContent>
+
+						{/* Danger Zone Tab */}
+						<TabsContent
+							value='danger'
+							className='space-y-6'>
+							<Card className='border-destructive/50'>
+								<CardHeader>
+									<CardTitle className='flex items-center gap-2 text-destructive'>
+										<Shield className='w-5 h-5' />
+										Danger Zone
+									</CardTitle>
+									<CardDescription>Irreversible and destructive actions</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className='space-y-4'>
+										<div className='flex items-center justify-between p-4 border border-destructive/20 rounded-lg'>
+											<div>
+												<h4 className='font-medium text-destructive'>Delete Account</h4>
+												<p className='text-sm text-muted-foreground'>
+													Permanently delete your account and all associated data. This action
+													cannot be undone.
+												</p>
+											</div>
+											<DeleteAccountDialog userRole='RecipeDeveloper'>
+												<Button
+													variant='destructive'
+													size='sm'>
+													Delete Account
+												</Button>
+											</DeleteAccountDialog>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
 						</TabsContent>
 					</Tabs>
 				</CardContent>

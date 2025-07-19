@@ -8,8 +8,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { VerificationStatus } from '@/generated/prisma/client';
-import { AlertTriangle, Calendar, CheckCircle, Clock, Eye, User, XCircle } from 'lucide-react';
-import { useState } from 'react';
+import {
+	AlertTriangle,
+	Calendar,
+	CheckCircle,
+	Clock,
+	Edit,
+	Eye,
+	Save,
+	User,
+	XCircle,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { DetailedRecipe } from './RecipeVerificationForm';
 
 interface VerificationActionsProps {
@@ -27,6 +38,12 @@ export default function VerificationActions({
 }: VerificationActionsProps) {
 	const [revisionNotes, setRevisionNotes] = useState('');
 	const [showRevisionForm, setShowRevisionForm] = useState(false);
+	const [editingHealthTips, setEditingHealthTips] = useState(false);
+	const [editedHealthTips, setEditedHealthTips] = useState(recipe.healthTips || '');
+
+	useEffect(() => {
+		setEditedHealthTips(recipe.healthTips || '');
+	}, [recipe.healthTips]);
 
 	const handleVerify = () => {
 		onStatusUpdate(VerificationStatus.verified);
@@ -34,7 +51,7 @@ export default function VerificationActions({
 
 	const handleRequestRevision = () => {
 		if (!revisionNotes.trim()) {
-			alert('Please provide revision notes');
+			toast.error('Please provide revision notes');
 			return;
 		}
 		// Save the revision notes as health tips first
@@ -43,6 +60,21 @@ export default function VerificationActions({
 		onStatusUpdate(VerificationStatus.needs_revision);
 		setShowRevisionForm(false);
 		setRevisionNotes('');
+	};
+
+	const handleEditHealthTips = () => {
+		setEditingHealthTips(true);
+		setEditedHealthTips(recipe.healthTips || '');
+	};
+
+	const handleSaveHealthTips = () => {
+		onSaveData({ healthTips: editedHealthTips });
+		setEditingHealthTips(false);
+	};
+
+	const handleCancelEditHealthTips = () => {
+		setEditingHealthTips(false);
+		setEditedHealthTips(recipe.healthTips || '');
 	};
 
 	const handleReview = () => {
@@ -79,6 +111,11 @@ export default function VerificationActions({
 
 	const currentStatus = statusConfig[recipe.status];
 	const StatusIcon = currentStatus.icon;
+
+	// Note: We removed the incorrect resubmission detection logic
+	// Health tips can be edited by nutritionists without changing recipe status
+	// The "resubmitted" status should only be shown when the recipe actually goes through resubmission
+	const isResubmittedRecipe = false; // TODO: Implement proper resubmission tracking if needed
 
 	return (
 		<div className='space-y-6'>
@@ -135,10 +172,52 @@ export default function VerificationActions({
 					{/* Current Health Tips */}
 					{recipe.healthTips && (
 						<div className='space-y-2'>
-							<Label className='text-sm font-medium'>Current Health Tips</Label>
-							<div className='p-3 bg-muted rounded-lg'>
-								<p className='text-sm whitespace-pre-wrap'>{recipe.healthTips}</p>
+							<div className='flex items-center justify-between'>
+								<Label className='text-sm font-medium'>Current Health Tips</Label>
+								{!editingHealthTips && (
+									<Button
+										variant='outline'
+										size='sm'
+										onClick={handleEditHealthTips}
+										className='h-8 px-2'>
+										<Edit className='h-3 w-3 mr-1' />
+										Edit
+									</Button>
+								)}
 							</div>
+
+							{editingHealthTips ? (
+								<div className='space-y-3'>
+									<Textarea
+										value={editedHealthTips}
+										onChange={e => setEditedHealthTips(e.target.value)}
+										placeholder='Enter revision notes...'
+										rows={4}
+										className='resize-none'
+									/>
+									<div className='flex gap-2'>
+										<Button
+											size='sm'
+											onClick={handleSaveHealthTips}
+											disabled={isLoading}
+											className='flex-1'>
+											<Save className='h-3 w-3 mr-1' />
+											{isLoading ? 'Saving...' : 'Save Changes'}
+										</Button>
+										<Button
+											size='sm'
+											variant='outline'
+											onClick={handleCancelEditHealthTips}
+											className='flex-1'>
+											Cancel
+										</Button>
+									</div>
+								</div>
+							) : (
+								<div className='p-3 bg-muted rounded-lg'>
+									<p className='text-sm whitespace-pre-wrap'>{recipe.healthTips}</p>
+								</div>
+							)}
 						</div>
 					)}
 				</CardContent>

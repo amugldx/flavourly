@@ -26,8 +26,9 @@ import {
 	useDeleteMealPlanEntry,
 	useMealPlanEntries,
 } from '@/lib/hooks/use-meal-plans';
+import { useMealPlan } from '@/lib/hooks/use-queries';
 import { useFavoritedRecipes, useUserRecipes } from '@/lib/hooks/use-recipes';
-import { addDays, format, parseISO } from 'date-fns';
+import { eachDayOfInterval, format, parseISO } from 'date-fns';
 import { ArrowLeft, Calendar, Clock, Plus, Save, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';
 import { use, useMemo, useState } from 'react';
@@ -325,7 +326,9 @@ function WeekView({
 	entriesByDate: any;
 }) {
 	return (
-		<div className='grid grid-cols-7 gap-4'>
+		<div
+			className={`grid gap-4`}
+			style={{ gridTemplateColumns: `repeat(${weekDays.length}, 1fr)` }}>
 			{weekDays.map((date, dayIndex) => (
 				<div
 					key={dayIndex}
@@ -356,14 +359,30 @@ function WeekView({
 
 export default function EditMealPlanPage({ params }: { params: Promise<{ planId: string }> }) {
 	const { planId } = use(params);
-	const { data: entries, isLoading, error } = useMealPlanEntries(parseInt(planId));
+	const planIdNum = parseInt(planId);
+	const {
+		data: entries,
+		isLoading: entriesLoading,
+		error: entriesError,
+	} = useMealPlanEntries(planIdNum);
+	const {
+		data: mealPlan,
+		isLoading: mealPlanLoading,
+		error: mealPlanError,
+	} = useMealPlan(planIdNum);
 
-	// Generate week days (assuming 7-day meal plans)
-	const weekDays: Date[] = [];
-	const today = new Date();
-	for (let i = 0; i < 7; i++) {
-		weekDays.push(addDays(today, i));
-	}
+	// Generate days based on actual meal plan start and end dates
+	const weekDays: Date[] = useMemo(() => {
+		if (!mealPlan) return [];
+
+		const startDate = parseISO(mealPlan.startDate);
+		const endDate = parseISO(mealPlan.endDate);
+
+		return eachDayOfInterval({ start: startDate, end: endDate });
+	}, [mealPlan]);
+
+	const isLoading = entriesLoading || mealPlanLoading;
+	const error = entriesError || mealPlanError;
 
 	// Group entries by date and meal type
 	const entriesByDate =
@@ -447,8 +466,10 @@ export default function EditMealPlanPage({ params }: { params: Promise<{ planId:
 					value='week'
 					className='space-y-4'>
 					{isLoading ? (
-						<div className='grid grid-cols-7 gap-4'>
-							{Array.from({ length: 7 }).map((_, dayIndex) => (
+						<div
+							className={`grid gap-4`}
+							style={{ gridTemplateColumns: `repeat(${Math.max(weekDays.length, 1)}, 1fr)` }}>
+							{Array.from({ length: Math.max(weekDays.length, 1) }).map((_, dayIndex) => (
 								<div
 									key={dayIndex}
 									className='space-y-4'>
@@ -479,7 +500,7 @@ export default function EditMealPlanPage({ params }: { params: Promise<{ planId:
 					className='space-y-4'>
 					{isLoading ? (
 						<div className='space-y-4'>
-							{Array.from({ length: 7 }).map((_, i) => (
+							{Array.from({ length: Math.max(weekDays.length, 1) }).map((_, i) => (
 								<div
 									key={i}
 									className='h-64 bg-muted rounded animate-pulse'

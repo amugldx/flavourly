@@ -9,10 +9,14 @@ import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSignUp } from '@/lib/hooks/use-auth';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function SignUpPage() {
+	const { data: session, status } = useSession();
+	const router = useRouter();
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
@@ -25,44 +29,161 @@ export default function SignUpPage() {
 
 	const signUpMutation = useSignUp();
 
+	// Redirect logged-in users to their appropriate dashboard
+	useEffect(() => {
+		if (status === 'authenticated' && session?.user) {
+			const userRole = session.user.role;
+			if (userRole === 'Nutritionist') {
+				router.push('/nutritionist');
+			} else {
+				router.push('/dashboard');
+			}
+		}
+	}, [session, status, router]);
+
+	// Show loading state while checking authentication
+	if (status === 'loading') {
+		return (
+			<div className='min-h-screen flex items-center justify-center bg-background'>
+				<div className='text-center'>
+					<div className='w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+					<p className='text-muted-foreground'>Loading...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Don't render the form if user is already authenticated
+	if (status === 'authenticated') {
+		return null;
+	}
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData(prev => ({ ...prev, [name]: value }));
-		// Clear error when user starts typing
-		if (errors[name]) {
-			setErrors(prev => ({ ...prev, [name]: '' }));
-		}
+
 		// Clear mutation error when user starts typing
 		if (signUpMutation.error) {
 			signUpMutation.reset();
+		}
+
+		// Real-time validation for full name
+		if (name === 'fullName') {
+			if (!value.trim()) {
+				setErrors(prev => ({ ...prev, fullName: 'Full name is required' }));
+			} else if (value.trim().length < 2) {
+				setErrors(prev => ({ ...prev, fullName: 'Full name must be at least 2 characters' }));
+			} else if (value.trim().length > 100) {
+				setErrors(prev => ({ ...prev, fullName: 'Full name is too long' }));
+			} else {
+				setErrors(prev => ({ ...prev, fullName: '' }));
+			}
+		}
+
+		// Real-time validation for username
+		if (name === 'username') {
+			if (!value.trim()) {
+				setErrors(prev => ({ ...prev, username: 'Username is required' }));
+			} else if (value.length < 3) {
+				setErrors(prev => ({ ...prev, username: 'Username must be at least 3 characters' }));
+			} else if (value.length > 30) {
+				setErrors(prev => ({ ...prev, username: 'Username must be less than 30 characters' }));
+			} else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+				setErrors(prev => ({
+					...prev,
+					username: 'Username can only contain letters, numbers, and underscores',
+				}));
+			} else {
+				setErrors(prev => ({ ...prev, username: '' }));
+			}
+		}
+
+		// Real-time validation for email
+		if (name === 'email') {
+			if (!value.trim()) {
+				setErrors(prev => ({ ...prev, email: 'Email is required' }));
+			} else if (!/\S+@\S+\.\S+/.test(value)) {
+				setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+			} else if (value.length > 254) {
+				setErrors(prev => ({ ...prev, email: 'Email address is too long' }));
+			} else {
+				setErrors(prev => ({ ...prev, email: '' }));
+			}
+		}
+
+		// Real-time validation for password
+		if (name === 'password') {
+			if (!value) {
+				setErrors(prev => ({ ...prev, password: 'Password is required' }));
+			} else if (value.length < 8) {
+				setErrors(prev => ({ ...prev, password: 'Password must be at least 8 characters long' }));
+			} else if (value.length > 128) {
+				setErrors(prev => ({ ...prev, password: 'Password is too long' }));
+			} else {
+				const hasLetters = /[a-zA-Z]/.test(value);
+				const hasNumbers = /\d/.test(value);
+				if (!hasLetters || !hasNumbers) {
+					setErrors(prev => ({
+						...prev,
+						password: 'Password must contain both letters and numbers',
+					}));
+				} else {
+					setErrors(prev => ({ ...prev, password: '' }));
+				}
+			}
+		}
+
+		// Real-time validation for confirm password
+		if (name === 'confirmPassword') {
+			if (!value) {
+				setErrors(prev => ({ ...prev, confirmPassword: 'Please confirm your password' }));
+			} else if (formData.password !== value) {
+				setErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }));
+			} else {
+				setErrors(prev => ({ ...prev, confirmPassword: '' }));
+			}
 		}
 	};
 
 	const validateForm = () => {
 		const newErrors: Record<string, string> = {};
 
+		// Full name validation
 		if (!formData.fullName.trim()) {
 			newErrors.fullName = 'Full name is required';
+		} else if (formData.fullName.trim().length < 2) {
+			newErrors.fullName = 'Full name must be at least 2 characters';
+		} else if (formData.fullName.trim().length > 100) {
+			newErrors.fullName = 'Full name is too long';
 		}
 
+		// Username validation
 		if (!formData.username.trim()) {
 			newErrors.username = 'Username is required';
 		} else if (formData.username.length < 3) {
 			newErrors.username = 'Username must be at least 3 characters';
+		} else if (formData.username.length > 30) {
+			newErrors.username = 'Username must be less than 30 characters';
 		} else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
 			newErrors.username = 'Username can only contain letters, numbers, and underscores';
 		}
 
+		// Email validation
 		if (!formData.email.trim()) {
 			newErrors.email = 'Email is required';
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
 			newErrors.email = 'Please enter a valid email address';
+		} else if (formData.email.length > 254) {
+			newErrors.email = 'Email address is too long';
 		}
 
+		// Password validation
 		if (!formData.password) {
 			newErrors.password = 'Password is required';
 		} else if (formData.password.length < 8) {
 			newErrors.password = 'Password must be at least 8 characters long';
+		} else if (formData.password.length > 128) {
+			newErrors.password = 'Password is too long';
 		} else {
 			const hasLetters = /[a-zA-Z]/.test(formData.password);
 			const hasNumbers = /\d/.test(formData.password);
@@ -71,6 +192,7 @@ export default function SignUpPage() {
 			}
 		}
 
+		// Confirm password validation
 		if (!formData.confirmPassword) {
 			newErrors.confirmPassword = 'Please confirm your password';
 		} else if (formData.password !== formData.confirmPassword) {
@@ -106,35 +228,8 @@ export default function SignUpPage() {
 	const getErrorMessage = () => {
 		if (!signUpMutation.error) return null;
 
-		const errorMessage = signUpMutation.error.message;
-
-		// Map specific error messages to user-friendly versions
-		const errorMap: Record<string, string> = {
-			'User with this email or username already exists':
-				'An account with this email or username already exists. Please try signing in instead.',
-			'Username and full name are required for registration': 'Please fill in all required fields.',
-			'Role not found. Please seed the database first.':
-				'System configuration error. Please contact support.',
-			'Password must be at least 8 characters long': 'Password must be at least 8 characters long.',
-			'Password must contain both letters and numbers':
-				'Password must contain both letters and numbers.',
-			'Network error': 'Connection error. Please check your internet connection and try again.',
-		};
-
-		// Check for exact matches first
-		if (errorMap[errorMessage]) {
-			return errorMap[errorMessage];
-		}
-
-		// Check for partial matches
-		for (const [key, message] of Object.entries(errorMap)) {
-			if (errorMessage.toLowerCase().includes(key.toLowerCase())) {
-				return message;
-			}
-		}
-
-		// Return a generic message for unknown errors
-		return 'Account creation failed. Please check your information and try again.';
+		// The error message is already processed by the auth hook
+		return signUpMutation.error.message;
 	};
 
 	return (
@@ -247,7 +342,7 @@ export default function SignUpPage() {
 
 								<ErrorDisplay
 									error={getErrorMessage()}
-									title='Account Creation Failed'
+									title={getErrorMessage() ? 'Account Creation Failed' : undefined}
 									variant='destructive'
 									dismissible={true}
 									onDismiss={() => signUpMutation.reset()}
@@ -355,7 +450,7 @@ export default function SignUpPage() {
 
 								<ErrorDisplay
 									error={getErrorMessage()}
-									title='Account Creation Failed'
+									title={getErrorMessage() ? 'Account Creation Failed' : undefined}
 									variant='destructive'
 									dismissible={true}
 									onDismiss={() => signUpMutation.reset()}

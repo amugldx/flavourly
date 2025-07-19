@@ -159,7 +159,14 @@ export default function NutritionistProfilePage({ params }: NutritionistProfileP
 					<p className='text-muted-foreground text-center max-w-md'>
 						The nutritionist profile you're looking for doesn't exist or is not available.
 					</p>
-					<Button onClick={() => router.back()}>Go Back</Button>
+					<Button
+						variant='outline'
+						size='sm'
+						onClick={() => router.back()}
+						className='flex items-center'>
+						<ArrowLeft className='h-4 w-4 mr-2' />
+						Go Back
+					</Button>
 				</div>
 			</div>
 		);

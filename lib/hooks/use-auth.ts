@@ -19,19 +19,31 @@ interface SignUpData {
 // Helper function to get user-friendly error messages
 function getAuthErrorMessage(error: string): string {
 	const errorMessages: Record<string, string> = {
+		// Sign In Errors
 		CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
+		'No user found with this email':
+			'No account found with this email address. Please check your email or create a new account.',
+		'Invalid password': 'Incorrect password. Please try again.',
+		'User not found':
+			'No account found with this email address. Please check your email or create a new account.',
+
+		// Sign Up Errors
 		'User with this email or username already exists':
 			'An account with this email or username already exists. Please try signing in instead.',
 		'Username and full name are required for registration': 'Please fill in all required fields.',
 		'Role not found. Please seed the database first.':
 			'System configuration error. Please contact support.',
-		'No user found with this email':
-			'No account found with this email address. Please check your email or create a new account.',
-		'Invalid password': 'Incorrect password. Please try again.',
 		'Password must be at least 8 characters long': 'Password must be at least 8 characters long.',
 		'Password must contain both letters and numbers':
 			'Password must contain both letters and numbers.',
+
+		// Network and System Errors
 		'Network error': 'Connection error. Please check your internet connection and try again.',
+		fetch: 'Connection error. Please check your internet connection and try again.',
+		'Failed to fetch': 'Connection error. Please check your internet connection and try again.',
+		NetworkError: 'Connection error. Please check your internet connection and try again.',
+
+		// Default fallback
 		default: 'An unexpected error occurred. Please try again.',
 	};
 
@@ -40,15 +52,19 @@ function getAuthErrorMessage(error: string): string {
 		return errorMessages[error];
 	}
 
-	// Check for partial matches
+	// Check for partial matches (case-insensitive)
 	for (const [key, message] of Object.entries(errorMessages)) {
-		if (error.toLowerCase().includes(key.toLowerCase())) {
+		if (key !== 'default' && error.toLowerCase().includes(key.toLowerCase())) {
 			return message;
 		}
 	}
 
-	// Return the original error if no match found
-	return error || errorMessages.default;
+	// Return the original error if no match found, but clean it up
+	const cleanError = error
+		.replace(/^Error: /, '')
+		.replace(/\[.*?\]/, '')
+		.trim();
+	return cleanError || errorMessages.default;
 }
 
 export function useSignIn() {
@@ -74,7 +90,10 @@ export function useSignIn() {
 				if (error instanceof TypeError && error.message.includes('fetch')) {
 					throw new Error('Network error');
 				}
-				throw error;
+
+				// Re-throw the error with a user-friendly message
+				const errorMessage = error instanceof Error ? error.message : String(error);
+				throw new Error(getAuthErrorMessage(errorMessage));
 			}
 		},
 		onSuccess: result => {
@@ -118,7 +137,10 @@ export function useSignUp() {
 				if (error instanceof TypeError && error.message.includes('fetch')) {
 					throw new Error('Network error');
 				}
-				throw error;
+
+				// Re-throw the error with a user-friendly message
+				const errorMessage = error instanceof Error ? error.message : String(error);
+				throw new Error(getAuthErrorMessage(errorMessage));
 			}
 		},
 		onSuccess: result => {

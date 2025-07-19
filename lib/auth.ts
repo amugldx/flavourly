@@ -149,7 +149,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					}
 				} catch (error) {
 					console.error('Auth error:', error);
-					throw error; // Re-throw to show proper error message
+					// Re-throw the error to ensure it's properly handled by NextAuth
+					throw error;
 				}
 			},
 		}),
@@ -170,6 +171,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			}
 			return session;
 		},
+		async signIn({ user, account, profile, email, credentials }) {
+			// This callback is called after successful authentication
+			return true;
+		},
 	},
 	pages: {
 		signIn: '/signin',
@@ -177,4 +182,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	session: {
 		strategy: 'jwt',
 	},
+	debug: process.env.NODE_ENV === 'development',
 });

@@ -92,7 +92,7 @@ const { data: recipes, isLoading } = useUserRecipes();
 // Fetch single recipe
 const { data: recipe } = useRecipe(recipeId);
 
-// Fetch all recipes (admin/nutritionist)
+// Fetch all recipes (nutritionist)
 const { data: allRecipes } = useAllRecipes();
 
 // Fetch verified recipes

@@ -113,7 +113,7 @@ export function useRecipe(recipeId: number) {
 	});
 }
 
-// Fetch all recipes (for admin/nutritionist)
+// Fetch all recipes (for nutritionist)
 export function useAllRecipes() {
 	return useQuery({
 		queryKey: queryKeys.recipes.all,

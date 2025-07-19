@@ -338,11 +338,12 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 			{/* Header */}
 			<div className='mb-8'>
 				<Button
-					variant='ghost'
+					variant='outline'
+					size='sm'
 					onClick={() => router.back()}
-					className='mb-4'>
+					className='mb-4 flex items-center'>
 					<ArrowLeft className='h-4 w-4 mr-2' />
-					Back
+					Go Back
 				</Button>
 
 				<div className='flex items-start justify-between'>

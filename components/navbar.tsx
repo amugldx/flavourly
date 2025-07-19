@@ -13,7 +13,7 @@ export function Navbar() {
 	const { data: user } = useUser();
 
 	const handleLogout = async () => {
-		await signOut({ callbackUrl: '/signin' });
+		await signOut({ callbackUrl: '/' });
 	};
 
 	const getUserInitials = (name: string) => {

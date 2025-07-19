@@ -20,13 +20,6 @@ Flavourly implements a comprehensive role-based routing system that directs user
 - **Description**: Users who verify and review recipes
 - **Permissions**: Review pending recipes, verify nutritional information
 
-### 3. Admin
-
-- **Role Name**: `Admin`
-- **Primary Dashboard**: `/dashboard` (same as Recipe Developer)
-- **Description**: Administrative users with full access
-- **Permissions**: All permissions (future implementation)
-
 ## Authentication Flow
 
 ### Sign In Process
@@ -37,7 +30,6 @@ Flavourly implements a comprehensive role-based routing system that directs user
 4. **Automatic redirect** based on role:
    - `Nutritionist` → `/nutritionist`
    - `RecipeDeveloper` → `/dashboard`
-   - `Admin` → `/dashboard`
 
 ### Sign Up Process
 
@@ -53,7 +45,7 @@ Flavourly implements a comprehensive role-based routing system that directs user
 
 #### Recipe Developer Routes (`/dashboard/*`)
 
-- **Access**: `RecipeDeveloper`, `Admin`
+- **Access**: `RecipeDeveloper`
 - **Layout**: `app/dashboard/layout.tsx`
 - **Features**: Recipe management, favorites, collections, meal planning
 
@@ -197,8 +189,8 @@ npx tsx scripts/test-dashboard.ts
 
 ### Planned Features
 
-1. **Admin Dashboard**: Dedicated admin interface for platform management
-2. **Role Management**: Allow admins to change user roles
+1. **Role Management**: Allow nutritionists to manage user roles (future)
+2. **Permission Granularity**: More detailed permission system
 3. **Permission Granularity**: More detailed permission system
 4. **Audit Logging**: Track user access and role changes
 

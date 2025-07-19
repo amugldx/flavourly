@@ -1,9 +1,10 @@
 'use client';
 
+import { DeleteAccountDialog } from '@/components/delete-account-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -266,7 +267,7 @@ export default function NutritionistSettingsPage() {
 					<Tabs
 						defaultValue='profile'
 						className='w-full'>
-						<TabsList className='grid w-full grid-cols-2'>
+						<TabsList className='grid w-full grid-cols-3'>
 							<TabsTrigger
 								value='profile'
 								className='flex items-center gap-2'>
@@ -278,6 +279,12 @@ export default function NutritionistSettingsPage() {
 								className='flex items-center gap-2'>
 								<Lock className='w-4 h-4' />
 								Account
+							</TabsTrigger>
+							<TabsTrigger
+								value='danger'
+								className='flex items-center gap-2'>
+								<Shield className='w-4 h-4' />
+								Danger Zone
 							</TabsTrigger>
 						</TabsList>
 
@@ -620,6 +627,41 @@ export default function NutritionistSettingsPage() {
 										<div className='flex items-center justify-between'>
 											<span className='text-muted-foreground'>Last Login</span>
 											<span>Recently</span>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						</TabsContent>
+
+						{/* Danger Zone Tab */}
+						<TabsContent
+							value='danger'
+							className='space-y-6'>
+							<Card className='border-destructive/50'>
+								<CardHeader>
+									<CardTitle className='flex items-center gap-2 text-destructive'>
+										<Shield className='w-5 h-5' />
+										Danger Zone
+									</CardTitle>
+									<CardDescription>Irreversible and destructive actions</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className='space-y-4'>
+										<div className='flex items-center justify-between p-4 border border-destructive/20 rounded-lg'>
+											<div>
+												<h4 className='font-medium text-destructive'>Delete Account</h4>
+												<p className='text-sm text-muted-foreground'>
+													Permanently delete your account and all associated data. This action
+													cannot be undone.
+												</p>
+											</div>
+											<DeleteAccountDialog userRole='Nutritionist'>
+												<Button
+													variant='destructive'
+													size='sm'>
+													Delete Account
+												</Button>
+											</DeleteAccountDialog>
 										</div>
 									</div>
 								</CardContent>

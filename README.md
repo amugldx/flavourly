@@ -1,17 +1,30 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 🚨 IMPORTANT: Package Manager Rule
+
+**This project uses PNPM exclusively. NEVER use npm, yarn, or bun commands.**
+
+```bash
+# ✅ CORRECT - Use pnpm
+pnpm dev
+pnpm install
+pnpm add package
+pnpm run build
+
+# ❌ WRONG - Don't use these
+npm run dev
+yarn dev
+bun dev
+```
+
+See [PNPM_RULE.md](./PNPM_RULE.md) for complete details.
+
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

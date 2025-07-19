@@ -9,10 +9,14 @@ import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSignIn } from '@/lib/hooks/use-auth';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function SignInPage() {
+	const { data: session, status } = useSession();
+	const router = useRouter();
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
@@ -22,30 +26,86 @@ export default function SignInPage() {
 
 	const signInMutation = useSignIn();
 
+	// Redirect logged-in users to their appropriate dashboard
+	useEffect(() => {
+		if (status === 'authenticated' && session?.user) {
+			const userRole = session.user.role;
+			if (userRole === 'Nutritionist') {
+				router.push('/nutritionist');
+			} else {
+				router.push('/dashboard');
+			}
+		}
+	}, [session, status, router]);
+
+	// Show loading state while checking authentication
+	if (status === 'loading') {
+		return (
+			<div className='min-h-screen flex items-center justify-center bg-background'>
+				<div className='text-center'>
+					<div className='w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+					<p className='text-muted-foreground'>Loading...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Don't render the form if user is already authenticated
+	if (status === 'authenticated') {
+		return null;
+	}
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData(prev => ({ ...prev, [name]: value }));
-		// Clear error when user starts typing
-		if (errors[name]) {
-			setErrors(prev => ({ ...prev, [name]: '' }));
-		}
+
 		// Clear mutation error when user starts typing
 		if (signInMutation.error) {
 			signInMutation.reset();
+		}
+
+		// Real-time validation for email
+		if (name === 'email') {
+			if (!value.trim()) {
+				setErrors(prev => ({ ...prev, email: 'Email is required' }));
+			} else if (!/\S+@\S+\.\S+/.test(value)) {
+				setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+			} else if (value.length > 254) {
+				setErrors(prev => ({ ...prev, email: 'Email address is too long' }));
+			} else {
+				setErrors(prev => ({ ...prev, email: '' }));
+			}
+		}
+
+		// Real-time validation for password
+		if (name === 'password') {
+			if (!value) {
+				setErrors(prev => ({ ...prev, password: 'Password is required' }));
+			} else if (value.length < 1) {
+				setErrors(prev => ({ ...prev, password: 'Password cannot be empty' }));
+			} else {
+				setErrors(prev => ({ ...prev, password: '' }));
+			}
 		}
 	};
 
 	const validateForm = () => {
 		const newErrors: Record<string, string> = {};
 
+		// Email validation
 		if (!formData.email.trim()) {
 			newErrors.email = 'Email is required';
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
 			newErrors.email = 'Please enter a valid email address';
+		} else if (formData.email.length > 254) {
+			newErrors.email = 'Email address is too long';
 		}
 
+		// Password validation
 		if (!formData.password) {
 			newErrors.password = 'Password is required';
+		} else if (formData.password.length < 1) {
+			newErrors.password = 'Password cannot be empty';
 		}
 
 		setErrors(newErrors);
@@ -69,31 +129,8 @@ export default function SignInPage() {
 	const getErrorMessage = () => {
 		if (!signInMutation.error) return null;
 
-		const errorMessage = signInMutation.error.message;
-
-		// Map specific error messages to user-friendly versions
-		const errorMap: Record<string, string> = {
-			'No user found with this email':
-				'No account found with this email address. Please check your email or create a new account.',
-			'Invalid password': 'Incorrect password. Please try again.',
-			CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
-			'Network error': 'Connection error. Please check your internet connection and try again.',
-		};
-
-		// Check for exact matches first
-		if (errorMap[errorMessage]) {
-			return errorMap[errorMessage];
-		}
-
-		// Check for partial matches
-		for (const [key, message] of Object.entries(errorMap)) {
-			if (errorMessage.toLowerCase().includes(key.toLowerCase())) {
-				return message;
-			}
-		}
-
-		// Return a generic message for unknown errors
-		return 'Sign in failed. Please check your credentials and try again.';
+		// The error message is already processed by the auth hook
+		return signInMutation.error.message;
 	};
 
 	return (
@@ -155,7 +192,7 @@ export default function SignInPage() {
 								</div>
 								<ErrorDisplay
 									error={getErrorMessage()}
-									title='Sign In Failed'
+									title={getErrorMessage() ? 'Sign In Failed' : undefined}
 									variant='destructive'
 									dismissible={true}
 									onDismiss={() => signInMutation.reset()}
@@ -211,7 +248,7 @@ export default function SignInPage() {
 								</div>
 								<ErrorDisplay
 									error={getErrorMessage()}
-									title='Sign In Failed'
+									title={getErrorMessage() ? 'Sign In Failed' : undefined}
 									variant='destructive'
 									dismissible={true}
 									onDismiss={() => signInMutation.reset()}

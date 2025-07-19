@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MealType } from '@/generated/prisma/client';
 import { useCreateMealPlan, useMealPlans } from '@/lib/hooks/use-meal-plans';
-import { addDays, format, parseISO } from 'date-fns';
+import { eachDayOfInterval, format, parseISO } from 'date-fns';
 import { ArrowLeft, Calendar, CalendarDays, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -135,14 +135,14 @@ function CreateMealPlanDialog({ onSuccess }: { onSuccess: () => void }) {
 }
 
 function MealPlanCard({ mealPlan }: { mealPlan: any }) {
-	const weekDays = [];
 	const startDate = parseISO(mealPlan.startDate);
 	const endDate = parseISO(mealPlan.endDate);
 
-	// Generate week days
-	for (let i = 0; i < 7; i++) {
-		weekDays.push(addDays(startDate, i));
-	}
+	// Generate days based on actual meal plan start and end dates
+	const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+
+	// Limit to maximum 6 days for the card view
+	const weekDays = allDays.slice(0, 6);
 
 	// Group entries by date and meal type
 	const entriesByDate = mealPlan.entries.reduce((acc: any, entry: any) => {
@@ -169,11 +169,18 @@ function MealPlanCard({ mealPlan }: { mealPlan: any }) {
 				</div>
 				<div className='text-sm text-muted-foreground'>
 					{format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
+					{allDays.length > 6 && (
+						<span className='ml-2 text-xs bg-muted px-2 py-1 rounded'>
+							+{allDays.length - 6} more days
+						</span>
+					)}
 				</div>
 			</CardHeader>
 			<CardContent className='pt-0 flex-1 flex flex-col'>
-				<div className='grid grid-cols-7 gap-2 text-xs flex-1'>
-					{weekDays.map((day, index) => (
+				<div
+					className={`grid gap-2 text-xs flex-1`}
+					style={{ gridTemplateColumns: `repeat(${weekDays.length}, 1fr)` }}>
+					{weekDays.map((day: Date, index: number) => (
 						<div
 							key={index}
 							className='text-center min-w-0'>
@@ -246,7 +253,9 @@ function MealPlanSkeleton() {
 				<div className='h-4 w-24 bg-muted rounded' />
 			</CardHeader>
 			<CardContent className='pt-0'>
-				<div className='grid grid-cols-7 gap-2'>
+				<div
+					className='grid gap-2'
+					style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
 					{Array.from({ length: 7 }).map((_, i) => (
 						<div
 							key={i}

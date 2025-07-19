@@ -178,6 +178,39 @@ export function useUpdateDietaryPreferences() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['user'] });
+			toast.success('Dietary preferences updated successfully');
+		},
+		onError: (error: Error) => {
+			toast.error(error.message);
+		},
+	});
+}
+
+// Delete account
+export function useDeleteAccount() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (): Promise<{ message: string; deletedFiles: number }> => {
+			const response = await fetch('/api/user/delete-account', {
+				method: 'DELETE',
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error || 'Failed to delete account');
+			}
+
+			return response.json();
+		},
+		onSuccess: data => {
+			// Invalidate all user-related queries instead of clearing
+			queryClient.invalidateQueries({ queryKey: ['user'] });
+			queryClient.invalidateQueries({ queryKey: ['recipes'] });
+			queryClient.invalidateQueries({ queryKey: ['collections'] });
+			queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
+			queryClient.invalidateQueries({ queryKey: ['shopping-lists'] });
+			toast.success(`Account deleted successfully. ${data.deletedFiles} files removed.`);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message);

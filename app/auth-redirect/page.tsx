@@ -25,7 +25,7 @@ export default function AuthRedirectPage() {
 		if (session.user?.role === 'Nutritionist') {
 			router.push('/nutritionist');
 		} else {
-			// RecipeDeveloper and Admin go to dashboard
+			// RecipeDeveloper goes to dashboard
 			router.push('/dashboard');
 		}
 	}, [session, status, router]);

@@ -1,5 +1,6 @@
 'use client';
 
+import { AddRecipeToCollectionDialog } from '@/components/add-recipe-to-collection-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -404,11 +405,13 @@ export default function CollectionDetailPage({ params }: CollectionDetailPagePro
 									Create Recipe
 								</Link>
 							</Button>
-							<Button
-								asChild
-								variant='outline'>
-								<Link href='/dashboard'>Browse Recipes</Link>
-							</Button>
+							<AddRecipeToCollectionDialog
+								collectionId={collection.id}
+								collectionName={collection.collectionName}
+								onSuccess={() => {
+									// The centralized query system will automatically refetch the data
+								}}
+							/>
 						</div>
 					</div>
 				)}

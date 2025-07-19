@@ -12,7 +12,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
 import { useUpdateDietaryPreferences, useUser } from '@/lib/hooks/use-user';
 import { ArrowLeft, Save, Utensils } from 'lucide-react';
 import Link from 'next/link';
@@ -84,7 +83,6 @@ const MEAL_SIZES = ['Small', 'Medium', 'Large'];
 export default function DietaryPreferencesPage() {
 	const { data: user, isLoading } = useUser();
 	const updateDietaryPreferences = useUpdateDietaryPreferences();
-	const { toast } = useToast();
 
 	const [preferences, setPreferences] = useState<DietaryPreferences>({
 		dietaryRestrictions: [],
@@ -148,17 +146,8 @@ export default function DietaryPreferencesPage() {
 				spiceTolerance: preferences.spiceTolerance,
 				mealSize: preferences.mealSize,
 			});
-
-			toast({
-				title: 'Success',
-				description: 'Dietary preferences updated successfully',
-			});
 		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'Failed to update dietary preferences. Please try again.',
-				variant: 'destructive',
-			});
+			// Error is handled by the mutation hook
 		}
 	};
 
