@@ -28,7 +28,7 @@ import {
 } from '@/lib/hooks/use-meal-plans';
 import { useMealPlan } from '@/lib/hooks/use-queries';
 import { useFavoritedRecipes, useUserRecipes } from '@/lib/hooks/use-recipes';
-import { eachDayOfInterval, format, parseISO } from 'date-fns';
+import { eachDayOfInterval, format } from 'date-fns';
 import { ArrowLeft, Calendar, Clock, Edit, Plus, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';
 import { use, useMemo, useState } from 'react';
@@ -296,8 +296,15 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ planI
 	const weekDays: Date[] = useMemo(() => {
 		if (!mealPlan) return [];
 
-		const startDate = parseISO(mealPlan.startDate);
-		const endDate = parseISO(mealPlan.endDate);
+		// Ensure consistent date handling by creating local dates
+		const startDateStr = mealPlan.startDate.split('T')[0]; // Get just the date part
+		const endDateStr = mealPlan.endDate.split('T')[0]; // Get just the date part
+
+		const [startYear, startMonth, startDay] = startDateStr.split('-').map(Number);
+		const [endYear, endMonth, endDay] = endDateStr.split('-').map(Number);
+
+		const startDate = new Date(startYear, startMonth - 1, startDay); // month is 0-indexed
+		const endDate = new Date(endYear, endMonth - 1, endDay); // month is 0-indexed
 
 		return eachDayOfInterval({ start: startDate, end: endDate });
 	}, [mealPlan]);
@@ -308,7 +315,8 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ planI
 	// Group entries by date and meal type
 	const entriesByDate =
 		entries?.reduce((acc: any, entry: any) => {
-			const date = format(parseISO(entry.mealDate), 'yyyy-MM-dd');
+			// Use the date part only to avoid timezone issues
+			const date = entry.mealDate.split('T')[0];
 			if (!acc[date]) {
 				acc[date] = {};
 			}

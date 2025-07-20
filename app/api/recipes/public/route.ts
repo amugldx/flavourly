@@ -165,7 +165,8 @@ export async function GET(request: NextRequest) {
 				break;
 			case 'recent':
 			default:
-				orderBy = { createdAt: 'desc' };
+				// For recent sorting, prioritize newly verified recipes first, then by creation date
+				orderBy = [{ verifiedAt: 'desc' }, { createdAt: 'desc' }];
 				break;
 		}
 

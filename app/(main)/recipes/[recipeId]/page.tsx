@@ -472,24 +472,26 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 			{/* Resubmit Button - Only show for recipes that need revision and user is the author */}
 			{canResubmit && (
-				<Button
-					onClick={handleResubmit}
-					disabled={resubmitRecipe.isPending}
-					variant='outline'
-					size='sm'
-					className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
-					{resubmitRecipe.isPending ? (
-						<>
-							<Loader2 className='h-4 w-4 mr-2 animate-spin' />
-							Resubmitting...
-						</>
-					) : (
-						<>
-							<RefreshCw className='h-4 w-4 mr-2' />
-							Resubmit for Review
-						</>
-					)}
-				</Button>
+				<div className='mb-6'>
+					<Button
+						onClick={handleResubmit}
+						disabled={resubmitRecipe.isPending}
+						variant='outline'
+						size='sm'
+						className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
+						{resubmitRecipe.isPending ? (
+							<>
+								<Loader2 className='h-4 w-4 mr-2 animate-spin' />
+								Resubmitting...
+							</>
+						) : (
+							<>
+								<RefreshCw className='h-4 w-4 mr-2' />
+								Resubmit for Review
+							</>
+						)}
+					</Button>
+				</div>
 			)}
 
 			{/* Main Content */}

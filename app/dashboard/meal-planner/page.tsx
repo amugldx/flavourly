@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MealType } from '@/generated/prisma/client';
 import { useCreateMealPlan, useMealPlans } from '@/lib/hooks/use-meal-plans';
-import { eachDayOfInterval, format, parseISO } from 'date-fns';
+import { eachDayOfInterval, format } from 'date-fns';
 import { ArrowLeft, Calendar, CalendarDays, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -135,8 +135,15 @@ function CreateMealPlanDialog({ onSuccess }: { onSuccess: () => void }) {
 }
 
 function MealPlanCard({ mealPlan }: { mealPlan: any }) {
-	const startDate = parseISO(mealPlan.startDate);
-	const endDate = parseISO(mealPlan.endDate);
+	// Ensure consistent date handling by creating local dates
+	const startDateStr = mealPlan.startDate.split('T')[0]; // Get just the date part
+	const endDateStr = mealPlan.endDate.split('T')[0]; // Get just the date part
+
+	const [startYear, startMonth, startDay] = startDateStr.split('-').map(Number);
+	const [endYear, endMonth, endDay] = endDateStr.split('-').map(Number);
+
+	const startDate = new Date(startYear, startMonth - 1, startDay); // month is 0-indexed
+	const endDate = new Date(endYear, endMonth - 1, endDay); // month is 0-indexed
 
 	// Generate days based on actual meal plan start and end dates
 	const allDays = eachDayOfInterval({ start: startDate, end: endDate });
@@ -146,7 +153,8 @@ function MealPlanCard({ mealPlan }: { mealPlan: any }) {
 
 	// Group entries by date and meal type
 	const entriesByDate = mealPlan.entries.reduce((acc: any, entry: any) => {
-		const date = format(parseISO(entry.mealDate), 'yyyy-MM-dd');
+		// Use the date part only to avoid timezone issues
+		const date = entry.mealDate.split('T')[0];
 		if (!acc[date]) {
 			acc[date] = {};
 		}

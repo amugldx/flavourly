@@ -185,11 +185,6 @@ export default function FavoritesPage() {
 					</p>
 					<div className='flex gap-4 justify-center'>
 						<Button onClick={() => router.push('/recipes')}>Browse Recipes</Button>
-						<Button
-							variant='outline'
-							onClick={() => router.push('/dashboard')}>
-							My Recipes
-						</Button>
 					</div>
 				</div>
 			)}

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePublicRecipes } from '@/lib/hooks/use-queries';
+import { useStats } from '@/lib/hooks/use-stats';
 import {
 	ArrowRight,
 	BookOpen,
@@ -32,6 +33,9 @@ export default function Home() {
 
 	// Fetch different types of recipes for the homepage
 	const { data: recentRecipes, isLoading: recentLoading } = usePublicRecipes('recent', 3);
+
+	// Fetch real-time stats
+	const { data: stats, isLoading: statsLoading } = useStats();
 
 	const handleTagClick = (tagName: string, tagType: string) => {
 		// Map tag type to filter parameter
@@ -146,18 +150,26 @@ export default function Home() {
 							</div>
 
 							{/* Quick Stats */}
-							<div className='grid grid-cols-3 gap-6 pt-8'>
+							<div className='grid grid-cols-2 gap-6 pt-8'>
 								<div className='text-center'>
-									<div className='text-2xl font-bold text-primary'>500+</div>
+									<div className='text-2xl font-bold text-primary'>
+										{statsLoading ? (
+											<Skeleton className='h-8 w-16 mx-auto' />
+										) : (
+											`${stats?.verifiedRecipes || 0}+`
+										)}
+									</div>
 									<div className='text-sm text-muted-foreground'>Verified Recipes</div>
 								</div>
 								<div className='text-center'>
-									<div className='text-2xl font-bold text-primary'>50+</div>
+									<div className='text-2xl font-bold text-primary'>
+										{statsLoading ? (
+											<Skeleton className='h-8 w-12 mx-auto' />
+										) : (
+											`${stats?.nutritionists || 0}+`
+										)}
+									</div>
 									<div className='text-sm text-muted-foreground'>Nutritionists</div>
-								</div>
-								<div className='text-center'>
-									<div className='text-2xl font-bold text-primary'>4.8★</div>
-									<div className='text-sm text-muted-foreground'>Rating</div>
 								</div>
 							</div>
 						</div>
@@ -411,9 +423,11 @@ export default function Home() {
 								game-changer!"
 							</p>
 							<div className='flex items-center gap-3'>
-								<div className='w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center'>
-									<span className='text-sm font-medium text-primary'>S</span>
-								</div>
+								<img
+									src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face'
+									alt='Sarah M.'
+									className='w-10 h-10 rounded-full object-cover'
+								/>
 								<div>
 									<p className='font-medium'>Sarah M.</p>
 									<p className='text-sm text-muted-foreground'>Home Cook</p>
@@ -435,9 +449,11 @@ export default function Home() {
 								trust for my clients. The verification process is thorough and reliable."
 							</p>
 							<div className='flex items-center gap-3'>
-								<div className='w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center'>
-									<span className='text-sm font-medium text-primary'>D</span>
-								</div>
+								<img
+									src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face'
+									alt='Dr. Lisa K.'
+									className='w-10 h-10 rounded-full object-cover'
+								/>
 								<div>
 									<p className='font-medium'>Dr. Lisa K.</p>
 									<p className='text-sm text-muted-foreground'>Certified Nutritionist</p>
@@ -459,9 +475,11 @@ export default function Home() {
 								automatically generates lists from my meal plans. Highly recommend!"
 							</p>
 							<div className='flex items-center gap-3'>
-								<div className='w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center'>
-									<span className='text-sm font-medium text-primary'>M</span>
-								</div>
+								<img
+									src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face'
+									alt='Mike R.'
+									className='w-10 h-10 rounded-full object-cover'
+								/>
 								<div>
 									<p className='font-medium'>Mike R.</p>
 									<p className='text-sm text-muted-foreground'>Busy Parent</p>

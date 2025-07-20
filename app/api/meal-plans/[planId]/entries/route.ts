@@ -77,11 +77,15 @@ export async function POST(
 			return NextResponse.json({ error: 'Meal plan not found' }, { status: 404 });
 		}
 
+		// Ensure the date is handled as a local date without timezone conversion
+		const [year, month, day] = mealDate.split('-').map(Number);
+		const localDate = new Date(year, month - 1, day); // month is 0-indexed
+
 		const entry = await prisma.mealPlanEntry.create({
 			data: {
 				planId: parseInt(planId),
 				recipeId: parseInt(recipeId),
-				mealDate: new Date(mealDate),
+				mealDate: localDate,
 				mealType,
 				servingsToPrepare: servingsToPrepare || 1,
 			},

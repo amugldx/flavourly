@@ -7,11 +7,6 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"setup": "tsx scripts/setup-env.ts",
-		"setup:cloudinary": "tsx scripts/setup-cloudinary.ts",
-		"disable:cloudinary": "tsx scripts/disable-cloudinary.ts",
-		"test:auth": "tsx scripts/test-auth-errors.ts",
-		"seed:roles": "tsx scripts/seed-roles.ts",
 		"db:seed": "tsx prisma/seed.ts"
 	},
 	"dependencies": {

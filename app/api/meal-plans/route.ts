@@ -60,11 +60,17 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
 		}
 
+		// Ensure dates are handled as local dates without timezone conversion
+		const [startYear, startMonth, startDay] = startDate.split('-').map(Number);
+		const [endYear, endMonth, endDay] = endDate.split('-').map(Number);
+		const localStartDate = new Date(startYear, startMonth - 1, startDay); // month is 0-indexed
+		const localEndDate = new Date(endYear, endMonth - 1, endDay); // month is 0-indexed
+
 		const mealPlan = await prisma.mealPlan.create({
 			data: {
 				planName,
-				startDate: new Date(startDate),
-				endDate: new Date(endDate),
+				startDate: localStartDate,
+				endDate: localEndDate,
 				userId: parseInt(session.user.id),
 			},
 			include: {

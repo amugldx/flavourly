@@ -31,9 +31,7 @@ export async function GET() {
 					},
 				},
 			},
-			orderBy: {
-				createdAt: 'desc',
-			},
+			orderBy: [{ verifiedAt: 'desc' }, { createdAt: 'desc' }],
 		});
 
 		return NextResponse.json(recipes);
