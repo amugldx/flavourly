@@ -1,5 +1,6 @@
 'use client';
 
+import { PhysicsCircles } from '@/components/physics-circles';
 import { RecipeCard } from '@/components/recipe-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -186,10 +187,9 @@ export default function Home() {
 										<p className='text-muted-foreground'>Join our community of food lovers</p>
 									</div>
 								</div>
-								{/* Decorative elements */}
-								<div className='absolute top-4 right-4 w-16 h-16 bg-green-500/20 rounded-full' />
-								<div className='absolute bottom-8 left-8 w-12 h-12 bg-orange-500/20 rounded-full' />
-								<div className='absolute top-1/2 left-4 w-8 h-8 bg-purple-500/20 rounded-full' />
+
+								{/* Animated floating circles */}
+								<PhysicsCircles />
 							</div>
 						</div>
 					</div>

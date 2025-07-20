@@ -128,3 +128,94 @@
 		-webkit-line-clamp: 2;
 	}
 }
+
+/* Floating animations for homepage decorative elements */
+@keyframes float-slow {
+	0%,
+	100% {
+		transform: translateY(0px) translateX(0px);
+	}
+	25% {
+		transform: translateY(-15px) translateX(8px);
+	}
+	50% {
+		transform: translateY(-8px) translateX(-5px);
+	}
+	75% {
+		transform: translateY(-20px) translateX(3px);
+	}
+}
+
+@keyframes float-medium {
+	0%,
+	100% {
+		transform: translateY(0px) translateX(0px);
+	}
+	33% {
+		transform: translateY(-12px) translateX(-6px);
+	}
+	66% {
+		transform: translateY(-18px) translateX(5px);
+	}
+}
+
+@keyframes float-fast {
+	0%,
+	100% {
+		transform: translateY(0px) translateX(0px);
+	}
+	50% {
+		transform: translateY(-10px) translateX(3px);
+	}
+}
+
+@keyframes float-medium-delayed {
+	0%,
+	100% {
+		transform: translateY(0px) translateX(0px);
+	}
+	25% {
+		transform: translateY(-11px) translateX(-3px);
+	}
+	50% {
+		transform: translateY(-15px) translateX(6px);
+	}
+	75% {
+		transform: translateY(-8px) translateX(-2px);
+	}
+}
+
+@keyframes float-slow-delayed {
+	0%,
+	100% {
+		transform: translateY(0px) translateX(0px);
+	}
+	30% {
+		transform: translateY(-13px) translateX(4px);
+	}
+	60% {
+		transform: translateY(-17px) translateX(-3px);
+	}
+}
+
+.animate-float-slow {
+	animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-medium {
+	animation: float-medium 6s ease-in-out infinite;
+}
+
+.animate-float-fast {
+	animation: float-fast 4s ease-in-out infinite;
+}
+
+.animate-float-medium-delayed {
+	animation: float-medium-delayed 7s ease-in-out infinite;
+	animation-delay: 1.5s;
+}
+
+.animate-float-slow-delayed {
+	animation: float-slow-delayed 9s ease-in-out infinite;
+	animation-delay: 2.5s;
+}
