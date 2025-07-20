@@ -2,16 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-	ArrowLeft,
-	BookOpen,
-	ChefHat,
-	Compass,
-	FileQuestion,
-	Home,
-	Search,
-	Utensils,
-} from 'lucide-react';
+import { BookOpen, ChefHat, Compass, FileQuestion, Home, Search, Utensils } from 'lucide-react';
 import Link from 'next/link';
 
 export default function NotFoundPage() {
@@ -79,19 +70,11 @@ export default function NotFoundPage() {
 						</p>
 					</CardHeader>
 					<CardContent className='text-center space-y-6'>
-						<div className='flex justify-center space-x-4'>
+						<div className='flex justify-center'>
 							<Link href='/'>
 								<Button className='flex items-center'>
 									<Home className='w-4 h-4 mr-2' />
 									Go Home
-								</Button>
-							</Link>
-							<Link href='javascript:history.back()'>
-								<Button
-									variant='outline'
-									className='flex items-center'>
-									<ArrowLeft className='w-4 h-4 mr-2' />
-									Go Back
 								</Button>
 							</Link>
 						</div>
