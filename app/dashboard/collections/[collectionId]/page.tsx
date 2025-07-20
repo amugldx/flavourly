@@ -26,7 +26,6 @@ import {
 	Edit,
 	Eye,
 	FolderOpen,
-	Plus,
 	Star,
 	Trash2,
 	Users,
@@ -364,12 +363,21 @@ export default function CollectionDetailPage({ params }: CollectionDetailPagePro
 							<span>Created {new Date(collection.createdAt).toLocaleDateString()}</span>
 						</div>
 					</div>
-					<Button asChild>
-						<Link href={`/dashboard/collections/${collection.id}/edit`}>
-							<Edit className='w-4 h-4 mr-2' />
-							Edit Collection
-						</Link>
-					</Button>
+					<div className='flex gap-2'>
+						<AddRecipeToCollectionDialog
+							collectionId={collection.id}
+							collectionName={collection.collectionName}
+							onSuccess={() => {
+								// The centralized query system will automatically refetch the data
+							}}
+						/>
+						<Button asChild>
+							<Link href={`/dashboard/collections/${collection.id}/edit`}>
+								<Edit className='w-4 h-4 mr-2' />
+								Edit Collection
+							</Link>
+						</Button>
+					</div>
 				</div>
 			</div>
 
@@ -392,21 +400,13 @@ export default function CollectionDetailPage({ params }: CollectionDetailPagePro
 						<p className='text-muted-foreground mb-6 max-w-md mx-auto'>
 							This collection is empty. Add some recipes to get started!
 						</p>
-						<div className='flex gap-2 justify-center'>
-							<Button asChild>
-								<Link href='/dashboard/recipes/new'>
-									<Plus className='w-4 h-4 mr-2' />
-									Create Recipe
-								</Link>
-							</Button>
-							<AddRecipeToCollectionDialog
-								collectionId={collection.id}
-								collectionName={collection.collectionName}
-								onSuccess={() => {
-									// The centralized query system will automatically refetch the data
-								}}
-							/>
-						</div>
+						<AddRecipeToCollectionDialog
+							collectionId={collection.id}
+							collectionName={collection.collectionName}
+							onSuccess={() => {
+								// The centralized query system will automatically refetch the data
+							}}
+						/>
 					</div>
 				)}
 			</div>

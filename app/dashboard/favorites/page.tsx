@@ -84,7 +84,7 @@ export default function FavoritesPage() {
 						return (
 							<Card
 								key={`favorite-${favorite.id}-${recipe.id}`}
-								className='group overflow-hidden hover:shadow-lg transition-shadow'>
+								className='group overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full'>
 								{/* Recipe Image */}
 								<div className='relative aspect-square overflow-hidden p-4'>
 									{mainImage ? (
@@ -101,15 +101,8 @@ export default function FavoritesPage() {
 										</div>
 									)}
 
-									{/* Action Buttons */}
+									{/* Remove Favorite Button Only */}
 									<div className='absolute top-7 right-7 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
-										<Button
-											size='sm'
-											variant='secondary'
-											className='h-8 w-8 p-0'
-											onClick={() => handleViewRecipe(recipe.id)}>
-											<Eye className='h-4 w-4' />
-										</Button>
 										<Button
 											size='sm'
 											variant='destructive'
@@ -122,50 +115,63 @@ export default function FavoritesPage() {
 								</div>
 
 								{/* Recipe Info */}
-								<CardHeader className='pb-3'>
-									<h3 className='font-semibold text-lg line-clamp-2 mb-2'>{recipe.title}</h3>
-									{recipe.description && (
-										<p className='text-sm text-muted-foreground line-clamp-2'>
-											{recipe.description}
-										</p>
-									)}
-									{/* Status Badge */}
-									{recipe.status === 'verified' && (
-										<Badge
-											variant='default'
-											className='text-xs mt-2'>
-											Verified
-										</Badge>
-									)}
-								</CardHeader>
-
-								<CardFooter className='pt-0'>
-									<div className='flex items-center justify-between w-full text-sm text-muted-foreground'>
-										{/* Cooking Time */}
-										{recipe.cookingTimeMinutes && (
-											<div className='flex items-center gap-1'>
-												<Clock className='h-4 w-4' />
-												<span>{recipe.cookingTimeMinutes}m</span>
-											</div>
+								<div className='flex flex-col flex-1 p-4'>
+									{/* Top Content */}
+									<div className='flex-1'>
+										<h3 className='font-semibold text-lg line-clamp-2 mb-2'>{recipe.title}</h3>
+										{recipe.description && (
+											<p className='text-sm text-muted-foreground line-clamp-2 mb-3'>
+												{recipe.description}
+											</p>
+										)}
+										{/* Status Badge */}
+										{recipe.status === 'verified' && (
+											<Badge
+												variant='default'
+												className='text-xs mb-3'>
+												Verified
+											</Badge>
 										)}
 
-										{/* Servings */}
-										{recipe.servings && (
-											<div className='flex items-center gap-1'>
-												<Users className='h-4 w-4' />
-												<span>{recipe.servings}</span>
-											</div>
-										)}
+										{/* Metadata */}
+										<div className='flex items-center justify-between w-full text-sm text-muted-foreground mb-3'>
+											{/* Cooking Time */}
+											{recipe.cookingTimeMinutes && (
+												<div className='flex items-center gap-1'>
+													<Clock className='h-4 w-4' />
+													<span>{recipe.cookingTimeMinutes}m</span>
+												</div>
+											)}
 
-										{/* Rating */}
-										{recipe.averageRating && (
-											<div className='flex items-center gap-1'>
-												<Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-												<span>{recipe.averageRating.toFixed(1)}</span>
-											</div>
-										)}
+											{/* Servings */}
+											{recipe.servings && (
+												<div className='flex items-center gap-1'>
+													<Users className='h-4 w-4' />
+													<span>{recipe.servings}</span>
+												</div>
+											)}
+
+											{/* Rating */}
+											{recipe.averageRating && (
+												<div className='flex items-center gap-1'>
+													<Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+													<span>{recipe.averageRating.toFixed(1)}</span>
+												</div>
+											)}
+										</div>
 									</div>
-								</CardFooter>
+
+									{/* Bottom Content - View Recipe Button (always at bottom) */}
+									<div className='mt-auto'>
+										<Button
+											onClick={() => handleViewRecipe(recipe.id)}
+											className='w-full'
+											variant='outline'>
+											<Eye className='h-4 w-4 mr-2' />
+											View Recipe
+										</Button>
+									</div>
+								</div>
 							</Card>
 						);
 					})}

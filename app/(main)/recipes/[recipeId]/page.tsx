@@ -1,5 +1,6 @@
 'use client';
 
+import { ReviewForm } from '@/components/review-form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,14 +27,17 @@ import {
 	useAddRecipeToCollection,
 	useAddToFavorites,
 	useCreateReview,
+	useDeleteReview,
 	useRemoveFromFavorites,
 	useResubmitRecipe,
+	useUpdateReview,
 } from '@/lib/hooks/use-mutations';
 import {
 	useRecipe,
 	useRecipeReviews,
 	useUserCollections,
 	useUserFavorites,
+	useUserReviews,
 } from '@/lib/hooks/use-queries';
 import {
 	AlertCircle,
@@ -51,6 +55,7 @@ import {
 	RefreshCw,
 	Share2,
 	Star,
+	Trash2,
 	User,
 	Users,
 } from 'lucide-react';
@@ -70,6 +75,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	const { data: recipe, isLoading: recipeLoading, error: recipeError } = useRecipe(recipeIdNum);
 	const { data: reviews, isLoading: reviewsLoading } = useRecipeReviews(recipeIdNum);
 	const { data: userFavorites } = useUserFavorites();
+	const { data: userReviews } = useUserReviews();
 	const { data: session } = useSession();
 	const router = useRouter();
 
@@ -92,9 +98,12 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	const addToFavorites = useAddToFavorites();
 	const removeFromFavorites = useRemoveFromFavorites();
 	const createReview = useCreateReview();
+	const updateReview = useUpdateReview();
+	const deleteReview = useDeleteReview();
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [activeTab, setActiveTab] = useState('overview');
+	const [editingReview, setEditingReview] = useState<any>(null);
 
 	// Check if recipe is in user's favorites
 	const isFavorited = userFavorites?.some(fav => fav.recipe.id === recipeIdNum) || false;
@@ -107,6 +116,28 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 	// Check if user is a nutritionist (should not see Quick Actions)
 	const isNutritionist = session?.user?.role === 'Nutritionist';
+
+	// Check if user has already reviewed this recipe
+	const userReview = userReviews?.find((review: any) => review.recipe.id === recipeIdNum);
+
+	// Handle review form success
+	const handleReviewSuccess = () => {
+		setEditingReview(null);
+	};
+
+	// Handle edit review
+	const handleEditReview = (review: any) => {
+		setEditingReview(review);
+	};
+
+	// Handle delete review
+	const handleDeleteReview = async (reviewId: number) => {
+		try {
+			await deleteReview.mutateAsync(reviewId);
+		} catch (error) {
+			// Error is handled by the mutation
+		}
+	};
 
 	// Handle resubmitting recipe for review
 	const handleResubmit = async () => {
@@ -591,10 +622,72 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 						<TabsContent
 							value='reviews'
 							className='space-y-6'>
-							{/* Review Summary */}
+							{/* Review Form - Show if user is editing or hasn't reviewed yet */}
+							{(!userReview || editingReview) && (
+								<ReviewForm
+									recipeId={recipeIdNum}
+									existingReview={editingReview}
+									onSuccess={handleReviewSuccess}
+									onCancel={() => {
+										setEditingReview(null);
+									}}
+								/>
+							)}
+
+							{/* User Review Management - Show if user has reviewed and not currently editing */}
+							{session && !isNutritionist && userReview && !editingReview && (
+								<Card>
+									<CardHeader>
+										<CardTitle className='flex items-center justify-between'>
+											Your Review
+											<div className='flex gap-2'>
+												<Button
+													variant='outline'
+													size='sm'
+													onClick={() => handleEditReview(userReview)}>
+													<Edit className='h-4 w-4 mr-2' />
+													Edit
+												</Button>
+												<Button
+													variant='outline'
+													size='sm'
+													onClick={() => handleDeleteReview(userReview.id)}
+													disabled={deleteReview.isPending}>
+													<Trash2 className='h-4 w-4 mr-2' />
+													Delete
+												</Button>
+											</div>
+										</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div className='flex items-center gap-2 mb-2'>
+											<div className='flex items-center gap-1'>
+												{Array.from({ length: 5 }).map((_, index) => (
+													<Star
+														key={index}
+														className={`h-4 w-4 ${
+															index < userReview.rating
+																? 'fill-yellow-400 text-yellow-400'
+																: 'text-muted-foreground'
+														}`}
+													/>
+												))}
+											</div>
+											<span className='text-sm text-muted-foreground'>
+												{new Date(userReview.createdAt).toLocaleDateString()}
+											</span>
+										</div>
+										{userReview.comment && (
+											<p className='text-muted-foreground'>{userReview.comment}</p>
+										)}
+									</CardContent>
+								</Card>
+							)}
+
+							{/* All Reviews */}
 							<Card>
 								<CardHeader>
-									<CardTitle>Reviews</CardTitle>
+									<CardTitle>All Reviews</CardTitle>
 								</CardHeader>
 								<CardContent>
 									{reviewsLoading ? (

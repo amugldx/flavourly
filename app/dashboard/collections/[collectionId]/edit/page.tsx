@@ -1,5 +1,6 @@
 'use client';
 
+import { AddRecipeToCollectionDialog } from '@/components/add-recipe-to-collection-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -150,9 +151,22 @@ export default function EditCollectionPage({ params }: EditCollectionPageProps) 
 						Back to Collection
 					</Link>
 				</Button>
-				<div>
-					<h1 className='text-3xl font-bold tracking-tight'>Edit Collection</h1>
-					<p className='text-muted-foreground'>Update your collection details and description.</p>
+				<div className='w-full'>
+					<div className='flex items-start justify-between'>
+						<div>
+							<h1 className='text-3xl font-bold tracking-tight'>Edit Collection</h1>
+							<p className='text-muted-foreground'>
+								Update your collection details and description.
+							</p>
+						</div>
+						<AddRecipeToCollectionDialog
+							collectionId={collectionIdNum}
+							collectionName={collection.collectionName}
+							onSuccess={() => {
+								// The centralized query system will automatically refetch the data
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 
