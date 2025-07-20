@@ -928,8 +928,8 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 						</CardContent>
 					</Card>
 
-					{/* Quick Actions */}
-					{!isNutritionist && (
+					{/* Quick Actions - Only for Recipe Developers */}
+					{session?.user?.role === 'RecipeDeveloper' && (
 						<Card>
 							<CardHeader>
 								<CardTitle>Quick Actions</CardTitle>
