@@ -11,11 +11,11 @@ interface Circle {
 
 export function PhysicsCircles() {
 	const circles: Circle[] = [
-		{ id: 1, size: 40, color: 'bg-green-500/20', animation: 'animate-float-slow' },
-		{ id: 2, size: 36, color: 'bg-orange-500/20', animation: 'animate-float-medium' },
-		{ id: 3, size: 32, color: 'bg-purple-500/20', animation: 'animate-float-fast' },
-		{ id: 4, size: 38, color: 'bg-blue-500/20', animation: 'animate-float-medium-delayed' },
-		{ id: 5, size: 34, color: 'bg-pink-500/20', animation: 'animate-float-slow-delayed' },
+		{ id: 1, size: 56, color: 'bg-green-500/20', animation: 'animate-float-slow' },
+		{ id: 2, size: 52, color: 'bg-orange-500/20', animation: 'animate-float-medium' },
+		{ id: 3, size: 48, color: 'bg-purple-500/20', animation: 'animate-float-fast' },
+		{ id: 4, size: 54, color: 'bg-blue-500/20', animation: 'animate-float-medium-delayed' },
+		{ id: 5, size: 50, color: 'bg-pink-500/20', animation: 'animate-float-slow-delayed' },
 	];
 
 	return (
@@ -53,14 +53,14 @@ export function PhysicsCircles() {
 				}}
 			/>
 
-			{/* Circle 4 - Top Center */}
+			{/* Circle 4 - Top Left */}
 			<motion.div
 				className={`absolute ${circles[3].color} rounded-full ${circles[3].animation}`}
 				style={{
 					width: circles[3].size,
 					height: circles[3].size,
-					top: '25%',
-					left: '50%',
+					top: '20%',
+					left: '20%',
 				}}
 			/>
 
