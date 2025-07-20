@@ -58,7 +58,7 @@ Flavourly implements a comprehensive role-based routing system that directs user
 #### Public Routes
 
 - **Access**: All users (authenticated and unauthenticated)
-- **Examples**: `/`, `/recipes`, `/about`, `/contact`
+- **Examples**: `/`, `/recipes`, `/about`
 
 ### Unauthorized Access Handling
 

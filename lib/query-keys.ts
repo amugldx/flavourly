@@ -18,6 +18,7 @@ export const queryKeys = {
 		byAuthor: (authorId: number) => ['recipes', 'author', authorId] as const,
 		verified: ['recipes', 'verified'] as const,
 		pending: ['recipes', 'pending'] as const,
+		public: (type: string, limit: number) => ['recipes', 'public', type, limit] as const,
 	},
 
 	// Ingredient-related queries

@@ -525,7 +525,7 @@ export function useAddToFavorites() {
 
 	return useMutation({
 		mutationFn: async (recipeId: number): Promise<void> => {
-			const response = await fetch(`/api/recipes/${recipeId}/favorite`, {
+			const response = await fetch(`/api/favorites/${recipeId}`, {
 				method: 'POST',
 			});
 
@@ -536,7 +536,10 @@ export function useAddToFavorites() {
 		},
 		onSuccess: async (_, recipeId) => {
 			toast.success('Added to favorites!');
-			await refetchHelpers.refetchRecipe(queryClient, recipeId);
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: queryKeys.favorites.user }),
+				refetchHelpers.refetchRecipe(queryClient, recipeId),
+			]);
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || 'Failed to add to favorites');

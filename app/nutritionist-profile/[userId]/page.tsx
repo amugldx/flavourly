@@ -233,7 +233,7 @@ export default function NutritionistProfilePage({ params }: NutritionistProfileP
 							<div className='flex justify-center'>
 								<Avatar className='h-24 w-24'>
 									<AvatarImage src={nutritionist.profilePicture || undefined} />
-									<AvatarFallback className='text-2xl'>
+									<AvatarFallback className='text-2xl bg-primary text-primary-foreground'>
 										{nutritionist.fullName
 											? nutritionist.fullName
 													.split(' ')

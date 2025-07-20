@@ -7,10 +7,15 @@ import { useUser } from '@/lib/hooks/use-user';
 import { ChefHat, LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Navbar() {
 	const { data: session, status } = useSession();
 	const { data: user } = useUser();
+	const pathname = usePathname();
+
+	// Check if user is on a public page (not dashboard or nutritionist)
+	const isPublicPage = !pathname.startsWith('/dashboard') && !pathname.startsWith('/nutritionist');
 
 	const handleLogout = async () => {
 		await signOut({ callbackUrl: '/' });
@@ -47,9 +52,21 @@ export function Navbar() {
 					</Link>
 				</div>
 
-				{/* Center - Page Title (if needed) */}
+				{/* Center - Navigation Links */}
 				<div className='flex-1 flex justify-center'>
-					{/* This can be used for page titles if needed */}
+					<nav className='hidden md:flex items-center gap-6'>
+						{/* Show Recipes and About for all users */}
+						<Link
+							href='/recipes'
+							className='text-sm font-medium text-muted-foreground hover:text-foreground transition-colors'>
+							Recipes
+						</Link>
+						<Link
+							href='/about'
+							className='text-sm font-medium text-muted-foreground hover:text-foreground transition-colors'>
+							About
+						</Link>
+					</nav>
 				</div>
 
 				{/* Right side - User info and actions */}
@@ -57,6 +74,19 @@ export function Navbar() {
 					{/* Show user info and actions if authenticated */}
 					{status === 'authenticated' && session ? (
 						<>
+							{/* Dashboard Button - Only show on public pages */}
+							{isPublicPage && (
+								<Button
+									asChild
+									variant='outline'
+									size='sm'>
+									<Link
+										href={session?.user?.role === 'Nutritionist' ? '/nutritionist' : '/dashboard'}>
+										Dashboard
+									</Link>
+								</Button>
+							)}
+
 							{/* User Profile */}
 							<div className='flex items-center gap-3'>
 								<Avatar className='h-10 w-10'>
@@ -92,25 +122,27 @@ export function Navbar() {
 							</Button>
 						</>
 					) : (
-						/* Show auth buttons if not authenticated */
+						/* Show auth buttons only on public pages if not authenticated */
 						<>
-							{/* Theme Toggle */}
+							{/* Theme Toggle - Always show */}
 							<ThemeToggle />
 
-							{/* Auth Buttons */}
-							<div className='flex items-center gap-2'>
-								<Button
-									asChild
-									variant='outline'
-									size='sm'>
-									<Link href='/signin'>Sign In</Link>
-								</Button>
-								<Button
-									asChild
-									size='sm'>
-									<Link href='/signup'>Sign Up</Link>
-								</Button>
-							</div>
+							{/* Auth Buttons - Only show on public pages */}
+							{isPublicPage && (
+								<div className='flex items-center gap-2'>
+									<Button
+										asChild
+										variant='outline'
+										size='sm'>
+										<Link href='/signin'>Sign In</Link>
+									</Button>
+									<Button
+										asChild
+										size='sm'>
+										<Link href='/signup'>Sign Up</Link>
+									</Button>
+								</div>
+							)}
 						</>
 					)}
 				</div>

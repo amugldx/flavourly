@@ -6,7 +6,7 @@ import { Card, CardFooter, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRemoveFromFavorites } from '@/lib/hooks/use-mutations';
 import { useUserFavorites, type FavoriteRecipe } from '@/lib/hooks/use-queries';
-import { Clock, Eye, Heart, Star, Trash2, Users } from 'lucide-react';
+import { ChefHat, Clock, Eye, Heart, Star, Trash2, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function FavoritesPage() {
@@ -83,43 +83,26 @@ export default function FavoritesPage() {
 
 						return (
 							<Card
-								key={favorite.id}
+								key={`favorite-${favorite.id}-${recipe.id}`}
 								className='group overflow-hidden hover:shadow-lg transition-shadow'>
 								{/* Recipe Image */}
-								<div className='relative aspect-square overflow-hidden'>
+								<div className='relative aspect-square overflow-hidden p-4'>
 									{mainImage ? (
-										<img
-											src={mainImage.url}
-											alt={recipe.title}
-											className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
-										/>
+										<div className='w-full h-full relative'>
+											<img
+												src={mainImage.url}
+												alt={recipe.title}
+												className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg'
+											/>
+										</div>
 									) : (
-										<div className='w-full h-full bg-muted flex items-center justify-center'>
-											<span className='text-muted-foreground text-sm'>No image</span>
+										<div className='w-full h-full bg-muted flex items-center justify-center rounded-lg'>
+											<ChefHat className='h-12 w-12 text-muted-foreground' />
 										</div>
 									)}
 
-									{/* Status Badge */}
-									<div className='absolute top-3 left-3'>
-										<Badge
-											variant={
-												recipe.status === 'verified'
-													? 'default'
-													: recipe.status === 'pending_verification'
-													? 'secondary'
-													: 'destructive'
-											}
-											className='text-xs'>
-											{recipe.status === 'verified'
-												? 'Verified'
-												: recipe.status === 'pending_verification'
-												? 'Pending'
-												: 'Needs Revision'}
-										</Badge>
-									</div>
-
 									{/* Action Buttons */}
-									<div className='absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
+									<div className='absolute top-7 right-7 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
 										<Button
 											size='sm'
 											variant='secondary'
@@ -145,6 +128,14 @@ export default function FavoritesPage() {
 										<p className='text-sm text-muted-foreground line-clamp-2'>
 											{recipe.description}
 										</p>
+									)}
+									{/* Status Badge */}
+									{recipe.status === 'verified' && (
+										<Badge
+											variant='default'
+											className='text-xs mt-2'>
+											Verified
+										</Badge>
 									)}
 								</CardHeader>
 

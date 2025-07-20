@@ -20,6 +20,7 @@ import {
 	AlertCircle,
 	BookOpen,
 	CheckCircle,
+	ChefHat,
 	Clock,
 	Edit,
 	Eye,
@@ -230,7 +231,7 @@ function RecipeCard({
 					</div>
 				) : (
 					<div className='mb-4 aspect-video rounded-lg bg-muted flex items-center justify-center'>
-						<span className='text-muted-foreground text-sm'>No image</span>
+						<ChefHat className='h-12 w-12 text-muted-foreground' />
 					</div>
 				)}
 
@@ -264,13 +265,6 @@ function RecipeCard({
 						<span className='font-medium'>
 							{Number(recipe.nutritionalInfo.calories).toFixed(0)} calories
 						</span>
-						<Badge
-							variant='outline'
-							className='ml-2 text-xs'>
-							{recipe.nutritionalInfo.dataSource === 'verified_nutritionist'
-								? 'Verified'
-								: 'Estimated'}
-						</Badge>
 					</div>
 				)}
 

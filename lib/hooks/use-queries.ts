@@ -64,10 +64,13 @@ export interface Recipe {
 			abbreviation: string | null;
 		};
 	}>;
-	tags: Array<{
-		id: number;
-		name: string;
-		type: string;
+	tags?: Array<{
+		tag: {
+			tagName: string;
+			tagType: {
+				typeName: string;
+			};
+		};
 	}>;
 	reviews: Array<{
 		id: number;
@@ -150,6 +153,72 @@ export function useVerifiedRecipes() {
 			const response = await fetch('/api/recipes?status=verified');
 			if (!response.ok) {
 				throw new Error('Failed to fetch verified recipes');
+			}
+			return response.json();
+		},
+	});
+}
+
+// Fetch public recipes for homepage
+export function usePublicRecipes(type: 'verified' | 'popular' | 'recent', limit: number = 6) {
+	return useQuery({
+		queryKey: queryKeys.recipes.public(type, limit),
+		queryFn: async (): Promise<Recipe[]> => {
+			// Map the old type parameter to the new sort parameter
+			let sortBy = 'recent';
+			if (type === 'popular') sortBy = 'popular';
+			if (type === 'verified') sortBy = 'recent'; // Verified recipes are sorted by recent by default
+
+			const response = await fetch(`/api/recipes/public?sort=${sortBy}&limit=${limit}`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch public recipes');
+			}
+			const data = await response.json();
+			// Return the recipes array from the new API response structure
+			return data.recipes || [];
+		},
+	});
+}
+
+// Fetch filtered public recipes
+export function useFilteredPublicRecipes(filters: {
+	search?: string;
+	sort?: string;
+	mealType?: string[];
+	dietary?: string[];
+	allergies?: string[];
+	cuisine?: string[];
+	time?: string;
+	difficulty?: string;
+	rating?: string;
+	cookingMethod?: string[];
+	health?: string[];
+	page?: number;
+	limit?: number;
+}) {
+	return useQuery({
+		queryKey: ['recipes', 'public', 'filtered', filters],
+		queryFn: async (): Promise<{ recipes: Recipe[]; totalCount: number }> => {
+			const params = new URLSearchParams();
+
+			if (filters.search) params.set('search', filters.search);
+			if (filters.sort) params.set('sort', filters.sort);
+			if (filters.mealType?.length) params.set('mealType', filters.mealType.join(','));
+			if (filters.dietary?.length) params.set('dietary', filters.dietary.join(','));
+			if (filters.allergies?.length) params.set('allergies', filters.allergies.join(','));
+			if (filters.cuisine?.length) params.set('cuisine', filters.cuisine.join(','));
+			if (filters.time) params.set('time', filters.time);
+			if (filters.difficulty) params.set('difficulty', filters.difficulty);
+			if (filters.rating) params.set('rating', filters.rating);
+			if (filters.cookingMethod?.length)
+				params.set('cookingMethod', filters.cookingMethod.join(','));
+			if (filters.health?.length) params.set('health', filters.health.join(','));
+			if (filters.page) params.set('page', filters.page.toString());
+			if (filters.limit) params.set('limit', filters.limit.toString());
+
+			const response = await fetch(`/api/recipes/public?${params.toString()}`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch filtered recipes');
 			}
 			return response.json();
 		},

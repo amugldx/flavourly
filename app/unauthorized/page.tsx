@@ -165,27 +165,18 @@ export default async function UnauthorizedPage() {
 					<CardContent className='space-y-3'>
 						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
 							<div className='p-3 bg-muted rounded-lg'>
-								<h4 className='font-medium text-sm'>Contact Support</h4>
+								<h4 className='font-medium text-sm'>Role Information</h4>
 								<p className='text-xs text-muted-foreground mt-1'>
-									If you believe you should have access to this page, please contact our support
-									team.
+									Different user roles have access to different features. Check your role
+									permissions.
 								</p>
 							</div>
 							<div className='p-3 bg-muted rounded-lg'>
-								<h4 className='font-medium text-sm'>Role Upgrade</h4>
+								<h4 className='font-medium text-sm'>Available Features</h4>
 								<p className='text-xs text-muted-foreground mt-1'>
-									Some features require specific roles. Check if you need to upgrade your account.
+									Use the navigation above to access features available for your current role.
 								</p>
 							</div>
-						</div>
-						<div className='flex justify-center pt-2'>
-							<Link href='/contact'>
-								<Button
-									size='sm'
-									className='flex items-center'>
-									Contact Support
-								</Button>
-							</Link>
 						</div>
 					</CardContent>
 				</Card>

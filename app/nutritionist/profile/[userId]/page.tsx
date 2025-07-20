@@ -176,14 +176,17 @@ export default function NutritionistProfilePage({ params }: NutritionistProfileP
 					<div className='flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6'>
 						<Avatar className='w-24 h-24'>
 							<AvatarImage
-								src={
-									nutritionist.profilePicture ||
-									`https://api.dicebear.com/7.x/avataaars/svg?seed=${nutritionist.username}`
-								}
+								src={nutritionist.profilePicture || undefined}
 								alt={nutritionist.fullName || nutritionist.username}
 							/>
-							<AvatarFallback className='text-lg'>
-								{nutritionist.fullName?.charAt(0) || nutritionist.username.charAt(0)}
+							<AvatarFallback className='text-lg bg-primary text-primary-foreground'>
+								{nutritionist.fullName
+									? nutritionist.fullName
+											.split(' ')
+											.map(n => n[0])
+											.join('')
+											.toUpperCase()
+									: nutritionist.username.charAt(0).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>
 

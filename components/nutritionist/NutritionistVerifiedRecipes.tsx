@@ -176,7 +176,7 @@ export default function NutritionistVerifiedRecipes() {
 
 			{/* Stats Cards */}
 			{verifiedData?.stats && (
-				<div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
 					<Card>
 						<CardContent className='p-4'>
 							<div className='flex items-center justify-between'>
@@ -196,19 +196,6 @@ export default function NutritionistVerifiedRecipes() {
 									<p className='text-2xl font-bold'>{verifiedData.stats.thisMonth}</p>
 								</div>
 								<TrendingUp className='h-8 w-8 text-blue-500' />
-							</div>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardContent className='p-4'>
-							<div className='flex items-center justify-between'>
-								<div>
-									<p className='text-sm text-muted-foreground'>Avg Recipe Rating</p>
-									<p className='text-2xl font-bold'>
-										{verifiedData.stats.averageRating?.toFixed(1) || 'N/A'}
-									</p>
-								</div>
-								<Star className='h-8 w-8 text-yellow-500' />
 							</div>
 						</CardContent>
 					</Card>
@@ -325,8 +312,8 @@ export default function NutritionistVerifiedRecipes() {
 							{filteredRecipes.map(recipe => (
 								<Card
 									key={recipe.id}
-									className='hover:shadow-lg transition-shadow'>
-									<CardContent className='p-4'>
+									className='hover:shadow-lg transition-shadow flex flex-col h-full'>
+									<CardContent className='p-4 flex flex-col flex-1'>
 										<div className='flex items-start justify-between mb-3'>
 											<h3 className='font-semibold text-lg line-clamp-2'>{recipe.title}</h3>
 											<div className='flex items-center space-x-1'>
@@ -397,8 +384,10 @@ export default function NutritionistVerifiedRecipes() {
 
 										<div className='flex items-center justify-between text-sm text-muted-foreground mb-4'>
 											<span>{recipe._count.reviews} reviews</span>
-											<span>{recipe._count.favoritedBy} favorites</span>
 										</div>
+
+										{/* Spacer to push buttons to bottom */}
+										<div className='flex-1' />
 
 										<div className='flex gap-2'>
 											<Button

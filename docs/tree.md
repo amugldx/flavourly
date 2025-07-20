@@ -40,10 +40,6 @@ These are the main entry points for new and returning users.
   - **Page:** **About Us**
   - **Description:** A static page explaining the mission of the application, the importance of verified nutritional information, and introducing the roles.
 
-- `/contact`
-  - **Page:** **Contact Page**
-  - **Description:** A form for users to send inquiries or feedback.
-
 #### 3. Protected Routes: Recipe Developer Dashboard
 
 These pages are accessible only to authenticated users with the "Recipe Developer" role. They are typically nested under a dashboard layout.

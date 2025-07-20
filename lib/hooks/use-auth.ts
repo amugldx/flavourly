@@ -26,6 +26,9 @@ function getAuthErrorMessage(error: string): string {
 		'Invalid password': 'Incorrect password. Please try again.',
 		'User not found':
 			'No account found with this email address. Please check your email or create a new account.',
+		'Invalid credentials':
+			'Invalid email or password. Please check your credentials and try again.',
+		'Email and password are required': 'Please enter both email and password.',
 
 		// Sign Up Errors
 		'User with this email or username already exists':
@@ -36,12 +39,31 @@ function getAuthErrorMessage(error: string): string {
 		'Password must be at least 8 characters long': 'Password must be at least 8 characters long.',
 		'Password must contain both letters and numbers':
 			'Password must contain both letters and numbers.',
+		'Email already exists':
+			'An account with this email already exists. Please try signing in instead.',
+		'Username already exists': 'This username is already taken. Please choose a different one.',
 
 		// Network and System Errors
 		'Network error': 'Connection error. Please check your internet connection and try again.',
 		fetch: 'Connection error. Please check your internet connection and try again.',
 		'Failed to fetch': 'Connection error. Please check your internet connection and try again.',
 		NetworkError: 'Connection error. Please check your internet connection and try again.',
+		ECONNREFUSED: 'Unable to connect to the server. Please try again later.',
+		ENOTFOUND: 'Unable to connect to the server. Please check your internet connection.',
+
+		// Database Errors
+		'Database connection error': 'Unable to connect to the database. Please try again later.',
+		'Database error': 'Database error. Please try again later.',
+		P2002: 'An account with this email or username already exists.',
+		P2025: 'User not found.',
+		P2014: 'Database constraint violation. Please try again.',
+
+		// Validation Errors
+		'Invalid email format': 'Please enter a valid email address.',
+		'Email is required': 'Email address is required.',
+		'Password is required': 'Password is required.',
+		'Username is required': 'Username is required.',
+		'Full name is required': 'Full name is required.',
 
 		// Default fallback
 		default: 'An unexpected error occurred. Please try again.',
@@ -50,6 +72,11 @@ function getAuthErrorMessage(error: string): string {
 	// Check for exact matches first
 	if (errorMessages[error]) {
 		return errorMessages[error];
+	}
+
+	// Special handling for CredentialsSignin - provide a more helpful message
+	if (error === 'CredentialsSignin') {
+		return 'Invalid email or password. Please check your credentials and try again.';
 	}
 
 	// Check for partial matches (case-insensitive)

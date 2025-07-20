@@ -1,7 +1,6 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -167,7 +166,19 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 	const handleFavoriteToggle = async () => {
 		if (!session) {
-			toast.error('Please sign in to add favorites');
+			toast.error('Please sign in to add recipes to favorites');
+			// Add a small delay to allow toast to show before redirect
+			setTimeout(() => {
+				router.push('/signin');
+			}, 1500);
+			return;
+		}
+
+		// Check if user is a nutritionist
+		if (session.user.role === 'Nutritionist') {
+			toast.error(
+				'Only Recipe Developers can favorite recipes. This feature is not available for Nutritionists.',
+			);
 			return;
 		}
 
@@ -182,16 +193,38 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 		}
 	};
 
-	const handleShare = () => {
+	const handleShare = async () => {
 		if (navigator.share) {
-			navigator.share({
-				title: recipe?.title || 'Recipe',
-				text: recipe?.description || '',
-				url: window.location.href,
-			});
+			try {
+				await navigator.share({
+					title: recipe?.title || 'Recipe',
+					text: recipe?.description || '',
+					url: window.location.href,
+				});
+				// Share was successful
+				toast.success('Recipe shared successfully!');
+			} catch (error) {
+				// User cancelled the share or there was an error
+				if (error instanceof Error && error.name === 'AbortError') {
+					// User cancelled - don't show error, just silently handle
+					return;
+				}
+				// Other error - fall back to clipboard
+				console.error('Share failed:', error);
+				await handleClipboardShare();
+			}
 		} else {
-			navigator.clipboard.writeText(window.location.href);
+			await handleClipboardShare();
+		}
+	};
+
+	const handleClipboardShare = async () => {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
 			toast.success('Link copied to clipboard!');
+		} catch (error) {
+			console.error('Failed to copy to clipboard:', error);
+			toast.error('Failed to copy link to clipboard');
 		}
 	};
 
@@ -387,16 +420,14 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 							<Share2 className='h-4 w-4 mr-2' />
 							Share
 						</Button>
-						{!isNutritionist && (
-							<Button
-								variant={isFavorited ? 'default' : 'outline'}
-								size='sm'
-								onClick={handleFavoriteToggle}
-								disabled={addToFavorites.isPending || removeFromFavorites.isPending}>
-								<Heart className={`h-4 w-4 mr-2 ${isFavorited ? 'fill-current' : ''}`} />
-								{isFavorited ? 'Favorited' : 'Favorite'}
-							</Button>
-						)}
+						<Button
+							variant={isFavorited ? 'default' : 'outline'}
+							size='sm'
+							onClick={handleFavoriteToggle}
+							disabled={addToFavorites.isPending || removeFromFavorites.isPending}>
+							<Heart className={`h-4 w-4 mr-2 ${isFavorited ? 'fill-current' : ''}`} />
+							{isFavorited ? 'Favorited' : 'Favorite'}
+						</Button>
 					</div>
 				</div>
 			</div>
@@ -408,46 +439,27 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 				</div>
 			)}
 
-			{/* Status Badge */}
-			<div className='mb-6 flex items-center gap-4'>
-				<Badge
-					variant={
-						recipe.status === 'verified'
-							? 'default'
-							: recipe.status === 'pending_verification'
-							? 'secondary'
-							: 'destructive'
-					}
-					className='text-sm'>
-					{recipe.status === 'verified'
-						? '✅ Nutritionist Verified'
-						: recipe.status === 'pending_verification'
-						? '⏳ Pending Verification'
-						: '⚠️ Needs Revision'}
-				</Badge>
-
-				{/* Resubmit Button - Only show for recipes that need revision and user is the author */}
-				{canResubmit && (
-					<Button
-						onClick={handleResubmit}
-						disabled={resubmitRecipe.isPending}
-						variant='outline'
-						size='sm'
-						className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
-						{resubmitRecipe.isPending ? (
-							<>
-								<Loader2 className='h-4 w-4 mr-2 animate-spin' />
-								Resubmitting...
-							</>
-						) : (
-							<>
-								<RefreshCw className='h-4 w-4 mr-2' />
-								Resubmit for Review
-							</>
-						)}
-					</Button>
-				)}
-			</div>
+			{/* Resubmit Button - Only show for recipes that need revision and user is the author */}
+			{canResubmit && (
+				<Button
+					onClick={handleResubmit}
+					disabled={resubmitRecipe.isPending}
+					variant='outline'
+					size='sm'
+					className='bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'>
+					{resubmitRecipe.isPending ? (
+						<>
+							<Loader2 className='h-4 w-4 mr-2 animate-spin' />
+							Resubmitting...
+						</>
+					) : (
+						<>
+							<RefreshCw className='h-4 w-4 mr-2' />
+							Resubmit for Review
+						</>
+					)}
+				</Button>
+			)}
 
 			{/* Main Content */}
 			<div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
@@ -492,13 +504,6 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 								<Card>
 									<CardHeader>
 										<CardTitle>Nutritional Information</CardTitle>
-										<Badge
-											variant='outline'
-											className='w-fit'>
-											{recipe.nutritionalInfo.dataSource === 'verified_nutritionist'
-												? 'Verified by Nutritionist'
-												: 'Estimated'}
-										</Badge>
 									</CardHeader>
 									<CardContent>
 										<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>

@@ -40,7 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password) {
-					return null;
+					throw new Error('Email and password are required');
 				}
 
 				const email = credentials.email as string;
@@ -149,8 +149,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					}
 				} catch (error) {
 					console.error('Auth error:', error);
-					// Re-throw the error to ensure it's properly handled by NextAuth
-					throw error;
+
+					// Provide more specific error messages for common database issues
+					if (error instanceof Error) {
+						const errorMessage = error.message;
+
+						// Check for database connection issues
+						if (errorMessage.includes('connect') || errorMessage.includes('connection')) {
+							throw new Error('Database connection error');
+						}
+
+						// Check for Prisma-specific errors
+						if (errorMessage.includes('P2002')) {
+							throw new Error('User with this email or username already exists');
+						}
+
+						if (errorMessage.includes('P2025')) {
+							throw new Error('User not found');
+						}
+
+						// Re-throw the original error if it's already user-friendly
+						throw error;
+					}
+
+					// For unknown errors, provide a generic message
+					throw new Error('An unexpected error occurred during authentication');
 				}
 			},
 		}),

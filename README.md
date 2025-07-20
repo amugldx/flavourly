@@ -1,49 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flavourly
 
-## 🚨 IMPORTANT: Package Manager Rule
+A recipe sharing platform with nutritionist verification.
 
-**This project uses PNPM exclusively. NEVER use npm, yarn, or bun commands.**
+## 🚀 Quick Start
+
+1. **Clone and install dependencies:**
+
+   ```bash
+   git clone <repository-url>
+   cd flavourly
+   pnpm install
+   ```
+
+2. **Set up environment variables:**
+
+   ```bash
+   pnpm run setup
+   ```
+
+   This will create a `.env.local` file with all required environment variables.
+
+3. **Set up the database:**
+
+   ```bash
+   pnpm run db:seed
+   ```
+
+4. **Start the development server:**
+
+   ```bash
+   pnpm run dev
+   ```
+
+5. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## ☁️ Cloudinary Setup (Optional)
+
+For media uploads (profile pictures, recipe images), you'll need to configure Cloudinary:
+
+### Option 1: Quick Setup
 
 ```bash
-# ✅ CORRECT - Use pnpm
-pnpm dev
-pnpm install
-pnpm add package
-pnpm run build
-
-# ❌ WRONG - Don't use these
-npm run dev
-yarn dev
-bun dev
+pnpm run setup:cloudinary
 ```
 
-See [PNPM_RULE.md](./PNPM_RULE.md) for complete details.
+This interactive script will guide you through the setup process.
 
-## Getting Started
+### Option 2: Manual Setup
 
-First, run the development server:
+1. Create a free account at [Cloudinary](https://cloudinary.com/)
+2. Get your credentials from the dashboard
+3. Update your `.env.local` file with:
+   ```env
+   CLOUDINARY_CLOUD_NAME=your-actual-cloud-name
+   CLOUDINARY_API_KEY=your-actual-api-key
+   CLOUDINARY_API_SECRET=your-actual-api-secret
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-actual-cloud-name
+   ```
+
+### Option 3: Disable Cloudinary
+
+If you don't want to use media uploads:
 
 ```bash
-pnpm dev
+pnpm run disable:cloudinary
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧪 Testing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Test authentication error handling:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm run test:auth
+```
 
-## Learn More
+## Troubleshooting
 
-To learn more about Next.js, take a look at the following resources:
+### Authentication Errors
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If you see "Configuration" or "Sign In Failed" errors:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Check Environment Variables**: Ensure your `.env.local` file has the required variables:
 
-## Deploy on Vercel
+   ```bash
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here
+   DATABASE_URL=your-database-url
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Database Connection**: Make sure your PostgreSQL database is running and accessible.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Database Seeding**: Ensure the database is properly seeded with roles:
+
+   ```bash
+   pnpm run db:seed
+   ```
+
+4. **Common Error Messages**:
+   - "Invalid email or password" - Check your credentials
+   - "No account found" - Create an account first
+   - "User already exists" - Try signing in instead
+   - "Configuration error" - Check your environment variables
+
+### Common Issues
+
+- **"Configuration" Error**: Missing or incorrect `NEXTAUTH_SECRET` or `NEXTAUTH_URL`
+- **Database Connection Errors**: Check your `DATABASE_URL` and ensure PostgreSQL is running
+- **Role Not Found**: Run `pnpm run db:seed` to create required roles
+
+## Features
+
+- User authentication with role-based access
+- Recipe creation and management
+- Nutritionist verification system
+- Recipe collections and favorites
+- Meal planning
+- Shopping list generation
+- Media upload support
+
+## Tech Stack
+
+- Next.js 15
+- NextAuth.js
+- Prisma ORM
+- PostgreSQL
+- Tailwind CSS
+- React Query
+- Cloudinary (media uploads)

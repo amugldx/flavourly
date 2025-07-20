@@ -1,11 +1,16 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-// Configure Cloudinary
-cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Check if Cloudinary is disabled
+const isCloudinaryDisabled = process.env.DISABLE_CLOUDINARY === 'true';
+
+// Configure Cloudinary only if not disabled
+if (!isCloudinaryDisabled) {
+	cloudinary.config({
+		cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+		api_key: process.env.CLOUDINARY_API_KEY,
+		api_secret: process.env.CLOUDINARY_API_SECRET,
+	});
+}
 
 /**
  * Upload a profile picture to Cloudinary
@@ -13,6 +18,27 @@ cloudinary.config({
  * @returns Promise that resolves to the upload result
  */
 export async function uploadProfilePicture(file: File): Promise<{ url: string; publicId: string }> {
+	// Check if Cloudinary is disabled
+	if (isCloudinaryDisabled) {
+		throw new Error(
+			'Cloudinary uploads are currently disabled. Please configure Cloudinary or remove DISABLE_CLOUDINARY=true from your .env.local file.',
+		);
+	}
+
+	// Check if Cloudinary credentials are properly configured
+	if (
+		!process.env.CLOUDINARY_CLOUD_NAME ||
+		!process.env.CLOUDINARY_API_KEY ||
+		!process.env.CLOUDINARY_API_SECRET ||
+		process.env.CLOUDINARY_CLOUD_NAME === 'your-cloud-name' ||
+		process.env.CLOUDINARY_API_KEY === 'your-api-key' ||
+		process.env.CLOUDINARY_API_SECRET === 'your-api-secret'
+	) {
+		throw new Error(
+			'Cloudinary credentials are not properly configured. Please run "pnpm run setup:cloudinary" to configure your Cloudinary account.',
+		);
+	}
+
 	try {
 		// Convert file to base64 for Cloudinary upload
 		const arrayBuffer = await file.arrayBuffer();
@@ -36,7 +62,17 @@ export async function uploadProfilePicture(file: File): Promise<{ url: string; p
 		};
 	} catch (error) {
 		console.error('Error uploading profile picture to Cloudinary:', error);
-		throw new Error('Failed to upload profile picture');
+
+		// Provide more specific error messages
+		if (error && typeof error === 'object' && 'http_code' in error) {
+			if (error.http_code === 401) {
+				throw new Error('Invalid Cloudinary credentials. Please check your API key and secret.');
+			} else if (error.http_code === 400) {
+				throw new Error('Invalid file format or size. Please try a different image.');
+			}
+		}
+
+		throw new Error('Failed to upload profile picture. Please try again.');
 	}
 }
 
