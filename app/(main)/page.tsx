@@ -25,11 +25,12 @@ import {
 	Zap,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-	const { data: session, status } = useSession();
+	const { status } = useSession();
 	const router = useRouter();
 
 	// Fetch different types of recipes for the homepage
@@ -418,14 +419,16 @@ export default function Home() {
 								))}
 							</div>
 							<p className='text-muted-foreground mb-6 leading-relaxed'>
-								"Flavourly has transformed how I cook. The verified nutritional info gives me
-								confidence in what I'm feeding my family. The meal planning feature is a
-								game-changer!"
+								&quot;Flavourly has transformed how I cook. The verified nutritional info gives me
+								confidence in what I&apos;m feeding my family. The meal planning feature is a
+								game-changer!&quot;
 							</p>
 							<div className='flex items-center gap-3'>
-								<img
+								<Image
 									src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face'
 									alt='Sarah M.'
+									width={40}
+									height={40}
 									className='w-10 h-10 rounded-full object-cover'
 								/>
 								<div>
@@ -445,13 +448,16 @@ export default function Home() {
 								))}
 							</div>
 							<p className='text-muted-foreground mb-6 leading-relaxed'>
-								"As a nutritionist, I love how Flavourly ensures accuracy. It's the only platform I
-								trust for my clients. The verification process is thorough and reliable."
+								&quot;As a nutritionist, I love how Flavourly ensures accuracy. It&apos;s the only
+								platform I trust for my clients. The verification process is thorough and
+								reliable.&quot;
 							</p>
 							<div className='flex items-center gap-3'>
-								<img
+								<Image
 									src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face'
 									alt='Dr. Lisa K.'
+									width={40}
+									height={40}
 									className='w-10 h-10 rounded-full object-cover'
 								/>
 								<div>
@@ -471,13 +477,15 @@ export default function Home() {
 								))}
 							</div>
 							<p className='text-muted-foreground mb-6 leading-relaxed'>
-								"The shopping list feature saves me so much time and money. I love how it
-								automatically generates lists from my meal plans. Highly recommend!"
+								&quot;The shopping list feature saves me so much time and money. I love how it
+								automatically generates lists from my meal plans. Highly recommend!&quot;
 							</p>
 							<div className='flex items-center gap-3'>
-								<img
+								<Image
 									src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face'
 									alt='Mike R.'
+									width={40}
+									height={40}
 									className='w-10 h-10 rounded-full object-cover'
 								/>
 								<div>

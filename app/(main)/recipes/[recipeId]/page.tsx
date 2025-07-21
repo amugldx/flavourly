@@ -26,13 +26,12 @@ import { useAddMealPlanEntry, useMealPlans } from '@/lib/hooks/use-meal-plans';
 import {
 	useAddRecipeToCollection,
 	useAddToFavorites,
-	useCreateReview,
 	useDeleteReview,
 	useRemoveFromFavorites,
 	useResubmitRecipe,
-	useUpdateReview,
 } from '@/lib/hooks/use-mutations';
 import {
+	Review,
 	useRecipe,
 	useRecipeReviews,
 	useUserCollections,
@@ -60,6 +59,7 @@ import {
 	Users,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
@@ -67,6 +67,11 @@ import { toast } from 'sonner';
 
 interface RecipeDetailPageProps {
 	params: Promise<{ recipeId: string }>;
+}
+
+interface MealPlan {
+	id: number;
+	planName: string;
 }
 
 export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
@@ -97,13 +102,11 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 	const addToFavorites = useAddToFavorites();
 	const removeFromFavorites = useRemoveFromFavorites();
-	const createReview = useCreateReview();
-	const updateReview = useUpdateReview();
 	const deleteReview = useDeleteReview();
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [activeTab, setActiveTab] = useState('overview');
-	const [editingReview, setEditingReview] = useState<any>(null);
+	const [editingReview, setEditingReview] = useState<Review | null>(null);
 
 	// Check if recipe is in user's favorites
 	const isFavorited = userFavorites?.some(fav => fav.recipe.id === recipeIdNum) || false;
@@ -118,7 +121,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	const isNutritionist = session?.user?.role === 'Nutritionist';
 
 	// Check if user has already reviewed this recipe
-	const userReview = userReviews?.find((review: any) => review.recipe.id === recipeIdNum);
+	const userReview = userReviews?.find((review: Review) => review.id === recipeIdNum);
 
 	// Handle review form success
 	const handleReviewSuccess = () => {
@@ -126,7 +129,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	};
 
 	// Handle edit review
-	const handleEditReview = (review: any) => {
+	const handleEditReview = (review: Review) => {
 		setEditingReview(review);
 	};
 
@@ -134,7 +137,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 	const handleDeleteReview = async (reviewId: number) => {
 		try {
 			await deleteReview.mutateAsync(reviewId);
-		} catch (error) {
+		} catch {
 			// Error is handled by the mutation
 		}
 	};
@@ -145,7 +148,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 
 		try {
 			await resubmitRecipe.mutateAsync(recipeIdNum);
-		} catch (error) {
+		} catch {
 			// Error is handled by the mutation
 		}
 	};
@@ -171,7 +174,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 			setSelectedMealPlan('');
 			setSelectedDate('');
 			setServingsToPrepare(1);
-		} catch (error) {
+		} catch {
 			// Error is handled by the mutation
 		}
 	};
@@ -190,7 +193,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 			});
 			setShowCollectionDialog(false);
 			setSelectedCollection('');
-		} catch (error) {
+		} catch {
 			// Error is handled by the mutation
 		}
 	};
@@ -219,7 +222,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 			} else {
 				await addToFavorites.mutateAsync(recipeIdNum);
 			}
-		} catch (error) {
+		} catch {
 			// Error is handled by the mutation
 		}
 	};
@@ -277,7 +280,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 				<div className='text-center'>
 					<h1 className='text-2xl font-bold text-destructive mb-4'>Recipe Not Found</h1>
 					<p className='text-muted-foreground mb-4'>
-						The recipe you're looking for doesn't exist or has been removed.
+						The recipe you&apos;re looking for doesn&apos;t exist or has been removed.
 					</p>
 					<Button onClick={() => router.push('/recipes')}>Browse Recipes</Button>
 				</div>
@@ -329,9 +332,11 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 		<div className={className}>
 			<div className='relative aspect-video rounded-lg overflow-hidden bg-muted'>
 				{currentMedia ? (
-					<img
+					<Image
 						src={currentMedia.url}
 						alt={currentMedia.caption || recipe.title}
+						width={800}
+						height={600}
 						className='w-full h-full object-cover'
 					/>
 				) : videos.length > 0 ? (
@@ -973,7 +978,7 @@ export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
 														<SelectValue placeholder='Choose a meal plan' />
 													</SelectTrigger>
 													<SelectContent>
-														{mealPlans?.map((plan: any) => (
+														{mealPlans?.map((plan: MealPlan) => (
 															<SelectItem
 																key={plan.id}
 																value={plan.id.toString()}>

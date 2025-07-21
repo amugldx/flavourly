@@ -18,7 +18,7 @@ import { useFilteredPublicRecipes } from '@/lib/hooks/use-queries';
 import { usePublicTags } from '@/lib/hooks/use-tags';
 import { ChefHat, Filter, Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 
 interface FilterState {
 	search: string;
@@ -32,7 +32,7 @@ interface FilterState {
 	health: string[];
 }
 
-export default function RecipesPage() {
+function RecipesPageContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -772,5 +772,13 @@ export default function RecipesPage() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export default function RecipesPage() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<RecipesPageContent />
+		</Suspense>
 	);
 }
