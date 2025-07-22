@@ -1,4 +1,4 @@
-import { RoleName } from '../generated/prisma/client';
+import { RoleName } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 async function testRoleRedirects() {

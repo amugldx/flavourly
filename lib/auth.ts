@@ -1,4 +1,4 @@
-import { RoleName } from '@/generated/prisma/client';
+import { RoleName } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';

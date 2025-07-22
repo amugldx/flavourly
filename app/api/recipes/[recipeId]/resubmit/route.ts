@@ -1,6 +1,6 @@
-import { VerificationStatus } from '@/generated/prisma/client';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { VerificationStatus } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(

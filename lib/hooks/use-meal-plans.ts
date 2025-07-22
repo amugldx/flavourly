@@ -1,4 +1,4 @@
-import { MealType } from '@/generated/prisma/client';
+import { MealType } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

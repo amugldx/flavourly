@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
+import { RoleName } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { RoleName } from '../generated/prisma/client';
 import { prisma } from '../lib/prisma';
 
 async function testAuthErrors() {

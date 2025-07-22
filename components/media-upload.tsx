@@ -107,16 +107,19 @@ export function MediaUpload({ onMediaChange, value = [] }: MediaUploadProps) {
 		setIsDragging(false);
 	}, []);
 
-	const handleDrop = useCallback((e: React.DragEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setIsDragging(false);
+	const handleDrop = useCallback(
+		(e: React.DragEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+			setIsDragging(false);
 
-		const files = e.dataTransfer.files;
-		if (files.length > 0) {
-			handleFileUpload(files);
-		}
-	}, []);
+			const files = e.dataTransfer.files;
+			if (files.length > 0) {
+				handleFileUpload(files);
+			}
+		},
+		[handleFileUpload],
+	);
 
 	const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.target.files;
@@ -197,6 +200,7 @@ export function MediaUpload({ onMediaChange, value = [] }: MediaUploadProps) {
 										src={media.url}
 										className='w-full h-full object-cover'
 										controls
+										aria-label='Recipe video'
 									/>
 								)}
 							</div>

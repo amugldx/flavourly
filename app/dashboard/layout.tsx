@@ -2,7 +2,7 @@
 
 import { DashboardSidebar } from '@/components/dashboard-sidebar';
 import { Navbar } from '@/components/navbar';
-import { RoleName } from '@/generated/prisma/client';
+import { RoleName } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 

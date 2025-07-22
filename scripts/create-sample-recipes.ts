@@ -1,4 +1,4 @@
-import { VerificationStatus } from '../generated/prisma/client';
+import { VerificationStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 async function createSampleRecipes() {

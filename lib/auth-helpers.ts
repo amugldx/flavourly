@@ -1,4 +1,4 @@
-import { RoleName } from '@/generated/prisma/client';
+import { RoleName } from '@prisma/client';
 import { prisma } from './prisma';
 
 export async function seedRoles() {

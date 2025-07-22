@@ -69,8 +69,8 @@ function CreateCollectionDialog({ onSuccess }: CreateCollectionDialogProps) {
 				<DialogHeader>
 					<DialogTitle>Create New Collection</DialogTitle>
 					<DialogDescription>
-						Organize your recipes into themed collections like "Quick Weeknight Dinners" or "Holiday
-						Baking".
+						Organize your recipes into themed collections like &quot;Quick Weeknight Dinners&quot;
+						or &quot;Holiday Baking&quot;.
 					</DialogDescription>
 				</DialogHeader>
 				<form onSubmit={handleSubmit}>
@@ -121,7 +121,7 @@ function DeleteCollectionDialog({
 	collection,
 	onDelete,
 }: {
-	collection: any;
+	collection: { id: number; collectionName: string };
 	onDelete: () => void;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
@@ -132,7 +132,7 @@ function DeleteCollectionDialog({
 			await deleteCollection.mutateAsync(collection.id);
 			setIsOpen(false);
 			onDelete();
-		} catch (error) {
+		} catch (_error) {
 			// Error is handled by the mutation
 		}
 	};
@@ -154,8 +154,8 @@ function DeleteCollectionDialog({
 				<DialogHeader>
 					<DialogTitle>Delete Collection</DialogTitle>
 					<DialogDescription>
-						Are you sure you want to delete "{collection.collectionName}"? This action cannot be
-						undone and will remove the collection, but your recipes will remain intact.
+						Are you sure you want to delete &quot;{collection.collectionName}&quot;? This action
+						cannot be undone and will remove the collection, but your recipes will remain intact.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
@@ -176,7 +176,19 @@ function DeleteCollectionDialog({
 	);
 }
 
-function CollectionCard({ collection }: { collection: any }) {
+function CollectionCard({
+	collection,
+}: {
+	collection: {
+		id: number;
+		collectionName: string;
+		description: string | null;
+		createdAt: string;
+		_count: { recipes: number };
+		firstImage?: string;
+		recipeCount: number;
+	};
+}) {
 	return (
 		<Card className='h-full hover:shadow-md transition-shadow group flex flex-col'>
 			<CardHeader className='pb-3 flex-shrink-0'>

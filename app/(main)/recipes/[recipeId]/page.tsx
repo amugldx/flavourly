@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MealType } from '@/generated/prisma/client';
 import { useAddMealPlanEntry, useMealPlans } from '@/lib/hooks/use-meal-plans';
 import {
 	useAddRecipeToCollection,
@@ -38,6 +37,7 @@ import {
 	useUserFavorites,
 	useUserReviews,
 } from '@/lib/hooks/use-queries';
+import { MealType } from '@prisma/client';
 import {
 	AlertCircle,
 	ArrowLeft,

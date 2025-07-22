@@ -1,311 +1,349 @@
 # CHAPTER 6
 
-## Testing and Quality Assurance
+## Testing (Software Quality Attributes)
 
-#### 1. <a name="_bookmark17"></a>Testing Strategy Overview
+#### 1. Test Case Specification
 
-The testing strategy for the Flavourly recipe management platform is comprehensive and multi-layered, designed to ensure the highest quality standards across all aspects of the application. The testing approach follows industry best practices and includes various testing methodologies to validate functionality, performance, security, and user experience.
+Test Case Specification document described detailed summary of what scenarios will be tested, how they will be tested, how often they will be tested, and so on and so forth, for a given feature. It specifies the purpose of a specific test, identifies the required inputs and expected results, provides step-by-step procedures for executing the test, and outlines the pass/fail criteria for determining acceptance.
 
-The testing strategy is implemented throughout the development lifecycle, from initial development to final deployment, ensuring that quality is maintained at every stage. The approach includes automated testing, manual testing, and user acceptance testing to provide complete coverage of all system functionalities.
+#### 2. User sign in -Valid Email
 
-#### 2. Testing Levels
+|                     |                                   |                                         |
+| ------------------- | --------------------------------- | --------------------------------------- |
+| **Test Case Id:**   | TC-1                              | Test Data                               |
+| **Test Case**       | User sign in -Valid Email         |                                         |
+| **Objective**       | To user sign in Process via Email |                                         |
+| **Perquisites**     | User must have an Email account   |                                         |
+| **Input**           | EnterValidEmail account           | [user@gmail.com](mailto:user@gmail.com) |
+| **Expected Result** | Sign in should be successful      |                                         |
+| **Actual Result**   | User Successfully sign in         |                                         |
+| **Status**          | Successfully signed in            | Pass                                    |
 
-The testing implementation is organized into multiple levels, each focusing on specific aspects of the system and providing different types of validation.
+**\*Table 6.1.1: \*\*\*\***User sign in**\*\***-Valid Email\*\*\*
 
-**Unit Testing:**
-Unit testing focuses on testing individual components and functions in isolation. This level of testing ensures that each component works correctly on its own before being integrated with other parts of the system.
+#### Description:
 
-- **Component Testing:** React components are tested using React Testing Library to ensure proper rendering, user interactions, and state management
-- **Utility Function Testing:** Helper functions and utilities are tested using Jest to validate logic and edge cases
-- **API Route Testing:** Individual API endpoints are tested to ensure proper request handling and response generation
-- **Database Operation Testing:** Database queries and operations are tested to ensure data integrity and performance
+This test case describes the user sign in-valid email process. Sign in screen is loaded is the perquisites for this test case. After providing the valid email and password, user gone to main activity and seen the home screen.
 
-**Integration Testing:**
-Integration testing focuses on testing how different components and modules work together. This level of testing ensures that the system functions correctly as a whole.
+#### 1. **User sign up -Recipe Developer**
 
-- **API Integration Testing:** Tests the interaction between frontend components and backend API endpoints
-- **Database Integration Testing:** Validates the integration between application logic and database operations
-- **Third-party Service Integration:** Tests integration with external services like Cloudinary for media management
-- **Authentication Integration:** Validates the complete authentication and authorization flow
+|                     |                                                     |                                                                                |
+| ------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Test Case Id:**   | TC-2                                                | Test Data                                                                      |
+| **Test Case**       | User sign up -Recipe Developer                      |                                                                                |
+| **Objective**       | To user sign up Process as Recipe Developer         |                                                                                |
+| **Perquisites**     | User must not have an existing account              |                                                                                |
+| **Input**           | EnterValidEmail, username, fullName, password, role | john@example.com<br/>john_doe<br/>John Doe<br/>password123<br/>RecipeDeveloper |
+| **Expected Result** | Sign up should be successful                        |                                                                                |
+| **Actual Result**   | User Successfully sign up                           |                                                                                |
+| **Status**          | Successfully signed up                              | Pass                                                                           |
 
-**System Testing:**
-System testing focuses on testing the complete system as a whole, ensuring that all components work together correctly to meet user requirements.
+**Table 6.1.2 User sign up -Recipe Developer**
 
-- **End-to-End Workflow Testing:** Tests complete user workflows from start to finish
-- **Cross-browser Compatibility Testing:** Ensures the application works correctly across different browsers
-- **Responsive Design Testing:** Validates that the application works well on different screen sizes and devices
-- **Performance Testing:** Tests system performance under various load conditions
+**Description:**
 
-#### 3. Testing Tools and Frameworks
+This test case describes the user sign up-valid email process. Sign up screen is loaded is the perquisites for this test case. After providing the valid email, username, full name, password, and selecting Recipe Developer role, user gone to main activity and seen the dashboard.
 
-The testing implementation utilizes modern testing tools and frameworks to ensure efficient and effective testing processes.
+#### 2. **User sign up -Nutritionist**
 
-**Frontend Testing Tools:**
+|                     |                                                     |                                                                                              |
+| ------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Test Case Id:**   | TC-3                                                | Test Data                                                                                    |
+| **Test Case**       | User sign up -Nutritionist                          |                                                                                              |
+| **Objective**       | To User sign up Process as Nutritionist             |                                                                                              |
+| **Perquisites**     | User must not have an existing account              |                                                                                              |
+| **Input**           | EnterValidEmail, username, fullName, password, role | nutritionist@example.com<br/>dr_nutrition<br/>Dr. Nutrition<br/>password123<br/>Nutritionist |
+| **Expected Result** | Sign up should be successful                        |                                                                                              |
+| **Actual Result**   | User Successfully sign up                           |                                                                                              |
+| **Status**          | Successfully signed up                              | Pass                                                                                         |
 
-- **Jest:** JavaScript testing framework for unit testing and test runner
-- **React Testing Library:** Testing utility for React components
-- **Cypress:** End-to-end testing framework for complete workflow testing
-- **Playwright:** Cross-browser testing framework for compatibility testing
+**Table 6.1.3:User sign up -Nutritionist**
 
-**Backend Testing Tools:**
+**Description:**
 
-- **Jest:** Testing framework for API route testing
-- **Supertest:** HTTP assertion library for API testing
-- **Prisma Testing:** Database testing utilities
-- **Postman:** API testing and documentation tool
+This test case describes the User sign up process as Nutritionist. Providing the valid credentials user will create a new account with Nutritionist role and access to recipe verification features.
 
-**Performance Testing Tools:**
+#### 3. **Update profile**
 
-- **Lighthouse:** Performance and accessibility testing
-- **WebPageTest:** Performance testing and analysis
-- **Load Testing:** Custom load testing scripts for API endpoints
-- **Database Performance Testing:** Query performance analysis tools
+|                     |                                                                                              |                                                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Test Case Id:**   | TC-4                                                                                         | Test Data                                                                                                                 |
+| **Test Case**       | Update profile                                                                               |                                                                                                                           |
+| **Objective**       | To Update profile Process                                                                    |                                                                                                                           |
+| **Perquisites**     | User must have a registered profile                                                          |                                                                                                                           |
+| **Input**           | Select picture Name<br/>Email Bio<br/>Dietary restrictions Allergies<br/>Cuisine preferences | Image="URL" John Doe [user@gmail.com](mailto:user@gmail.com) Food enthusiast<br/>Vegetarian<br/>Nuts<br/>Italian, Mexican |
+| **Expected Result** | Profile should be update successful                                                          |                                                                                                                           |
+| **Actual Result**   | Profile updated successfully                                                                 |                                                                                                                           |
+| **Status**          | Profile updated successfully                                                                 | Pass                                                                                                                      |
 
-**Security Testing Tools:**
+**Table 6.1.4 Update profile**
 
-- **ESLint Security:** Security-focused linting rules
-- **OWASP ZAP:** Security vulnerability scanning
-- **Manual Security Testing:** Penetration testing and security review
-- **Dependency Scanning:** Automated vulnerability scanning for dependencies
+**Description:**
 
-#### 4. Test Case Design
+This test case describes the update profile process. Profile setting screen is loaded is the perquisites for this test case. After providing the required information user seen his profile updated with new dietary preferences and personal information.
 
-Test cases are designed to cover all functional and non-functional requirements of the system. Each test case includes clear objectives, test data, expected results, and execution steps.
+#### 4. **Create recipe**
 
-**Functional Test Cases:**
+|                     |                                                                       |                                                                                                                                      |
+| ------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Test Case Id:**   | TC-5                                                                  | Test Data                                                                                                                            |
+| **Test Case**       | Create recipe                                                         |                                                                                                                                      |
+| **Objective**       | To create a new recipe                                                |                                                                                                                                      |
+| **Perquisites**     | User should be sign in<br/>User should be Recipe Developer            |                                                                                                                                      |
+| **Input**           | Recipe title, description, ingredients, steps, cooking time, servings | Chicken Pasta<br/>Delicious pasta dish<br/>Chicken, Pasta, Sauce<br/>Boil pasta, Cook chicken, Combine<br/>30 minutes<br/>4 servings |
+| **Expected Result** | Recipe should be created successfully                                 |                                                                                                                                      |
+| **Actual Result**   | Recipe created successfully                                           |                                                                                                                                      |
+| **Status**          | Recipe created successfully                                           | Pass                                                                                                                                 |
 
-**User Authentication Test Cases:**
+**Table 6.1.5: Create recipe**
 
-- User registration with valid data
-- User registration with invalid data
-- User login with correct credentials
-- User login with incorrect credentials
-- Password reset functionality
-- Session management and timeout
-- Role-based access control
+**Description:**
 
-**Recipe Management Test Cases:**
+This test case describes the create recipe process. User will add recipe title, description, ingredients, preparation steps, cooking time, and servings, by providing these info he will create a new recipe that goes to verification queue.
 
-- Recipe creation with all required fields
-- Recipe creation with missing required fields
-- Recipe editing and updating
-- Recipe deletion and confirmation
-- Recipe search and filtering
-- Recipe categorization and tagging
-- Media upload and management
+#### 5. **Nutritionist verify recipe**
 
-**Verification System Test Cases:**
+|                     |                                                   |                                                   |
+| ------------------- | ------------------------------------------------- | ------------------------------------------------- |
+| **Test Case Id:**   | TC-6                                              | Test Data                                         |
+| **Test Case**       | Nutritionist verify recipe                        |                                                   |
+| **Objective**       | To verify recipe as nutritionist                  |                                                   |
+| **Perquisites**     | Nutritionist should be signed in                  |                                                   |
+| **Input**           | Recipe review, health tips, verification decision | Recipe looks good<br/>High in protein<br/>Approve |
+| **Expected Result** | Recipe should be verified successfully            |                                                   |
+| **Actual Result**   | Recipe successfully verified                      |                                                   |
+| **Status**          | Recipe successfully verified                      | Pass                                              |
 
-- Recipe submission for verification
-- Nutritionist review and approval process
-- Recipe rejection with feedback
-- Revision request and resubmission
-- Verification status tracking
-- Health tips and nutritional guidance
-- Verification history and reporting
+**Table 6.1.6: Nutritionist verify recipe**
 
-**User Engagement Test Cases:**
+**Description:**
 
-- Recipe review and rating submission
-- Favorite recipe management
-- Recipe collection creation and management
-- User profile management
-- Dietary preferences and restrictions
-- User feedback and reporting
+This test case describes the nutritionist recipe verification process. Recipe verification screen should loaded is the perquisites for this test case. After reviewing the recipe details, nutritional information, and safety aspects, nutritionist can approve, request revisions, or reject the recipe.
 
-**Meal Planning Test Cases:**
+#### 6. **Add review**
 
-- Meal plan creation and scheduling
-- Recipe addition to meal plans
-- Meal plan editing and modification
-- Shopping list generation from meal plans
-- Meal plan sharing and collaboration
-- Nutritional analysis and reporting
+|                     |                                                         |                            |
+| ------------------- | ------------------------------------------------------- | -------------------------- |
+| **Test Case Id:**   | TC-7                                                    | Test Data                  |
+| **Test Case**       | Add review                                              |                            |
+| **Objective**       | To add review on recipe                                 |                            |
+| **Perquisites**     | User should sign in User should view recipe<br/>details |                            |
+| **Input**           | Rating, comment                                         | 5 stars, Delicious recipe! |
+| **Expected Result** | Review should be posted                                 |                            |
+| **Actual Result**   | Review posted                                           |                            |
+| **Status**          | User can view review<br/>successfully                   | Pass                       |
 
-**Non-Functional Test Cases:**
+**Table 6.1.7: Add review**
 
-**Performance Test Cases:**
+**Description:**
 
-- Page load time testing
-- API response time testing
-- Database query performance testing
-- Concurrent user load testing
-- Memory usage and optimization testing
-- Image optimization and loading testing
+This test case describes the add review process. Recipe detail page is loaded is the perquisites for this test case. User will write a review with rating and comment and submit it, by this process review will posted and visible to other users.
 
-**Security Test Cases:**
+#### 7. **Create meal plan**
 
-- Authentication and authorization testing
-- Input validation and sanitization testing
-- SQL injection prevention testing
-- XSS protection testing
-- File upload security testing
-- Session security testing
+|                     |                                             |                                                                 |
+| ------------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| **Test Case Id:**   | TC-8                                        | Test Data                                                       |
+| **Test Case**       | Create meal plan                            |                                                                 |
+| **Objective**       | To create meal plan                         |                                                                 |
+| **Perquisites**     | User should be signed in                    |                                                                 |
+| **Input**           | Plan name<br/>Start date, end date, recipes | Weekly Plan<br/>2024-01-01, 2024-01-07<br/>Chicken Pasta, Salad |
+| **Expected Result** | Meal plan should be created                 |                                                                 |
+| **Actual Result**   | Meal plan created successfully              |                                                                 |
+| **Status**          | Meal plan created successfully              | Pass                                                            |
 
-**Usability Test Cases:**
+**Table 6.1.8: Create meal plan**
 
-- User interface navigation testing
-- Responsive design testing
-- Accessibility compliance testing
-- Cross-browser compatibility testing
-- Mobile device compatibility testing
-- User experience flow testing
+**Description:**
 
-#### 5. Test Execution and Automation
+This test case describes the create meal plan process. User will enter plan name, select start and end dates, and add recipes to the plan. User gets a complete meal plan by this process.
 
-Test execution is automated where possible to ensure consistent and reliable testing processes. Automated tests are integrated into the development pipeline to provide immediate feedback on code changes.
+#### 8. **Generate shopping list**
 
-**Automated Testing Pipeline:**
+|                     |                                                             |                                        |
+| ------------------- | ----------------------------------------------------------- | -------------------------------------- |
+| **Test Case Id:**   | TC-9                                                        | Test Data                              |
+| **Test Case**       | Generate shopping list                                      |                                        |
+| **Objective**       | To generate shopping list from meal plan                    |                                        |
+| **Perquisites**     | User should be signed in<br/>User should have<br/>meal plan |                                        |
+| **Input**           | Meal plan selection, generate list                          | Weekly Plan<br/>Generate shopping list |
+| **Expected Result** | Shopping list should be generated successfully              |                                        |
+| **Actual Result**   | Shopping list has been generated successfully               |                                        |
+| **Status**          | Shopping list has been generated successfully               | Pass                                   |
 
-- **Continuous Integration:** Automated tests run on every code commit
-- **Pre-deployment Testing:** Comprehensive test suite execution before deployment
-- **Post-deployment Testing:** Smoke tests to validate deployment success
-- **Regression Testing:** Automated regression testing for critical functionalities
+**Table 6.1.9: Generate shopping list**
 
-**Test Automation Framework:**
+**Description**
 
-- **Unit Test Automation:** Jest-based automated unit testing
-- **Integration Test Automation:** Automated API and database integration testing
-- **End-to-End Test Automation:** Cypress-based automated workflow testing
-- **Performance Test Automation:** Automated performance testing scripts
+This test case describes the shopping list generation process. Meal plan selection is the perquisites for this test case. A user will select a meal plan and generate a shopping list containing all ingredients needed for the recipes in the plan.
 
-**Manual Testing Processes:**
+#### 3. Black Box Test Case
 
-- **Exploratory Testing:** Manual testing for user experience validation
-- **Usability Testing:** Manual testing for interface and interaction validation
-- **Security Testing:** Manual penetration testing and security review
-- **User Acceptance Testing:** Manual testing with end users
+Black Box Testing is a software testing method in which the functionalities of software applications are tested without having knowledge of internal code structure, implementation details and internal paths. Black Box Testing mainly focuses on input and output of software applications and it is entirely based on software requirements and specifications. It is also known as Behavioral Testing.
 
-#### 6. Quality Assurance Processes
+The above Black-Box can be any software system you want to test. For Example, an operating system like Windows, a website like Google, a database like Oracle or even your own custom application. Under Black Box Testing, you can test these applications by just focusing on the inputs and outputs without knowing their internal code implementation.
 
-Quality assurance processes are implemented throughout the development lifecycle to ensure consistent quality standards and continuous improvement.
+#### 4. Boundary Value Analysis
 
-**Code Quality Assurance:**
+Boundary value analysis is based on testing at the boundaries between partitions. It includes maximum, minimum, inside or outside boundaries, typical values and error values. It is generally seen that a large number of errors occur at the boundaries of the defined input values rather than the center. It is also known as BVA and gives a selection of test cases which exercise bounding values. This black box testing technique complements equivalence partitioning.
 
-- **Code Review Process:** Peer review of all code changes
-- **Static Code Analysis:** ESLint and TypeScript for code quality validation
-- **Code Coverage Analysis:** Test coverage reporting and analysis
-- **Documentation Review:** Code documentation and comment review
+#### 5. Sign in Form Boundary value analysisBVA on Email
 
-**Performance Quality Assurance:**
+In our web application we have text field (Email) which accepts a valid email format with length between 5-50 characters.
 
-- **Performance Monitoring:** Continuous performance monitoring and analysis
-- **Performance Optimization:** Regular performance optimization and tuning
-- **Load Testing:** Regular load testing to validate system capacity
-- **Performance Benchmarking:** Performance comparison with industry standards
+|                                           |                                       |                 |
+| ----------------------------------------- | ------------------------------------- | --------------- |
+| Boundary Value Analysis<br/><br/>Of Email |                                       |                 |
+| Invalid (Min-1)                           | Valid<br/><br/>(Min, +min, max, -max) | Invalid (max+1) |
+| 4 characters                              | 5,15,25,40,50 characters              | 51 characters   |
 
-**Security Quality Assurance:**
+#### 6. BVA on Password
 
-- **Security Review:** Regular security code review and analysis
-- **Vulnerability Assessment:** Regular vulnerability scanning and assessment
-- **Security Testing:** Comprehensive security testing and validation
-- **Security Documentation:** Security best practices and guidelines
+In our app we have password field (password) which accepts the length between 8-30 characters and must contain both letters and numbers.
 
-**User Experience Quality Assurance:**
+|                                              |                                       |                 |
+| -------------------------------------------- | ------------------------------------- | --------------- |
+| Boundary Value Analysis<br/><br/>Of Password |                                       |                 |
+| Invalid (Min-1)                              | Valid<br/><br/>(Min, +min, max, -max) | Invalid (max+1) |
+| 7 characters                                 | 8,16,25,30 characters                 | 31 characters   |
 
-- **Usability Testing:** Regular usability testing with target users
-- **Accessibility Testing:** WCAG compliance testing and validation
-- **Cross-platform Testing:** Testing across different devices and browsers
-- **User Feedback Analysis:** Analysis of user feedback and improvement implementation
+#### 7. Equivalence Class Partitioning
 
-#### 7. Bug Tracking and Resolution
+Equivalence Partitioning Method is also known as Equivalence class partitioning (ECP). It is a software testing technique or black-box testing that divides input domain into classes of data, and with the help of these classes of data, test cases can be derived.
 
-A comprehensive bug tracking and resolution process is implemented to ensure timely identification and resolution of issues.
+#### 8. Recipe Title Boundary value analysisECP on recipe title
 
-**Bug Identification:**
+|                                                         |           |            |
+| ------------------------------------------------------- | --------- | ---------- |
+| Equivalence Class Partitioning<br/><br/>Of Recipe Title |           |            |
+| Invalid                                                 | Invalid   | Valid      |
+| Empty title                                             | Title < 3 | Title >= 3 |
 
-- **Automated Testing:** Bugs identified through automated test execution
-- **Manual Testing:** Bugs identified through manual testing processes
-- **User Feedback:** Bugs reported by users through feedback channels
-- **Monitoring Systems:** Bugs identified through system monitoring and alerting
+#### 9. **State Transition Testing**
 
-**Bug Tracking System:**
+State Transition Testing is a black box testing technique in which changes made in input conditions cause state changes or output changes in the Application under Test (AUT). State Transition Testing helps to analyze behavior of an application for different input conditions.
 
-- **Issue Tracking:** Centralized issue tracking and management
-- **Priority Classification:** Bug priority classification and management
-- **Assignment and Tracking:** Bug assignment and progress tracking
-- **Resolution Verification:** Bug resolution verification and testing
+#### 1. State Transition Diagram
 
-**Bug Resolution Process:**
+**Figure 6.2.5 State Transition Diagram**
 
-- **Root Cause Analysis:** Comprehensive analysis of bug root causes
-- **Fix Implementation:** Implementation of bug fixes and improvements
-- **Testing and Validation:** Testing of bug fixes and validation
-- **Deployment and Monitoring:** Deployment of fixes and monitoring for recurrence
+This is a UML State Transition Diagram for the Flavourly recipe management system, illustrating the states and transitions of a recipe verification process. The diagram uses standard UML notation with rounded rectangles for states, arrows for transitions, and labels for events triggering transitions.
 
-#### 8. Performance Testing and Optimization
+- **States**:
+  - **Draft**: The initial state when a recipe is created by a Recipe Developer.
+  - **Pending Verification**: The state when the recipe is submitted for nutritionist review.
+  - **Needs Revision**: The state when the nutritionist requests changes to the recipe.
+  - **Verified**: The state when the recipe is approved and published.
+  - **Rejected**: The state when the recipe is rejected by the nutritionist.
+- **Transitions**:
+  - From **Draft** to **Pending Verification**: Triggered by the event "Submit for Review" (e.g., Recipe Developer submits the recipe).
+  - From **Pending Verification** to **Needs Revision**: Triggered by the event "Request Changes" (e.g., nutritionist finds issues with the recipe).
+  - From **Pending Verification** to **Verified**: Triggered by the event "Approve Recipe" (e.g., nutritionist approves the recipe).
+  - From **Pending Verification** to **Rejected**: Triggered by the event "Reject Recipe" (e.g., nutritionist rejects the recipe).
+  - From **Needs Revision** to **Pending Verification**: Triggered by the event "Resubmit Recipe" (e.g., Recipe Developer makes changes and resubmits).
+- **Events**: Labels on transitions indicate actions like "Submit for Review," "Request Changes," "Approve Recipe," or "Reject Recipe."
 
-Performance testing is conducted regularly to ensure the system meets performance requirements and provides optimal user experience.
+The diagram captures the verification workflow of the recipe system, showing how user actions (e.g., submitting or reviewing) influence state changes in the recipe lifecycle.
 
-**Performance Testing Scenarios:**
+**Draw.io Instructions for State Transition Diagram:**
 
-- **Load Testing:** Testing system performance under expected load
-- **Stress Testing:** Testing system behavior under extreme load conditions
-- **Endurance Testing:** Testing system performance over extended periods
-- **Spike Testing:** Testing system response to sudden load increases
+1. Create a new diagram in draw.io
+2. Use the "UML" template
+3. Add states as rounded rectangles: "Draft", "Pending Verification", "Needs Revision", "Verified", "Rejected"
+4. Add an initial state (black circle) pointing to "Draft"
+5. Add final states (black circle with inner circle) for "Verified" and "Rejected"
+6. Connect states with arrows labeled with events
+7. Use different colors for different state types
+8. Add event labels on transition arrows
 
-**Performance Metrics:**
+#### 10. Decision Table Testing
 
-- **Response Time:** API and page response time measurement
-- **Throughput:** System throughput and capacity measurement
-- **Resource Utilization:** CPU, memory, and database resource monitoring
-- **User Experience Metrics:** Page load times and interaction responsiveness
+Decision table testing is a software testing technique used to test system behavior for different input combinations. This is a systematic approach where the different input combinations and their corresponding system behavior (Output) are captured in a tabular form. That is why it is also called as a Cause-Effect table where Cause and effects are captured for better test coverage.
 
-**Performance Optimization:**
+#### 11. Decision Table for Sign in Form
 
-- **Frontend Optimization:** Code splitting, lazy loading, and caching optimization
-- **Backend Optimization:** API optimization and database query tuning
-- **Database Optimization:** Index optimization and query performance tuning
-- **Infrastructure Optimization:** Server and network optimization
+|                |               |               |                |                |
+| -------------- | ------------- | ------------- | -------------- | -------------- |
+| <br/>Condition | <br/>Case 1/G | <br/>Case 2/G | <br/>Case 3/No | <br/>Case 4/No |
+| <br/>Email/No  | <br/>T        | <br/>F        | <br/>F         | <br/>T         |
 
-#### 9. Security Testing and Validation
+|             |        |        |        |        |
+| ----------- | ------ | ------ | ------ | ------ |
+| <br/>Output | <br/>H | <br/>E | <br/>E | <br/>H |
 
-Security testing is conducted to ensure the system is protected against various security threats and vulnerabilities.
+Legend:
 
-**Security Testing Types:**
+T – Correct Format/Size F – Wrong Format/Size
 
-- **Authentication Testing:** Testing of authentication mechanisms and security
-- **Authorization Testing:** Testing of authorization and access control
-- **Input Validation Testing:** Testing of input validation and sanitization
-- **Session Management Testing:** Testing of session security and management
+E – Error message is displayed
 
-**Security Vulnerability Assessment:**
+#### Interpretation:
 
-- **OWASP Top 10 Testing:** Testing for common web application vulnerabilities
-- **SQL Injection Testing:** Testing for SQL injection vulnerabilities
-- **XSS Testing:** Testing for cross-site scripting vulnerabilities
-- **File Upload Security Testing:** Testing for file upload security vulnerabilities
+Case 1 – Email was correct and the user navigated to home screen. Case 2 – Email was wrong. The user is shown an error message.
 
-**Security Monitoring:**
+Case 3 – Password was wrong. The user is shown an error message. Case 4 –Password was correct, and the user navigated to home screen.
 
-- **Security Event Monitoring:** Monitoring for security events and incidents
-- **Vulnerability Scanning:** Regular vulnerability scanning and assessment
-- **Security Log Analysis:** Analysis of security logs and events
-- **Incident Response:** Security incident response and resolution
+#### 12. Graph Base Testing
 
-#### 10. User Acceptance Testing
+**Figure 6.2.6 Graph Base Testing**
 
-User acceptance testing is conducted to ensure the system meets user requirements and expectations.
+This is a Graph-Based Testing diagram for the Flavourly recipe management system, illustrating the relationship between inputs (causes) and outputs (effects) in the system. The diagram uses nodes to represent inputs and outputs and directed edges to show the cause-effect relationships.
 
-**User Acceptance Testing Process:**
+- **Nodes**:
+  - **Input Nodes**: Represent causes, such as "Enter Email," "Enter Password," "Select Role," or "Submit Recipe."
+  - **Output Nodes**: Represent effects, such as "Display Dashboard," "Show Error Message," or "Navigate to Recipe Creation."
+- **Edges**: Directed arrows connecting input nodes to output nodes, labeled with conditions or actions (e.g., "Valid Email -> Display Dashboard," "Invalid Password -> Show Error Message").
+- **Flow**: The diagram shows multiple paths, such as:
+  - Valid email and password leading to the appropriate dashboard based on role.
+  - Invalid email or password leading to an error message.
+  - Recipe Developer role leading to recipe creation interface.
+  - Nutritionist role leading to verification queue.
 
-- **Test Planning:** Planning and preparation for user acceptance testing
-- **Test Execution:** Execution of user acceptance tests with end users
-- **Feedback Collection:** Collection and analysis of user feedback
-- **Issue Resolution:** Resolution of issues identified during testing
+The diagram uses standard graph notation to visualize the flow of inputs and outputs, helping to understand the software's functional performance and test case generation for various input-output combinations.
 
-**User Acceptance Criteria:**
+**Draw.io Instructions for Graph Base Testing:**
 
-- **Functional Requirements:** Validation of all functional requirements
-- **User Experience:** Validation of user experience and interface design
-- **Performance Requirements:** Validation of performance requirements
-- **Security Requirements:** Validation of security requirements
+1. Create a new diagram in draw.io
+2. Use the "Flowchart" template
+3. Add input nodes as rectangles: "Enter Email", "Enter Password", "Select Role"
+4. Add output nodes as rectangles: "Display Dashboard", "Show Error Message", "Navigate to Recipe Creation"
+5. Connect nodes with arrows showing cause-effect relationships
+6. Add labels on arrows showing conditions
+7. Use different colors for input and output nodes
+8. Include decision diamonds for conditional flows
 
-**User Feedback Integration:**
+#### 13. White Box Testing
 
-- **Feedback Analysis:** Analysis of user feedback and suggestions
-- **Improvement Implementation:** Implementation of user-requested improvements
-- **Feature Enhancement:** Enhancement of features based on user feedback
-- **Documentation Updates:** Updates to user documentation based on feedback
+#### 14. **Statement Coverage**
 
-The testing and quality assurance processes ensure that the Flavourly platform meets the highest quality standards and provides a reliable, secure, and user-friendly experience for all users. The comprehensive testing strategy, combined with continuous quality assurance processes, ensures that the platform is robust, scalable, and maintainable for long-term success.
+Statement coverage is one of the widely used software testing. It comes under white box testing. Statement coverage technique is used to design white box test cases. This technique involves execution of all statements of the source code at least once. It is used to calculate the total number of executed statements in the source code out of total statements present in the source code. Statement coverage derives scenario of test cases under the white box testing process which is based upon the structure of the code.
+
+#### Source Code Structure:
+
+15. Take input of user credentials like email and password.
+
+16. Validate the email format and password requirements.
+
+17. If the credentials are valid, then authenticate the user and redirect to dashboard.
+
+18. If the credentials are invalid, then display an error message.
+
+#### 19. **Branch Coverage**
+
+Branch coverage technique is used to cover all branches of the control flow graph. It covers all the possible outcomes (true and false) of each condition of decision point at least once. Branch coverage technique is a White box testing technique that ensures that every branch of each decision point must be executed. However, branch coverage technique and decision coverage technique are very similar, but there is a key difference between the two. Decision coverage technique covers all branches of each decision point whereas branch testing covers all branches of every decision point of the code. In other words, branch coverage follows decision point and branch coverage edges. Many different metrics can be used to find branch coverage and decision coverage, but some of the most basic metrics are: finding the percentage of program and paths of execution during the execution of the program. In this method, the number of paths of executed branches is used to calculate Branch coverage. Branch coverage technique can be used as the alternative of decision coverage. Somewhere, it is not defined as an individual technique, but it is distinct from decision coverage and essential to test all branches of the control flow graph.
+
+#### 20. **Path Coverage**
+
+Basis Path Testing in software engineering is a White Box Testing method in which test cases are defined based on flows or logical paths that can be taken through the program. The objective of basis path testing is to define the number of independent Paths, so the number of test cases needed can be defined explicitly to maximize test coverage. In software engineering, Basis path testing involves execution of all possible blocks in a program and achieves maximum path coverage with the least number of test cases. It is a hybrid method of branch testing and path testing methods.
+
+#### Steps for Basis Path testing
+
+The basic steps involved in basis path testing include
+
+21. Draw a control graph (to determine different program paths)
+
+22. Calculate Cyclamate complexity (metrics to determine the number of independent paths)
+
+23. Find a basis set of paths
+
+24. Generate test cases to exercise each path.

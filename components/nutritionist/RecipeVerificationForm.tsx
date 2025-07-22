@@ -1,6 +1,6 @@
 'use client';
 
-import { VerificationStatus } from '@/generated/prisma/client';
+import { VerificationStatus } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';

@@ -54,7 +54,7 @@ function RemoveRecipeDialog({
 			await removeRecipe.mutateAsync({ collectionId, recipeId: recipe.id });
 			setIsOpen(false);
 			onRemove();
-		} catch (error) {
+		} catch (_error) {
 			// Error is handled by the mutation
 		}
 	};
@@ -76,8 +76,8 @@ function RemoveRecipeDialog({
 				<DialogHeader>
 					<DialogTitle>Remove Recipe from Collection</DialogTitle>
 					<DialogDescription>
-						Are you sure you want to remove "{recipe.title}" from this collection? The recipe will
-						remain in your recipes but will be removed from this collection.
+						Are you sure you want to remove &quot;{recipe.title}&quot; from this collection? The
+						recipe will remain in your recipes but will be removed from this collection.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>

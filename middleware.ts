@@ -1,5 +1,5 @@
-import { RoleName } from '@/generated/prisma/client';
 import { auth } from '@/lib/auth';
+import { RoleName } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 export default auth(req => {

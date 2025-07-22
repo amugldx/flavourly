@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { VerificationStatus } from '@/generated/prisma/client';
+import { VerificationStatus } from '@prisma/client';
 import {
 	AlertTriangle,
 	Calendar,

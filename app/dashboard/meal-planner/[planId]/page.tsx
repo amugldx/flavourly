@@ -20,7 +20,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { MealType } from '@/generated/prisma/client';
 import {
 	useAddMealPlanEntry,
 	useDeleteMealPlanEntry,
@@ -28,6 +27,7 @@ import {
 } from '@/lib/hooks/use-meal-plans';
 import { useMealPlan } from '@/lib/hooks/use-queries';
 import { useFavoritedRecipes, useUserRecipes } from '@/lib/hooks/use-recipes';
+import { MealType } from '@prisma/client';
 import { eachDayOfInterval, format } from 'date-fns';
 import { ArrowLeft, Calendar, Clock, Edit, Plus, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';

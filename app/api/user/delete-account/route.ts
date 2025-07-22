@@ -3,7 +3,7 @@ import { deleteFromCloudinary, extractPublicIdFromUrl } from '@/lib/cloudinary';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
 	try {
 		// Get the current session
 		const session = await auth();

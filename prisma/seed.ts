@@ -4,7 +4,7 @@ import {
 	PrismaClient,
 	RoleName,
 	VerificationStatus,
-} from '../generated/prisma/client';
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 

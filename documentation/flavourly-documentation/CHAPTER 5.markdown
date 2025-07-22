@@ -1,302 +1,120 @@
 # CHAPTER 5
 
-## Implementation and Development
+## <a name="_bookmark34"></a>Implementation
+
+#### <a name="_bookmark35"></a>5.1 Component Diagram
 
-#### 1. <a name="_bookmark16"></a>Development Methodology
+**Fig5.1 Component Diagram**
 
-The Flavourly recipe management platform was developed using an iterative and incremental development methodology, combining elements of Agile and Scrum frameworks. This approach allowed for continuous feedback, rapid prototyping, and iterative improvements throughout the development lifecycle.
+This is a UML Component Diagram for the Flavourly recipe management system. It provides a static view of the system's structure, illustrating the organization and relationships among its components. Each component is represented as a rectangle with two smaller rectangles on the left side, indicating interfaces. The diagram includes the following components:
 
-The development process was organized into multiple sprints, each focusing on specific features and functionalities. Each sprint included planning, development, testing, and review phases, ensuring that all requirements were met and quality standards were maintained.
-
-The development team followed a collaborative approach, with regular meetings, code reviews, and continuous integration practices. This methodology ensured that the final product met all functional and non-functional requirements while maintaining high code quality and user experience standards.
-
-#### 2. Development Environment Setup
-
-The development environment was carefully configured to ensure consistency across team members and facilitate efficient development processes. The setup included all necessary tools, libraries, and configurations required for the Flavourly platform development.
-
-**Development Tools:**
-
-- Visual Studio Code as the primary code editor
-- Git for version control and collaboration
-- Node.js runtime environment
-- npm/pnpm for package management
-- ESLint and Prettier for code formatting and linting
-
-**Database Setup:**
-
-- PostgreSQL database server
-- Prisma CLI for database migrations and management
-- Prisma Studio for database visualization and management
-- Database seeding scripts for development data
-
-**Cloud Services Configuration:**
-
-- Cloudinary account setup for media management
-- Environment variables configuration
-- API key management and security
-- Development and production environment separation
-
-**Testing Environment:**
-
-- Jest for unit testing
-- React Testing Library for component testing
-- API testing tools for endpoint validation
-- Browser testing for cross-platform compatibility
-
-#### 3. Frontend Implementation
-
-The frontend implementation focused on creating a responsive, accessible, and user-friendly interface that works seamlessly across different devices and browsers. The implementation utilized modern React patterns and best practices to ensure maintainability and performance.
-
-**Component Architecture:**
-The frontend is built using a component-based architecture with clear separation of concerns. Components are organized into logical groups:
-
-- **UI Components:** Reusable UI elements like buttons, forms, and modals
-- **Layout Components:** Page layouts and navigation structures
-- **Feature Components:** Specific functionality components like recipe cards and forms
-- **Page Components:** Main page components that combine other components
-
-**State Management:**
-React Query is used for server state management, providing efficient caching, background updates, and optimistic updates. Local state is managed using React hooks and context API where appropriate.
-
-**Routing and Navigation:**
-Next.js App Router is used for client-side routing, providing fast navigation and SEO benefits. The routing structure is organized to reflect the application's user roles and feature hierarchy.
-
-**Responsive Design:**
-Tailwind CSS is used for responsive design, ensuring the application works well on desktop, tablet, and mobile devices. The design system includes consistent spacing, typography, and color schemes.
-
-#### 4. Backend Implementation
-
-The backend implementation focuses on creating robust, secure, and scalable API endpoints that support all frontend functionalities. The implementation follows RESTful principles and includes comprehensive error handling and validation.
-
-**API Route Structure:**
-API routes are organized by feature and follow consistent naming conventions:
-
-- **Authentication Routes:** User registration, login, and session management
-- **Recipe Routes:** Recipe CRUD operations and management
-- **User Routes:** User profile and preference management
-- **Nutritionist Routes:** Recipe verification and review processes
-- **Meal Planning Routes:** Meal plan creation and management
-- **Shopping List Routes:** Shopping list generation and management
-
-**Database Operations:**
-Prisma ORM is used for all database operations, providing type-safe queries and efficient data access. The implementation includes:
-
-- Proper error handling for database operations
-- Transaction management for complex operations
-- Efficient query optimization
-- Data validation and sanitization
-
-**Authentication and Authorization:**
-NextAuth.js is implemented for authentication, providing secure session management and role-based access control. The implementation includes:
-
-- Secure password hashing with bcryptjs
-- JWT token management
-- Role-based route protection
-- Session validation and management
-
-**File Upload and Media Management:**
-Cloudinary integration is implemented for secure and efficient media management. The implementation includes:
-
-- Secure file upload endpoints
-- Image optimization and transformation
-- File type validation and security
-- Efficient media storage and retrieval
-
-#### 5. Database Implementation
-
-The database implementation focuses on creating an efficient, scalable, and maintainable data structure that supports all application features. The implementation includes proper indexing, relationships, and data integrity constraints.
-
-**Schema Design:**
-The database schema is designed with proper normalization and relationships:
-
-- **User Management:** Users, roles, and preferences tables
-- **Recipe Management:** Recipes, ingredients, steps, and media tables
-- **Verification System:** Verification status and health tips
-- **User Engagement:** Reviews, favorites, and collections
-- **Meal Planning:** Meal plans, entries, and shopping lists
-
-**Migration Management:**
-Prisma migrations are used for database schema management, ensuring:
-
-- Version-controlled schema changes
-- Safe deployment of database updates
-- Rollback capabilities for failed migrations
-- Environment-specific schema management
-
-**Data Seeding:**
-Comprehensive seeding scripts are implemented to populate the database with initial data:
-
-- Default user roles and permissions
-- Sample recipes and ingredients
-- Test data for development and testing
-- Production-ready initial data
-
-**Performance Optimization:**
-Database performance is optimized through:
-
-- Proper indexing on frequently queried columns
-- Efficient query design and optimization
-- Connection pooling and management
-- Regular performance monitoring and tuning
-
-#### 6. Security Implementation
-
-Security is implemented at multiple levels to ensure data protection, user privacy, and system integrity. The implementation follows security best practices and industry standards.
-
-**Authentication Security:**
-
-- Secure password hashing with salt rounds
-- JWT token management with proper expiration
-- Session security and management
-- Multi-factor authentication support
-
-**Data Protection:**
-
-- HTTPS encryption for all data transmission
-- Input validation and sanitization
-- SQL injection prevention through ORM
-- XSS protection through React security features
-
-**API Security:**
-
-- Rate limiting to prevent abuse
-- CORS configuration for cross-origin requests
-- Request validation and sanitization
-- Error handling without sensitive information exposure
-
-**Media Security:**
-
-- Secure file upload validation
-- File type and size restrictions
-- Access control for media files
-- Secure storage and retrieval mechanisms
-
-#### 7. Testing Implementation
-
-Comprehensive testing is implemented to ensure code quality, functionality, and reliability. The testing strategy includes multiple levels of testing to catch issues early and ensure system stability.
-
-**Unit Testing:**
-
-- Component testing with React Testing Library
-- Utility function testing with Jest
-- API endpoint testing
-- Database operation testing
-
-**Integration Testing:**
-
-- API integration testing
-- Database integration testing
-- Third-party service integration testing
-- End-to-end workflow testing
-
-**User Interface Testing:**
-
-- Cross-browser compatibility testing
-- Responsive design testing
-- Accessibility testing
-- User experience testing
-
-**Performance Testing:**
-
-- Load testing for API endpoints
-- Database performance testing
-- Frontend performance optimization
-- Memory and resource usage testing
-
-#### 8. Deployment Implementation
-
-The deployment implementation focuses on creating a reliable, secure, and efficient deployment pipeline that ensures smooth application delivery to end users.
-
-**Environment Configuration:**
-
-- Development environment for local development
-- Staging environment for testing and validation
-- Production environment for live application
-- Environment-specific configuration management
-
-**Deployment Pipeline:**
-
-- Automated build and deployment processes
-- Version control and release management
-- Automated testing in deployment pipeline
-- Rollback capabilities for failed deployments
-
-**Monitoring and Logging:**
-
-- Application performance monitoring
-- Error tracking and alerting
-- User behavior analytics
-- System health monitoring
-
-**Backup and Recovery:**
-
-- Automated database backups
-- Application state backup
-- Disaster recovery procedures
-- Data integrity verification
-
-#### 9. Quality Assurance
-
-Quality assurance processes are implemented throughout the development lifecycle to ensure high-quality code and user experience.
-
-**Code Quality:**
-
-- ESLint for code linting and style enforcement
-- Prettier for code formatting
-- TypeScript for type safety
-- Code review processes
-
-**Documentation:**
-
-- Comprehensive API documentation
-- Code documentation and comments
-- User documentation and guides
-- Development setup documentation
-
-**Performance Optimization:**
-
-- Frontend performance optimization
-- Backend performance tuning
-- Database query optimization
-- Caching strategy implementation
-
-**Accessibility:**
-
-- WCAG compliance implementation
-- Screen reader compatibility
-- Keyboard navigation support
-- Color contrast and visual accessibility
-
-#### 10. Maintenance and Support
-
-Ongoing maintenance and support processes are implemented to ensure long-term system reliability and user satisfaction.
-
-**Regular Maintenance:**
-
-- Security updates and patches
-- Performance monitoring and optimization
-- Database maintenance and optimization
-- Third-party dependency updates
-
-**User Support:**
-
-- User feedback collection and analysis
-- Bug reporting and tracking
-- Feature request management
-- User documentation updates
-
-**System Monitoring:**
-
-- Application performance monitoring
-- Error tracking and resolution
-- User behavior analytics
-- System health monitoring
-
-**Continuous Improvement:**
-
-- Regular code reviews and refactoring
-- Performance optimization
-- Feature enhancements
-- User experience improvements
-
-The implementation of the Flavourly platform follows industry best practices and modern development methodologies, ensuring a robust, scalable, and maintainable solution for recipe management and verification. The comprehensive testing, security measures, and quality assurance processes ensure a reliable and user-friendly platform for all users.
+- **User Management Component**: Handles user-related operations such as sign-in, sign-up, profile updates, and role-based access control for Recipe Developers and Nutritionists.
+- **Recipe Management Component**: Manages recipe creation, editing, ingredient management, preparation steps, and media uploads with Cloudinary integration.
+- **Verification Management Component**: Responsible for recipe verification workflow, nutritional analysis, and health tips from nutritionists.
+- **Review Management Component**: Processes review submission, rating systems, and user feedback for recipes.
+- **Collection Management Component**: Manages user-created recipe collections, adding and removing recipes from collections.
+- **Meal Planning Component**: Handles meal plan creation, scheduling, and shopping list generation from meal plans.
+- **Shopping List Component**: Manages shopping list creation, item management, and completion tracking.
+- **Media Management Component**: Handles image and video uploads, Cloudinary integration, and media optimization.
+- **Database Component**: Stores all system data, including users, recipes, ingredients, reviews, collections, meal plans, and shopping lists using PostgreSQL with Prisma ORM.
+
+Relationships are shown as lines with interfaces (e.g., provided and required interfaces) indicating dependencies, such as the Recipe Management Component depending on the Database Component for data storage, and the Media Management Component depending on Cloudinary for file storage. The diagram uses standard UML notation to depict how components collaborate to implement the system's functionalities.
+
+**Draw.io Instructions for Component Diagram:**
+
+1. Create a new diagram in draw.io
+2. Use the "UML" template
+3. Add components as rectangles with two small rectangles on the left side for interfaces
+4. Add the following components:
+   - "User Management Component"
+   - "Recipe Management Component"
+   - "Verification Management Component"
+   - "Review Management Component"
+   - "Collection Management Component"
+   - "Meal Planning Component"
+   - "Shopping List Component"
+   - "Media Management Component"
+   - "Database Component"
+5. Connect components with lines showing dependencies
+6. Use different colors for different component types (Core: Blue, User-related: Green, Recipe-related: Orange, Planning: Purple)
+7. Add interface labels on the connection lines
+
+#### <a name="_bookmark36"></a>5.2 Deployment Diagram
+
+**Fig 5.2 Deployment Diagram**
+
+This is a UML Deployment Diagram for the Flavourly recipe management system, illustrating the physical deployment of software components on hardware nodes. The diagram uses rectangular nodes to represent hardware and artifacts to represent software components, with lines showing their interconnections.
+
+- **Nodes**:
+  - **Client Device**: Represents user devices (e.g., desktop computers, laptops, smartphones, tablets) running the Flavourly web application through modern web browsers.
+  - **Vercel Application Server**: Hosts the Next.js application logic, including user management, recipe management, verification processing, and API endpoints.
+  - **PostgreSQL Database Server**: Stores the system's data, such as user profiles, recipes, ingredients, reviews, collections, meal plans, and shopping lists.
+  - **Cloudinary CDN**: Manages media file storage, optimization, and delivery for recipe images and videos.
+- **Artifacts**:
+  - **Web Application**: Deployed on the Client Device, providing the user interface for interacting with the system through React components and Next.js pages.
+  - **Next.js Backend Services**: Deployed on the Vercel Application Server, handling business logic, API routes, authentication, and database operations.
+  - **PostgreSQL Database**: Deployed on the Database Server, managing data storage and retrieval through Prisma ORM.
+  - **Cloudinary Media Service**: Deployed on the Cloudinary CDN, handling image and video uploads, transformations, and delivery.
+- **Connections**: Lines represent communication protocols (e.g., HTTP/HTTPS for client-server communication, database protocols for server-database interaction, and CDN protocols for media delivery).
+
+The diagram uses standard UML notation, with nodes connected by associations to show real-time data processing and hardware-software mapping, demonstrating how the Flavourly system is deployed across multiple services and platforms.
+
+**Draw.io Instructions for Deployment Diagram:**
+
+1. Create a new diagram in draw.io
+2. Use the "UML" template
+3. Add nodes as rectangles:
+   - "Client Device" (representing user browsers)
+   - "Vercel Application Server" (hosting Next.js app)
+   - "PostgreSQL Database Server" (database)
+   - "Cloudinary CDN" (media storage)
+4. Add artifacts as rectangles within nodes:
+   - "Web Application" in Client Device
+   - "Next.js Backend Services" in Vercel Server
+   - "PostgreSQL Database" in Database Server
+   - "Cloudinary Media Service" in Cloudinary CDN
+5. Connect nodes with lines showing communication protocols
+6. Use different colors for different node types
+7. Add protocol labels on connection lines
+
+#### <a name="_bookmark37"></a>5.3 Database Architecture
+
+Flavourly is based on a 3-tier architecture approach serving as a comprehensive blueprint for our recipe management platform. Its purpose is to provide a structured framework that ensures optimal performance, security, and scalability. The application breaks down the database management system into discrete components, and the architecture facilitates independent modifications, changes, replacements, and alterations, thereby ensuring optimal flexibility and scalability.
+
+This modular approach empowers the database systems as a foundation for efficient data storage, retrieval, and management, allowing the platform to efficiently handle large volumes of recipe data, user information, and nutritional data while maintaining data integrity and security. It also enables effective performance optimization, as each component can be individually fine-tuned and optimized to achieve optimal efficiency and responsiveness for recipe searches, user interactions, and meal planning features.
+
+The structure of the Flavourly application is designed to provide the most enhanced security measures for user data and recipe information, and also streamlines the deployment process through modern cloud infrastructure. The three distinct tiers or layers, each assigned specific functions that collectively enhance the efficiency and reliability of the entire recipe management system.
+
+The presentation tier is providing all of the user interface related services and handles user interactions. It is providing an intuitive and user-friendly interface to the users of the system to browse recipes, create recipes, manage meal plans, and interact with the verification system. This tier includes React components, Next.js pages, and responsive design elements that work across different devices and screen sizes.
+
+The business logic tier is providing all of the implemented constrained processing and the business rules, and processing functions calls. All of the application logic processing including recipe creation and verification, user authentication and authorization, meal planning algorithms, shopping list generation, and nutritional data processing. This tier includes Next.js API routes, authentication middleware, data validation, and business rule enforcement.
+
+The data tier is stored data for all of the application. It incorporates a robust and scalable PostgreSQL database management system with Prisma ORM that ensures efficient data storage, retrieval, and management for recipes, users, ingredients, reviews, collections, meal plans, and shopping lists. The data tier also includes data backup, recovery, and optimization strategies to maintain system reliability and performance.
+
+**Fig 5.3 Tier Database Architecture**
+
+This is a diagram illustrating the 3-tier database architecture of the Flavourly recipe management system. It visually represents the three layers of the system and their interactions. The diagram includes:
+
+- **Presentation Tier**: Depicted as the top layer, showing the user interface (e.g., web application screens, mobile-responsive design) where users interact with the system for actions like signing in, browsing recipes, creating meal plans, or submitting recipes for verification.
+- **Business Logic Tier**: The middle layer, representing the Next.js application server that processes business rules, such as recipe management, user authentication, meal planning algorithms, and verification workflows. It communicates with both the presentation and data tiers through API routes and middleware.
+- **Data Tier**: The bottom layer, showing the PostgreSQL database server that stores all system data, including user profiles, recipes, ingredients, reviews, collections, meal plans, shopping lists, and nutritional information through the Prisma ORM.
+- **Connections**: Arrows indicate data flow between tiers, with the presentation tier sending user inputs to the business logic tier, which processes requests and interacts with the data tier for storage and retrieval. Additional connections show integration with external services like Cloudinary for media management.
+
+The diagram uses a layered structure to emphasize the separation of concerns, with each tier labeled and connected to show the flow of data and interactions, demonstrating how the Flavourly system maintains clean architecture while providing comprehensive recipe management functionality.
+
+**Draw.io Instructions for Tier Database Architecture:**
+
+1. Create a new diagram in draw.io
+2. Use the "Software" template
+3. Add three horizontal layers:
+   - Top layer: "Presentation Tier" (React/Next.js UI)
+   - Middle layer: "Business Logic Tier" (Next.js API/Server)
+   - Bottom layer: "Data Tier" (PostgreSQL Database)
+4. Add components within each tier:
+   - Presentation: "Web Interface", "Mobile Interface"
+   - Business Logic: "API Routes", "Authentication", "Business Rules"
+   - Data: "PostgreSQL", "Prisma ORM"
+5. Connect tiers with arrows showing data flow
+6. Add external service connections (Cloudinary)
+7. Use different colors for each tier
+8. Add labels on arrows showing data types

@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MealType } from '@/generated/prisma/client';
 import { useCreateMealPlan, useMealPlans } from '@/lib/hooks/use-meal-plans';
+import { MealType } from '@prisma/client';
 import { eachDayOfInterval, format } from 'date-fns';
 import { ArrowLeft, Calendar, CalendarDays, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';

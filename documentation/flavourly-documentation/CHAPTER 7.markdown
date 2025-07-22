@@ -1,314 +1,132 @@
 # CHAPTER 7
 
-## Deployment, Maintenance, and Future Enhancements
+## Tools and Technology
 
-#### 1. <a name="_bookmark18"></a>Deployment Strategy
+#### 7.1 Programming Languages
 
-The deployment strategy for the Flavourly recipe management platform is designed to ensure reliable, secure, and efficient application delivery to end users. The deployment process follows industry best practices and includes comprehensive testing, monitoring, and rollback capabilities.
+The Flavourly recipe management system is a modern web application that revolutionizes the recipe sharing and meal planning experience, providing a highly automated and personalized platform for users to create, share, and discover recipes in real-time. The platform is developed using modern web technologies, Flavourly enhances the recipe management process, offering a seamless and user-friendly interface for web users across desktop and mobile devices. The implementation involves the utilization of various platforms, languages, and tools to ensure optimal performance and functionality.
 
-The deployment strategy utilizes a multi-environment approach, including development, staging, and production environments. Each environment serves a specific purpose in the deployment pipeline, ensuring that only thoroughly tested and validated code reaches the production environment.
+The application is built using TypeScript, the primary programming language for modern web development, known for its type safety and developer productivity. TypeScript enables the creation of efficient and reliable web applications, providing a solid foundation for the Flavourly recipe management system.
 
-**Environment Configuration:**
+In addition to TypeScript, React is used for building the user interface (UI) of the application. React allows for the creation of reusable components and efficient state management, enabling easy customization and maintenance of the app's appearance and functionality.
 
-**Development Environment:**
-The development environment is used for active development and testing of new features. This environment allows developers to work independently and test their changes without affecting other team members or the production system.
+The application integrates with PostgreSQL database for data storage and management, Prisma ORM for type-safe database operations, and Cloudinary for media file management and optimization. These integrations provide real-time data synchronization, user authentication, and cloud storage capabilities.
 
-- Local development setup with hot reloading
-- Development database with sample data
-- Development API keys and configuration
-- Debugging and logging capabilities
+In the Flavourly recipe management system, we have integrated Cloudinary to provide media management capabilities, making the recipe sharing experience even more engaging and interactive for all users. Cloudinary's powerful infrastructure enables seamless image and video upload, optimization, and delivery for recipe photos and cooking demonstrations. With Cloudinary, users can upload high-quality recipe images that are automatically optimized for different devices and screen sizes.
 
-**Staging Environment:**
-The staging environment mirrors the production environment and is used for final testing and validation before deployment to production. This environment ensures that all changes work correctly in a production-like setting.
+The PostgreSQL database serves as the central repository for storing crucial user information, recipe-related data, and meal planning details. As users register and create recipes, their personal information, such as names, contact details, and dietary preferences, is securely stored in the PostgreSQL database. Additionally, the database maintains comprehensive records of the recipes created by users, including their ingredients, preparation steps, nutritional information, and verification status.
 
-- Production-like configuration and infrastructure
-- Staging database with production-like data
-- Integration testing with external services
-- Performance testing and validation
+The platform utilizes modern web libraries and frameworks, such as React Query for data fetching and state management, to handle network requests and retrieve data from the server. These tools simplify the communication between the web application and the backend system, ensuring efficient data retrieval and updates. Furthermore, other functions are also integrated in order to enhance the system. This web application is implemented through following tools and technologies:
 
-**Production Environment:**
-The production environment is the live system that serves end users. This environment is optimized for performance, security, and reliability, with comprehensive monitoring and backup systems.
+FRONT END REACT
 
-- Optimized for performance and scalability
-- Production database with real user data
-- Security-hardened configuration
-- Comprehensive monitoring and alerting
+The application uses React for building interactive user interface (UI) components and state management.
 
-#### 2. Deployment Process
+TYPESCRIPT
 
-The deployment process is automated and follows a structured approach to ensure consistency and reliability. The process includes multiple stages of validation and testing to minimize the risk of deployment failures.
+The application primarily developed using TypeScript programming language for type safety and better development experience.
 
-**Pre-deployment Phase:**
+NEXT.JS
 
-- Code review and approval process
-- Automated testing execution
-- Security scanning and validation
-- Performance testing and validation
-- Documentation updates and review
+Next.js serves as the full-stack framework providing both frontend and backend capabilities through API routes.
 
-**Deployment Phase:**
+TAILWIND CSS
 
-- Automated build and packaging
-- Database migration execution
-- Application deployment and configuration
-- Health checks and validation
-- Monitoring setup and verification
+The application uses Tailwind CSS for responsive design and modern styling.
 
-**Post-deployment Phase:**
+RADIX UI
 
-- Smoke tests and validation
-- Performance monitoring and analysis
-- User acceptance testing
-- Rollback preparation and monitoring
-- Documentation updates
+The application integrates Radix UI components for accessible and customizable UI elements.
 
-**Rollback Process:**
+BACK END NEXT.JS API ROUTES
 
-- Automated rollback triggers for critical failures
-- Manual rollback procedures for non-critical issues
-- Database rollback capabilities
-- Configuration rollback procedures
-- Communication and notification systems
+Next.js API routes connect Flavourly to PostgreSQL using Prisma ORM for data exchange.
 
-#### 3. Infrastructure and Hosting
+Database PostgreSQL
 
-The infrastructure and hosting setup is designed to provide high availability, scalability, and performance for the Flavourly platform. The infrastructure utilizes cloud services and modern deployment practices to ensure optimal system performance.
+Flavourly uses PostgreSQL database for data storage and management with Prisma ORM.
 
-**Hosting Platform:**
+CLOUDINARY
 
-- **Vercel:** Frontend and API deployment platform
-- **PostgreSQL:** Database hosting and management
-- **Cloudinary:** Media storage and management
-- **CDN:** Global content delivery network
+The application integrates with Cloudinary for media file storage, optimization, and delivery.
 
-**Infrastructure Components:**
+VERCEL
 
-- **Load Balancing:** Automatic load balancing and scaling
-- **Auto-scaling:** Automatic scaling based on demand
-- **Monitoring:** Comprehensive system monitoring
-- **Backup Systems:** Automated backup and recovery
+The application is deployed on Vercel platform for hosting and continuous deployment.
 
-**Security Infrastructure:**
+Authentication NextAuth.js
 
-- **SSL/TLS Encryption:** Secure data transmission
-- **Firewall Protection:** Network security and protection
-- **DDoS Protection:** Distributed denial of service protection
-- **Security Monitoring:** Real-time security monitoring
+Utilizing NextAuth.js for secure user authentication and session management in Flavourly.
 
-#### 4. Monitoring and Alerting
+Operating System
 
-Comprehensive monitoring and alerting systems are implemented to ensure system reliability and facilitate proactive issue resolution. The monitoring systems track various aspects of the application and infrastructure.
+I have chosen to use modern web browsers and Node.js runtime as the foundation for creating a dynamic and user-friendly web application that works across all devices and platforms.
 
-**Application Monitoring:**
+#### 7.2 Operating Environment
 
-- **Performance Metrics:** Response time, throughput, and error rates
-- **User Experience Metrics:** Page load times and interaction responsiveness
-- **Error Tracking:** Error logging and alerting
-- **User Behavior Analytics:** User interaction and engagement tracking
+The operating environment refers to the software layer that exists between the web browser and the applications running on the device. It consists of two primary components: the user interface provided by a web browser and the application programming interface (API) to the web platform. The web browser is responsible for managing the lifecycle of web applications on the user's device. It handles tasks such as loading and rendering web pages, managing memory usage, and handling user interactions with the web apps. The API to the web platform allows developers to interact with the browser and access various services and functionalities provided by the web standards. This API enables web app developers to access system resources, use device features like the camera or microphone, and interact with other web apps securely. It is essential to understand that the operating environment is not a complete operating system itself but rather a middleware layer that bridges the gap between the web browser and the web applications. It provides a standardized and controlled environment for web apps to run efficiently and securely on the web platform, ensuring a consistent user experience across different devices and browser versions. This system is divided in three modules which are mentioned below:
 
-**Infrastructure Monitoring:**
+· Public User
 
-- **Server Performance:** CPU, memory, and disk usage monitoring
-- **Database Performance:** Query performance and connection monitoring
-- **Network Performance:** Network latency and bandwidth monitoring
-- **Service Health:** External service availability monitoring
+· Recipe Developer
 
-**Security Monitoring:**
+· Nutritionist
 
-- **Security Events:** Security event logging and alerting
-- **Access Monitoring:** User access and authentication monitoring
-- **Vulnerability Scanning:** Regular vulnerability assessment
-- **Threat Detection:** Real-time threat detection and response
+The following are the platforms, languages and tools used in implementation of Flavourly:
 
-**Alerting Systems:**
+· REACT
 
-- **Critical Alerts:** Immediate notification for critical issues
-- **Warning Alerts:** Proactive notification for potential issues
-- **Performance Alerts:** Notification for performance degradation
-- **Security Alerts:** Notification for security incidents
+· TYPESCRIPT
 
-#### 5. Backup and Recovery
+· NEXT.JS
 
-Comprehensive backup and recovery systems are implemented to ensure data protection and system availability. The backup strategy includes multiple layers of protection and recovery procedures.
+· TAILWIND CSS
 
-**Backup Strategy:**
+· RADIX UI
 
-- **Database Backups:** Automated daily database backups
-- **Application Backups:** Application state and configuration backups
-- **Media Backups:** User-uploaded media backup and protection
-- **Configuration Backups:** System configuration and settings backup
+· POSTGRESQL
 
-**Recovery Procedures:**
+· PRISMA ORM
 
-- **Database Recovery:** Automated and manual database recovery procedures
-- **Application Recovery:** Application state recovery and restoration
-- **Media Recovery:** Media file recovery and restoration
-- **Configuration Recovery:** System configuration recovery
+· CLOUDINARY
 
-**Disaster Recovery:**
+· VERCEL
 
-- **Disaster Recovery Plan:** Comprehensive disaster recovery procedures
-- **Data Center Failover:** Multi-region failover capabilities
-- **Service Continuity:** Business continuity and service restoration
-- **Communication Plan:** User communication and notification procedures
+· NEXTAUTH.JS
 
-#### 6. Maintenance Procedures
+· NODE.JS
 
-Regular maintenance procedures are implemented to ensure system reliability, performance, and security. The maintenance schedule includes routine tasks and proactive system optimization.
+· MODERN WEB BROWSERS
 
-**Routine Maintenance:**
+#### 7.2.1 Hardware & Software Requirement (Minimum)
 
-- **Security Updates:** Regular security patches and updates
-- **Performance Optimization:** Database and application optimization
-- **Dependency Updates:** Third-party dependency updates and management
-- **System Health Checks:** Regular system health monitoring and validation
-
-**Database Maintenance:**
-
-- **Index Optimization:** Database index maintenance and optimization
-- **Query Optimization:** Database query performance tuning
-- **Data Cleanup:** Regular data cleanup and archiving
-- **Backup Verification:** Backup integrity verification and testing
-
-**Application Maintenance:**
-
-- **Code Updates:** Regular code updates and improvements
-- **Feature Enhancements:** User-requested feature enhancements
-- **Bug Fixes:** Bug identification and resolution
-- **Performance Tuning:** Application performance optimization
-
-**Infrastructure Maintenance:**
-
-- **Server Maintenance:** Server updates and maintenance
-- **Network Maintenance:** Network infrastructure maintenance
-- **Security Maintenance:** Security system updates and maintenance
-- **Monitoring Maintenance:** Monitoring system updates and optimization
-
-#### 7. User Support and Documentation
-
-Comprehensive user support and documentation systems are implemented to ensure user satisfaction and facilitate effective system usage.
-
-**User Support Systems:**
-
-- **Help Documentation:** Comprehensive user guides and tutorials
-- **FAQ System:** Frequently asked questions and answers
-- **Contact Support:** User support contact and communication channels
-- **Feedback System:** User feedback collection and analysis
-
-**Technical Documentation:**
-
-- **API Documentation:** Comprehensive API documentation and examples
-- **Developer Guides:** Development and integration guides
-- **System Documentation:** System architecture and technical documentation
-- **Deployment Guides:** Deployment and configuration guides
-
-**User Training:**
-
-- **User Onboarding:** New user onboarding and training materials
-- **Feature Tutorials:** Feature-specific tutorials and guides
-- **Best Practices:** Usage best practices and recommendations
-- **Video Tutorials:** Video-based training and demonstration materials
-
-#### 8. Performance Optimization
-
-Continuous performance optimization is implemented to ensure optimal system performance and user experience. The optimization process includes regular monitoring, analysis, and improvement implementation.
-
-**Frontend Optimization:**
-
-- **Code Splitting:** Efficient code splitting and lazy loading
-- **Image Optimization:** Image compression and optimization
-- **Caching Strategy:** Effective caching strategies and implementation
-- **Bundle Optimization:** JavaScript bundle optimization and minification
-
-**Backend Optimization:**
-
-- **API Optimization:** API response time and efficiency optimization
-- **Database Optimization:** Database query and performance optimization
-- **Caching Implementation:** Server-side caching and optimization
-- **Resource Management:** Efficient resource utilization and management
-
-**Infrastructure Optimization:**
-
-- **Server Optimization:** Server performance and resource optimization
-- **Network Optimization:** Network performance and bandwidth optimization
-- **CDN Optimization:** Content delivery network optimization
-- **Load Balancing:** Load balancing and distribution optimization
-
-#### 9. Security Maintenance
-
-Ongoing security maintenance is implemented to ensure system security and protect against evolving threats and vulnerabilities.
-
-**Security Updates:**
-
-- **Regular Security Patches:** Regular security updates and patches
-- **Vulnerability Management:** Vulnerability identification and resolution
-- **Security Monitoring:** Continuous security monitoring and alerting
-- **Threat Intelligence:** Security threat intelligence and response
-
-**Access Control:**
-
-- **User Access Management:** User access control and management
-- **Role-based Access:** Role-based access control implementation
-- **Authentication Security:** Authentication system security and monitoring
-- **Session Management:** Secure session management and monitoring
-
-**Data Protection:**
-
-- **Data Encryption:** Data encryption and protection measures
-- **Privacy Compliance:** Privacy regulation compliance and monitoring
-- **Data Backup Security:** Secure backup and data protection
-- **Audit Logging:** Comprehensive audit logging and monitoring
-
-#### 10. Future Enhancements and Roadmap
-
-The Flavourly platform is designed with future growth and enhancement in mind. The roadmap includes planned features and improvements based on user feedback and market requirements.
-
-**Planned Features:**
-
-**Advanced Recipe Features:**
-
-- **Recipe Scaling:** Automatic recipe scaling based on serving size
-- **Nutritional Analysis:** Advanced nutritional analysis and recommendations
-- **Recipe Variations:** Recipe variation and substitution suggestions
-- **Cooking Timer Integration:** Integrated cooking timer and step tracking
-
-**Enhanced User Experience:**
-
-- **Personalized Recommendations:** AI-powered recipe recommendations
-- **Social Features:** Enhanced social sharing and collaboration features
-- **Mobile Application:** Native mobile application development
-- **Voice Integration:** Voice-controlled recipe navigation and instructions
-
-**Advanced Meal Planning:**
-
-- **Smart Meal Planning:** AI-powered meal planning and suggestions
-- **Grocery Integration:** Integration with grocery delivery services
-- **Nutritional Goals:** Personalized nutritional goal tracking
-- **Meal Prep Planning:** Advanced meal preparation planning features
-
-**Professional Features:**
-
-- **Restaurant Integration:** Integration with restaurant management systems
-- **Catering Features:** Catering and large-scale meal planning features
-- **Professional Tools:** Advanced tools for professional chefs and nutritionists
-- **Analytics Dashboard:** Comprehensive analytics and reporting features
-
-**Technical Enhancements:**
-
-- **Microservices Architecture:** Migration to microservices architecture
-- **Real-time Features:** Real-time collaboration and communication features
-- **Advanced Search:** AI-powered recipe search and discovery
-- **API Enhancements:** Enhanced API capabilities and integrations
-
-**Market Expansion:**
-
-- **Internationalization:** Multi-language and international market support
-- **Regional Features:** Region-specific features and content
-- **Partnership Integration:** Integration with food industry partners
-- **Educational Content:** Educational content and cooking tutorials
-
-The deployment, maintenance, and future enhancement strategies ensure that the Flavourly platform remains competitive, reliable, and user-friendly. The comprehensive maintenance procedures, combined with planned enhancements and improvements, ensure long-term success and user satisfaction.
-
-The platform's architecture and design principles support future growth and enhancement, allowing for seamless integration of new features and capabilities. The continuous improvement process, based on user feedback and market requirements, ensures that the platform evolves to meet changing user needs and market demands.
-
-The Flavourly recipe management platform is positioned for long-term success and growth, with a solid foundation for future enhancements and market expansion. The comprehensive documentation, maintenance procedures, and enhancement roadmap ensure that the platform continues to provide value to users and stakeholders while maintaining high standards of quality and reliability.
+Minimum Server Requirement
+
+|                  |                     |
+| ---------------- | ------------------- |
+| Processor        | 2.0 GHz CPU         |
+| RAM              | 2 GB                |
+| Disk Space       | 1 GB Of Free Space  |
+| Operating System | Linux/Windows/macOS |
+| Front End        | React, TypeScript   |
+| Back End         | Next.js API Routes  |
+| Database Engine  | PostgreSQL          |
+| Media Storage    | Cloudinary          |
+| Hosting Platform | Vercel              |
+| Authentication   | NextAuth.js         |
+
+Minimum Client Requirement
+
+|                   |                                     |
+| ----------------- | ----------------------------------- |
+| Processor         | 1.0 GHz CPU                         |
+| Operating System  | Any modern OS                       |
+| RAM               | 2 GB                                |
+| Disk Space        | 100 MB Of Free Space                |
+| Browser           | Chrome 90+, Firefox 88+, Safari 14+ |
+| Internet          | 1Mb speed or above                  |
+| Screen Resolution | 320px minimum width                 |
+
+Appendix A: User Documentation
+
+Appendix B: Source Code

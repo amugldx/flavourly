@@ -5,7 +5,7 @@
  * Tests the Cloudinary upload for user profile pictures
  */
 
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

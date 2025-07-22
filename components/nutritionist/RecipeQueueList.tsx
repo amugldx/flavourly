@@ -1,6 +1,6 @@
 'use client';
 
-import { VerificationStatus } from '@/generated/prisma/client';
+import { VerificationStatus } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
